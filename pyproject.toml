@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+testpaths = ["tests/dofbot"]
+pythonpath = ["robot/dofbot"]
+addopts = "-ra"

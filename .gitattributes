@@ -19,10 +19,6 @@
 *.ncnn.bin binary
 *.ncnn.param binary
 
-# Preserve the pinned upstream model and native MMIO provenance byte for byte.
-AmazingHand/** -text
-fpga/mjc1_fpd/mmio.c -text
-# Keep exported upstream discussions and patches unchanged for hash verification.
-docs/migration/upstream_archive_20261019_v2/** -text
-# Preserve the closeout command logs and evidence hashes byte for byte.
-docs/migration/closeout_20261019/** -text
+# Keep the validated runtime byte-identical to its deployment manifest.
+robot/dofbot/*.py -text
+robot/dofbot/*.sh -text

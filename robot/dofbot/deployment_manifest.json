@@ -1,0 +1,48 @@
+{
+  "schema": "visiongrasp.dofbot-release/1",
+  "baseline_date": "2026-10-29",
+  "files": {
+    "standalone_runtime.py": "40222f978dd0703bf5b969d58e32943fceb759e67af725658aabed2cdeae217f",
+    "standalone_voice.py": "dd42db0579607af117191be83017a8981bf8902309a723fd19d1c01e8e172d1d",
+    "preview_publisher.py": "6cf66ca670784cf3480c21766550685f62c12548ab536588d7e55d46ce39d279",
+    "dashboard.py": "c507d6f0ba14ad82f3397b17e425e7437afe300f2c1a07b2effcdd3a28c3a2c2",
+    "dashboard_model.py": "5df9fca6ff88307094dfd75aee02eaf1e03ce485be8eb008f030493c9aa49001",
+    "dashboard_launcher.py": "7766f68befb56ebbc9085b98f85effcc0055b0dfbaed3833a99a9ebd58ec5d2c",
+    "launch_controller.py": "6a83d162735b8de2ca844e66683d76beec31199a9e6f5ef264b32b5eba6365eb",
+    "ensure_kinematics.py": "6a1c816541a12621d8af1e494b2ee2ead289d204d1619169dd5dbd5c4951f6a1",
+    "start.sh": "8c1b862f81cc2a4b2102f3c8f142300c0132ff51b5de34d382f99f6b3ade3265",
+    "run_runtime.sh": "ed10318d41b70de365c42d8d5c12e396c4992c2bbec15ced585bf0fe7cecc7aa",
+    "dashboard-icon.svg": "0cd13c490bd1236e683fa4f0718c6edff8bdf5202079ffb266c2fba750d5a606",
+    "voice_bridge.py": "4a5f80f46ebe5bca6add9dc1df0d086ddda72e4d72814df0c56ce2bde8bb238a"
+  },
+  "validated_deployment_sha256": {
+    "standalone_runtime.py": "40222f978dd0703bf5b969d58e32943fceb759e67af725658aabed2cdeae217f",
+    "standalone_voice.py": "dd42db0579607af117191be83017a8981bf8902309a723fd19d1c01e8e172d1d",
+    "preview_publisher.py": "6cf66ca670784cf3480c21766550685f62c12548ab536588d7e55d46ce39d279",
+    "dashboard.py": "c507d6f0ba14ad82f3397b17e425e7437afe300f2c1a07b2effcdd3a28c3a2c2",
+    "dashboard_model.py": "5df9fca6ff88307094dfd75aee02eaf1e03ce485be8eb008f030493c9aa49001",
+    "dashboard_launcher.py": "7766f68befb56ebbc9085b98f85effcc0055b0dfbaed3833a99a9ebd58ec5d2c",
+    "launch_controller.py": "6a83d162735b8de2ca844e66683d76beec31199a9e6f5ef264b32b5eba6365eb",
+    "ensure_kinematics.py": "6a1c816541a12621d8af1e494b2ee2ead289d204d1619169dd5dbd5c4951f6a1",
+    "start.sh": "8c1b862f81cc2a4b2102f3c8f142300c0132ff51b5de34d382f99f6b3ade3265",
+    "run_runtime.sh": "ed10318d41b70de365c42d8d5c12e396c4992c2bbec15ced585bf0fe7cecc7aa",
+    "dashboard-icon.svg": "0cd13c490bd1236e683fa4f0718c6edff8bdf5202079ffb266c2fba750d5a606",
+    "voice_bridge.py": "b8407b040206a8f93327cb592ce9c652da3b36581da4c906681c88644a85beb8"
+  },
+  "transformations": {
+    "voice_bridge.py": {
+      "operation": "Keep only the three unchanged protocol definitions; remove unused APP controller",
+      "definitions_ast_sha256": {
+        "SINGLE_CLASSES": "f2c662abb464b556c20bfdc5b5b8fef5a6c6fd9f8a1d19207ed715597271da47",
+        "SINGLE_AUDIO": "9841b75f1f04f24a2782eb71189c71988c65481761ed7698e5e25732a5154b4e",
+        "FrameParser": "92500ab8e676a881f9e878d8df0c891e742bd6b0beb5f7ae9cc1acf45a62fce6"
+      },
+      "ast_format": "Canonical JSON of AST node types and fields; omit empty type_params/type_comment; encode bytes as hex; sort keys",
+      "definitions_source_sha256": {
+        "SINGLE_CLASSES": "11e4ebc3bfdc460389109a9a8601afec5d4e03bf5532d7f949b328d062a9e342",
+        "SINGLE_AUDIO": "d4f76fcb9d14c5d9fa424da7957af693c57456b15a9c1d2fd3653a14d8efa981",
+        "FrameParser": "a9d588bd676aefb51cf31db745338c0180291fd0796d9bdfee52a76661a48785"
+      }
+    }
+  }
+}

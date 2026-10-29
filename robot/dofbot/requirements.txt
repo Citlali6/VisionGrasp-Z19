@@ -1,0 +1,6 @@
+# Application-layer dependencies; the supported VM already provides them.
+# Do not run a blanket pip upgrade on a validated demo VM.
+# ROS Humble, the detector's pinned OpenCV/PyTorch/Ultralytics environment,
+# Arm_Lib and vendor assets are external VM dependencies, not installed here.
+pyserial==3.5
+PyQt5>=5.15,<6
