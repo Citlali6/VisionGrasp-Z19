@@ -1,9 +1,0 @@
-test_reject_bad_targets (__main__.WireTests.test_reject_bad_targets) ... ok
-test_reject_unsafe_fault_telemetry (__main__.WireTests.test_reject_unsafe_fault_telemetry) ... ok
-test_reject_wrong_source_old_ack_and_missing_counter (__main__.WireTests.test_reject_wrong_source_old_ack_and_missing_counter) ... ok
-test_valid_ack (__main__.WireTests.test_valid_ack) ... ok
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.000s
-
-OK

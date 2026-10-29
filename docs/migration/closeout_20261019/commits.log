@@ -1,5 +1,0 @@
-3494ef01415252ed84b9a65fd568ad1cad7070eb feat: prepare USB microphone voice foundation and offline deployment
-2c4aef61d1a8789dd1697c0a937271eaddf3504e feat: migrate complete Z19 workspace with vendored models and validated packages
-186072f646fa6f2ec7d83b9709aff338aed4fc9b docs: archive upstream issues reviews and PR changes for independent use
-cb63f66fa4c591e2b256ca7d00ed2752b9adf020 docs: audit migration coverage and preserve remaining legacy configuration
-71d8bb14d43c67e63f744f506a972bd4cd769d1a docs: record approved repository protection settings

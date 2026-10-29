@@ -1,1 +1,0 @@
-{"model_files": 196, "archives": 2, "asset_integrity": "passed", "board_access": "not_attempted", "mujoco": "3.15.0", "actuators": 8, "model_load": "passed"}

@@ -1,0 +1,47 @@
+name: Offline verification
+
+on:
+  push:
+    branches: [main, 'chore/**', 'feature/**', 'fix/**', 'docs/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: offline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  software:
+    name: Python 3.10 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.10'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Runtime, protocol and installer tests (no hardware)
+        run: python -m pytest -q
+      - name: Audio capture and SD image format tests (no hardware)
+        run: |
+          python -B -m unittest discover -s host/tests -p test_audio.py -v
+          python -B tools/test_z19_sd.py
+      - name: Repository structure and documentation
+        run: python .github/scripts/check_repository.py
+      - name: Shell syntax
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          for script in robot/dofbot/install.sh robot/dofbot/start.sh robot/dofbot/run_runtime.sh; do
+            bash -n "$script"
+          done
+          sh -n .githooks/pre-push
