@@ -2,7 +2,7 @@ name: Offline verification
 
 on:
   push:
-    branches: [main, 'chore/**', 'feature/**', 'fix/**', 'docs/**']
+    branches: [main, 'chore/**', 'feat/**', 'feature/**', 'fix/**', 'docs/**']
   pull_request:
   workflow_dispatch:
 
@@ -29,7 +29,7 @@ jobs:
         with:
           python-version: '3.10'
       - run: python -m pip install -r requirements-dev.txt
-      - name: Runtime, protocol and installer tests (no hardware)
+      - name: Runtime, protocol, installer and candidate adapter tests (no hardware)
         run: python -m pytest -q
       - name: Audio capture and SD image format tests (no hardware)
         run: |
@@ -45,3 +45,26 @@ jobs:
             bash -n "$script"
           done
           sh -n .githooks/pre-push
+
+  fpga_guard:
+    name: FPGA candidate guard RTL simulation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install simulator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+      - name: Compile and simulate the independent guard peripheral
+        shell: bash
+        run: |
+          iverilog -g2012 -s tb_sort_guard -o "$RUNNER_TEMP/sort_guard.vvp" \
+            fpga/sort_guard/rtl/vg_sort_guard_core.sv \
+            fpga/sort_guard/rtl/vg_sort_guard_axi.sv \
+            fpga/sort_guard/sim/tb_sort_guard.sv
+          set -o pipefail
+          timeout 60 vvp "$RUNNER_TEMP/sort_guard.vvp" | tee "$RUNNER_TEMP/sort_guard.log"
+          grep -q 'SORT_GUARD_PASS' "$RUNNER_TEMP/sort_guard.log"
