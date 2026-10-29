@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "scope": "offline RTL simulation and standalone OOC synthesis; no hardware integration",
+  "tool": "Vivado 2020.1 win64 Build 2902540",
+  "part": "xczu19eg-ffvc1760-2-i",
+  "top": "vg_sort_guard_axi",
+  "simulation": {
+    "top": "tb_sort_guard",
+    "result": "PASS",
+    "marker": "SORT_GUARD_PASS checks=661 axi_writes=418 axi_reads=66 axi_permits=2 core_permits=1 timeout_priority=PASS reset=PASS",
+    "assertion_checks": 661,
+    "axi_writes": 418,
+    "axi_reads": 66,
+    "axi_permits": 2,
+    "core_permits": 1,
+    "coverage": [
+      "AW before W / W before AW / simultaneous",
+      "B/R response stalls and independent read/write",
+      "invalid addresses, read-only writes, full WSTRB enforcement, reserved bits",
+      "configuration validation and ARM snapshot",
+      "ROI and mask count, invalid/fresh flags, fixed-anchor jitter and slow drift",
+      "duplicate/out-of-order/half-space sequence ignored, wrap accepted",
+      "exact-cycle timeout priority over consume/new frame",
+      "busy/cancel revoke, new ARM required, one-cycle permit and no double consume",
+      "reset flushes independent AW and stalled B/R",
+      "external busy remains asserted across reset; ARM refused until pin clears"
+    ]
+  },
+  "synthesis": {
+    "result": "PASS",
+    "type": "out_of_context_synthesis_only",
+    "lut": 866,
+    "flip_flop": 949,
+    "bram_tiles": 0,
+    "dsp": 0,
+    "latches": 0,
+    "carry8": 54,
+    "synthesis_errors": 0,
+    "synthesis_critical_warnings": 0,
+    "synthesis_warnings": 0,
+    "drc_violations": 0,
+    "clock_name": "guard_clk",
+    "clock_period_ns": 10.0,
+    "clock_constraint_stage": "applied after synthesis for synthesized-netlist timing report",
+    "wns_ns": 7.112,
+    "whs_ns": 0.061,
+    "unconstrained_input_ports": 67,
+    "unconstrained_output_ports": 40,
+    "clock_source_warning": "HD.CLK_SRC not set; no clock delay/skew estimation",
+    "placed": false,
+    "routed": false,
+    "bitstream_generated": false
+  },
+  "hardware": {
+    "accessed": false,
+    "loaded": false,
+    "robot_motion": false,
+    "physical_base_address": null
+  },
+  "reproducibility": {
+    "source_sha256": {
+      "rtl/vg_sort_guard_core.sv": "d8bdbb5f98409718d2171bc42f24051a7c8dd3996a26465c52643dfa49d85842",
+      "rtl/vg_sort_guard_axi.sv": "0e8c3e99041d559935a0c65ce8f5efcfe3b3cfbd9d04791e195657e8ce4a93d5",
+      "sim/tb_sort_guard.sv": "b99ffb1de44a3a7162f6c71a2361e60b0d055523846307d167d2ac3f0c222438",
+      "sim/run.tcl": "6218ffa4f2392f3c61113605d4ab2cd023186e11f1da826b920e510a9a797efb",
+      "scripts/sim.ps1": "2d51ba8b660e9344af6a4f5b9cfcb7b943097fb56b17e00e51f43ce9c3638475",
+      "scripts/synth_ooc.tcl": "d856234967ee7264f6eab6fac62b6747a1f81fd791d4de607171345d7b8a37e9",
+      "INTERFACE.md": "4f856650bebcb66092a7bca72eb4c4a6907c52557648669896d5b99786822b3c"
+    },
+    "external_report_sha256": {
+      "utilization.rpt": "48ffbad887b1a50a019356b191b12e18a0700ac8d531a4664f780fbf3be6e60b",
+      "timing_synth_only.rpt": "885ae1e9cd563d6c0cee6dd272578a7cd99d7a7958daa8696343b3f5ffb6aa44",
+      "drc_synth_only.rpt": "ab4dd2116355f98ace366e6f26695fa01158f3267fa04b9873406f39c67b60d2"
+    },
+    "simulation_log_sha256": "869c3ea6cd06f6df4614e2c260191069ffcc1b679b8e731e33ad5a5bc22aa0b9",
+    "successful_build": "ooc-run-03; same-source ASCII path alias of external audit directory",
+    "failed_attempts": "ooc-run-01/02: Vivado TclStackFree internal crash on Unicode source path; original logs retained externally; not successful synthesis",
+    "published_reports": {
+      "reports/utilization.rpt": {
+        "original_sha256": "48ffbad887b1a50a019356b191b12e18a0700ac8d531a4664f780fbf3be6e60b",
+        "published_sha256": "e270f0c428d56c48b058b07b1d7f7279cc5c81dace17e0921253aa6872e37513"
+      },
+      "reports/timing_synth_only.rpt": {
+        "original_sha256": "885ae1e9cd563d6c0cee6dd272578a7cd99d7a7958daa8696343b3f5ffb6aa44",
+        "published_sha256": "abd692996ecb00aa6a160feb468a366c84c2c3e38c295baf9b8d2569d572ef65"
+      },
+      "reports/drc_synth_only.rpt": {
+        "original_sha256": "ab4dd2116355f98ace366e6f26695fa01158f3267fa04b9873406f39c67b60d2",
+        "published_sha256": "18522de5d01ece4a373d716063f3f9500f1b676e5b9b0a791bf1e26cf785554b"
+      }
+    },
+    "report_sanitization": [
+      "remove Host header line only",
+      "replace temporary S:/ooc-run-03/reports/ output path prefix in Command header with empty string",
+      "normalize CRLF to LF; preserve all technical report sections and values",
+      "remove trailing horizontal whitespace; technical content unchanged",
+      "remove surplus blank lines at EOF, retaining exactly one final newline"
+    ],
+    "source_hash_basis": "Exact source bytes, pinned by module .gitattributes -text rules across checkouts"
+  },
+  "limits": [
+    "No board BD/address assignment or PS physical transport implemented",
+    "PS supplies trusted validity/freshness; hardware cannot prove source authenticity",
+    "Selected-color global bbox is not garbage classification or instance separation",
+    "No certified safety function or actuator output",
+    "No measured board frequency, throughput, speedup, optical accuracy or grasp-success result"
+  ]
+}

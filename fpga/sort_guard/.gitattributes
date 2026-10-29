@@ -1,0 +1,8 @@
+# Pin the exact bytes covered by validation/result.json, including on Windows.
+INTERFACE.md -text
+rtl/*.sv -text
+sim/*.sv -text
+sim/*.tcl -text
+scripts/*.ps1 -text
+scripts/*.tcl -text
+validation/reports/*.rpt -text

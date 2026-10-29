@@ -1,6 +1,8 @@
 """Check the source release without importing drivers or contacting hardware."""
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+import hashlib
+import json
 import os
 import re
 import subprocess
@@ -12,6 +14,21 @@ FORBIDDEN = ('AmazingHand', 'pc', 'sim', 'fpga/hand_control', 'fpga/mjc1_fpd',
              'deliverables/local_sources', 'start_virtual_hand.bat', 'start_mjc1_observer.bat')
 LARGE_ASSETS = {'deliverables/voice_usb/voice_usb_package_20261018_v2.zip'}
 TEXT_SUFFIXES = {'.py', '.md', '.json', '.yml', '.yaml', '.toml', '.sh', '.ps1', '.txt'}
+
+
+def check_guard_evidence(errors):
+    module = ROOT/'fpga/sort_guard'
+    manifest = json.loads((module/'validation/result.json').read_text(encoding='utf-8'))
+    evidence = manifest['reproducibility']
+    entries = [(module, name, digest) for name, digest in evidence['source_sha256'].items()]
+    entries += [(module/'validation', name, record['published_sha256'])
+                for name, record in evidence['published_reports'].items()]
+    for base, name, expected in entries:
+        path = (base/name).resolve()
+        if not path.is_relative_to(base.resolve()) or not path.is_file():
+            errors.append('Invalid evidence input: '+name)
+        elif hashlib.sha256(path.read_bytes()).hexdigest() != expected:
+            errors.append('Evidence hash differs from validated input: '+path.relative_to(ROOT).as_posix())
 
 
 def main():
@@ -52,6 +69,7 @@ def main():
                             errors.append('Link case mismatch: '+relative+' -> '+target)
                             break
                         current = current/part
+    check_guard_evidence(errors)
     if errors:
         print('\n'.join(errors), file=sys.stderr)
         return 1

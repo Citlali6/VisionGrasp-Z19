@@ -4,6 +4,7 @@ Z19 模块独立于 DOFBOT 分拣运行，包含 USB 颜色定位、语音颜色
 
 | 任务 | 入口 |
 |---|---|
+| 查看新增候选目标门控工程 | [sort_guard](../../fpga/sort_guard/README.md)，独立离线验证，尚未上板 |
 | 了解颜色数据流、RTL 接口和离线仿真 | [颜色模块源码](../../fpga/color_locator/README.md)、[中文概览](usb_color_module.md) |
 | 使用指定颜色固件与寄存器接口 | [板端操作](../../fpga/color_locator/BOARD.md) |
 | 启动语音颜色选择与网格坐标播报 | [网格与播报](../../fpga/color_locator/GRID.md)、[语音协议](../../fpga/color_locator/VOICE.md) |

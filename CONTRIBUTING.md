@@ -1,6 +1,6 @@
 # 参与开发
 
-欢迎改进可复现部署、任务可靠性、展示体验和 FPGA 感知能力。先阅读[系统架构](docs/ARCHITECTURE.md)与[验证结果](docs/VALIDATION.md)，确定改动属于 DOFBOT 应用还是 Z19 感知模块。
+欢迎改进可复现部署、任务可靠性、展示体验和 FPGA 感知能力。先阅读[系统架构](docs/ARCHITECTURE.md)与[验证结果](docs/VALIDATION.md)，确定改动属于 DOFBOT 应用、Z19 感知模块还是独立候选门控工程。
 
 ## 提交方式
 
@@ -10,6 +10,8 @@
 4. 推送工作分支并创建 PR，写明问题、改变后的行为和验证结果。
 
 主分支通过 PR 更新，不直接推送，不重写历史。完整约定见 [Git 工作流](docs/GIT_WORKFLOW.md)与 [AGENTS.md](AGENTS.md)。
+
+参赛文档按[模板映射](docs/competition/README.md)组织，引用[事实与指标表](docs/competition/EVIDENCE_MATRIX.md)。新测试结果需注明软件、RTL、综合或现场证据等级；未测项目保留待测状态。
 
 ## 代码与文档约定
 
