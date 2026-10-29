@@ -38,7 +38,7 @@ bit 的 store 索引实际为 0/1/2，部分导出派生元数据写六帧；保
 使用匹配工具，目标目录必须不存在；脚本把 source 和 generated 分开：
 
 ```powershell
-vivado -mode batch -source fpga/camera_hw/scripts/create_project.tcl -tclargs F:/Amazing_Hand/tmp/camera-hw-new-build
+vivado -mode batch -source fpga/camera_hw/scripts/create_project.tcl -tclargs ../camera-hw-new-build
 ```
 
 本机现有 Vivado 2020.1 会被版本检查拒绝，不能通过自动降级或升级 IP 绕过。

@@ -1,3 +1,0 @@
-# Preserve original evidence bytes so the manifest hashes survive Git checkout.
-acceptance.json -text -whitespace
-gui.*.txt -text -whitespace

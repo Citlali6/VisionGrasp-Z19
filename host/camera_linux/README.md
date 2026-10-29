@@ -1,7 +1,7 @@
 # Z19 Linux camera 0 bench
 
 This directory ports the already demonstrated FL0214/IMX214 camera-0 sequence
-to Linux. It does not configure hand actuators. The unchanged hardware inputs,
+to Linux as a camera-only service. The unchanged hardware inputs,
 reviewed bit/XSA and provenance are archived in
 [camera_hw](../../fpga/camera_hw/README.md); external originals remain preserved.
 
@@ -73,7 +73,7 @@ On the directly connected PC, run `python host/camera_linux/view_camera.py`
 and open `http://127.0.0.1:8766/`. This loopback viewer forwards only camera
 HTTP routes directly to the board, preserving the PC's existing proxy settings.
 Stop it with Ctrl+C. The board service remains available at
-`http://192.28.14.153:9000/` when the browser can connect directly.
+`http://YOUR_Z19_ADDRESS:9000/` when the browser can connect directly.
 
 Preview now uses a persistent **1920×1080 MJPEG stream**, with no upscaling
 from the old 320×180 image. A 30-second PC receive test decoded all 757 JPEGs

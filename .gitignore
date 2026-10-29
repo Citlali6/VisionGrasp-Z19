@@ -1,31 +1,4 @@
-# ===== Vivado / Vitis / Vitis AI 中间产物（保留 .bit/.xsa/.hwh/.ltx 与 rpt 报告）=====
-*.jou
-*.log
-*.str
-*.wdb
-*.wpc
-*.dcp
-*.bit.bin
-.Xil/
-xsim.dir/
-webtalk/
-*.debug
-.vivado.begin*
-.vivado.end*
-.Pynq*
-
-# ===== 模型权重与导出产物（tools/ 脚本可重建，不入库）=====
-*.pt
-yolov8n_ncnn_model/
-yolov8n.onnx
-host/models/
-data/render/
-*.backup.*
-*.bak
-*.orig
-fpga/build/out/*
-
-# ===== Python =====
+# Python environments and caches
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -35,24 +8,44 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
-# ===== Node（如临时脚本用到）=====
-node_modules/
+# Local runtime evidence, model weights and machine credentials
+robot/dofbot/records/
+robot/dofbot/launcher-backups/
+robot/dofbot/ui-backups/
+robot/dofbot/installer-backups/
+host/models/
+*.pt
+*.onnx
+.env
+.env.*
+!.env.example
 
-# ===== 系统文件 =====
+# Build output: keep source BD/XCI/XDC and validated images tracked
+*.jou
+*.log
+*.str
+*.wdb
+*.wpc
+*.dcp
+.Xil/
+xsim.dir/
+webtalk/
+*.debug
+.vivado.begin*
+.vivado.end*
+node_modules/
+output/
+tmp/
+.cache/
+
+# Editor and operating system files
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 desktop.ini
-*~
-
-# ===== 编辑器 =====
-.vscode/
-.idea/
-
-# ===== 临时/本地产物 =====
 *.tmp
-*.orig.*
-output/
-tmp/
-
-# MJC1 local build/runtime output; validated firmware is in deliverables/mjc1_fpd/.
-fpga/mjc1_fpd/out/
+*.bak
+*.backup.*
+*.orig
+*~

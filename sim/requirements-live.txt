@@ -1,6 +1,0 @@
-# PC-only interactive demo. Python 3.12 recommended; no ARM/AI packages required.
-mujoco==3.15.0
-numpy==1.26.4
-opencv-python==4.9.0.80
-pillow==12.2.0
-PyYAML==6.0.1

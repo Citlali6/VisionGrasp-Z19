@@ -1,1 +1,1 @@
-"""语音层：Vosk 离线命令词识别（project_framework F1）。"""
+"""Z19 颜色语音链复用的 ALSA 采音与 PCM 转换。"""

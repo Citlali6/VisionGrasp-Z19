@@ -10,7 +10,7 @@ add_files -norecurse [file join $root rtl vg_color_axi_top.v]
 update_compile_order -fileset sources_1
 create_bd_design color_bd
 create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.3 ps0
-source [file join $root .. mjc1_fpd src ps_config.tcl]
+source [file join $root .. scripts alinx ps_config.tcl]
 set_ps_config ps0
 set_property -dict [list CONFIG.PSU__USE__M_AXI_GP0 {1} CONFIG.PSU__USE__M_AXI_GP1 {0} CONFIG.PSU__USE__M_AXI_GP2 {0} CONFIG.PSU__MAXIGP0__DATA_WIDTH {128} CONFIG.PSU__FPGA_PL0_ENABLE {1} CONFIG.PSU__FPGA_PL1_ENABLE {1} CONFIG.PSU__CRL_APB__PL0_REF_CTRL__FREQMHZ {200.000} CONFIG.PSU__CRL_APB__PL1_REF_CTRL__FREQMHZ {100.000} CONFIG.PSU__CRL_APB__PL0_REF_CTRL__SRCSEL {RPLL} CONFIG.PSU__CRL_APB__PL1_REF_CTRL__SRCSEL {RPLL}] [get_bd_cells ps0]
 create_bd_cell -type module -reference vg_color_axi_top color0

@@ -31,13 +31,14 @@ live_v2 曾取得真实 1080p 采集图像，JTAG 小预览约 1.3 fps（80 帧�
 ## 编译
 
 已有 BSP 必须来自配套 [camera.xsa](../camera_hw/validated/camera.xsa) 的 A53 standalone domain；
-准备 Vitis 平台/BSP 后，指定自己的路径。例子使用本机已经存在的 Vitis 2020.1 工具与 BSP：
+准备 Vitis 平台/BSP 后，将 `CAMERA_BSP` 设置为匹配 BSP 的绝对路径，
+`VITIS_AARCH64_GCC` 设置为 Vitis 2020.1 的 `aarch64-none-elf-gcc.exe` 路径：
 
 ```powershell
-& F:/Amazing_Hand/fpga/camera_baremetal/build.ps1 `
-  -BspDirectory F:/z19-camera-baremetal-20261006-204935/platform/camera_hw/psu_cortexa53_0/standalone_domain/bsp/psu_cortexa53_0 `
-  -GccPath F:/Xilinx/Vitis/2020.1/gnu/aarch64/nt/aarch64-none/bin/aarch64-none-elf-gcc.exe `
-  -OutputDirectory F:/Amazing_Hand/tmp/camera-baremetal-new-build
+& ./fpga/camera_baremetal/build.ps1 `
+  -BspDirectory "$env:CAMERA_BSP" `
+  -GccPath "$env:VITIS_AARCH64_GCC" `
+  -OutputDirectory '../camera-baremetal-new-build'
 ```
 
 输出目录必须不存在；脚本不会覆盖 BSP、源文件或历史归档，也不连接板卡。

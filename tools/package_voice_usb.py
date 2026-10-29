@@ -1,4 +1,8 @@
-"""Create a new voice-only board package; never include FPGA loaders or secrets."""
+"""Package Z19 audio capture, offline Vosk wheels and model assets.
+
+Command recognition lives in fpga/color_locator/host/voice_color.py. This
+dependency package contains no controller, command-line service or FPGA loader.
+"""
 from __future__ import annotations
 
 import argparse
@@ -54,10 +58,9 @@ def main():
         raise RuntimeError('Offline dependency set incomplete: ' + str(required - set(wheel_metadata)))
     root = args.output.resolve()
     root.mkdir(parents=True, exist_ok=False)
-    files = [Path('host/app/__init__.py'), Path('host/config/voice_usb.json'),
-             Path('host/requirements-voice.txt'), Path('host/scripts/voice_usb.sh'),
+    files = [Path('host/app/__init__.py'), Path('host/app/voice/__init__.py'),
+             Path('host/app/voice/audio.py'), Path('host/requirements-voice.txt'),
              Path('docs/voice/USB_MICROPHONE.md')]
-    files += [path.relative_to(repo) for path in (repo / 'host/app/voice').glob('*.py')]
     for relative in files:
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -73,7 +76,7 @@ def main():
     artifacts = {str(p.relative_to(root)).replace('\\', '/'): hashlib.sha256(p.read_bytes()).hexdigest()
                  for p in root.rglob('*') if p.is_file()}
     with (root / 'manifest.json').open('x', encoding='utf-8') as out:
-        json.dump(dict(profile='usb-voice-foundation-v1', target='aarch64-linux-python3.7',
+        json.dump(dict(profile='z19-audio-assets-v2', target='aarch64-linux-python3.7',
                        hardware='Waveshare USB TO AUDIO', board_validation='pending',
                        recognition_accuracy='not_measured', control='not_connected',
                        wheels=wheel_metadata, sha256=artifacts), out, indent=2)

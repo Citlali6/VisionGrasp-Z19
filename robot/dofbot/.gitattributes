@@ -1,0 +1,7 @@
+# Keep the byte-pinned runtime files identical across Windows and Linux clones.
+*.py -text
+*.sh -text
+*.svg -text
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf

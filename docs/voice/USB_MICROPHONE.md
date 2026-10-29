@@ -1,167 +1,31 @@
-# 微雪 USB TO AUDIO：语音基础工程
+# Z19 USB 语音依赖
 
-## 当前交付与边界
+当前 Z19 语音功能由板端 ARM 采音、Vosk 颜色关键词识别和 PL 颜色定位组成。语音不是在 PL 上执行；这套板端环境与 DOFBOT 串口语音模块相互独立。
 
-目标硬件：微雪 USB TO AUDIO（板载麦克风），接 Z19 **PS USB HOST**。
-语音由 PS 上的 Vosk 中文小模型识别，PL 继续承担手控制。
+## 配套资产
 
-源码提供：设备枚举、环境报告、录音、PCM转换、WAV/实时中文识别、JSON命令输出，及主程序的sim输入入口。
-**麦克风尚未到货：没有真实USB录音、识别率、延迟或相机/PL并发验收结果。**
-本工程不打开 `/dev/mem`、不加载bit、不改相机固件、启动文件、密码或防火墙。
-语音CLI仅输出命令，**没有连接正在运行的MJC1闭环**。接入时由原控制进程消费命令，保持唯一MMIO写入者，不能同时启动旧 `backend_fpga`。
+已验证环境为 Z19 AArch64 Linux / Python 3.7、USB TO AUDIO 声卡、16 kHz 单声道 PCM。`host/app/voice/audio.py` 提供 ALSA 采集与音频格式处理，`fpga/color_locator/host/voice_color.py` 使用它进行流式识别。
 
-开发副本：`D:/Vitis/project_1/voice_usb_foundation_20261018`。
-工作分支：`feature/usb-voice-foundation-20261018`。原目录及相机集成目录的未提交修改保留。
+复现所需的固定资产来自 [USB 语音包](../../deliverables/voice_usb/README.md)中的 Vosk wheel、`vosk-model-small-cn-0.22`、模型来源与哈希记录，以及[板端原生依赖](../../deliverables/voice_pl_color/README.md)。旧压缩包是冻结的依赖快照；以当前仓库中的颜色入口运行，包内历史命令行应用不属于当前入口。
 
-## 固定音频格式
+不要把 AArch64 wheel 或板端运行库安装到 PC，也不要从 Windows 复制 Python 虚拟环境到板卡。wheel 保留其许可文件；模型包保留来源 URL 与校验值，但没有附带模型许可全文，使用前需核对适用条款。中文坐标 TTS 依赖及其再分发边界见[第三方说明](../../THIRD_PARTY.md)。
 
-- 识别器输入：16000 Hz、单声道、16位有符号小端PCM，100ms一块。
-- Linux实时采音：`arecord` + ALSA `plughw`完成声道/采样率转换；无需PyAudio。
-- 自动选择仅接受**恰好一个**USB录音设备；零个或多个时明确报错。可用 `--device` 指定。
-- WAV入口支持PCM16、单/双声道、16/32/48kHz；可选mix/left/right声道。整数比降采样用简单平均，未做拾音/降噪效果标定。
-- 24位、浮点、44.1kHz或压缩音频明确拒绝，不会当成16位数据送入识别器。
+## 运行入口
 
-配置在 `host/config/voice_usb.json`。其中model路径相对该配置文件解析；不依赖启动目录。
-`device: null` 为唯一USB自动选择；设备到货后以实际枚举结果为准，不预填声卡号。
-
-## 板端环境与离线安装
-
-独立语音CLI面向Python3.7+ / Linux AArch64；依赖 `vosk==0.3.45` 和系统 `alsa-utils`。
-PC上准备的AArch64 wheel不能安装到Windows环境。不要安装根目录混合视觉/仿真的requirements。
-
-先在板端查看实际环境：
+先完成[颜色固件和 MMIO 所有者检查](../../fpga/color_locator/BOARD.md)，按[当前网格与播报部署](../../fpga/color_locator/GRID.md)准备原生相机程序及同目录 Python/JavaScript 文件。预览通过 `--voice-assets` 指向已有板端资产目录，`--listen` 决定启动时是否开启麦克风。
 
 ```sh
-python3 --version
-uname -m
-cat /etc/os-release
-command -v arecord
-ls /dev/snd
+python3 -u preview.py --directory /dev/shm/visiongrasp-grid-fast-20261023 \
+  --port 18774 --camera /opt/your-color-release/color_camera --profile balanced \
+  --voice-assets /opt/your-verified-voice-assets --listen
 ```
 
-若缺arecord，需按**当前Linux镜像**安装匹配alsa-utils；若没有录音设备，先核对USB枚举及内核 `CONFIG_SND_USB_AUDIO`，不把“免驱”理解为所有镜像均已启用驱动。
-当前ALINX系统曾报告Python3.7.6/AArch64；未在本次语音任务中重新读取板卡状态。
+这里的两个 `/opt/your-...` 路径需替换为按部署说明准备的实际目录。使用模块内 `voice_color.sh` 管理指定语音环境；预览进程会管理自己的采音子进程，不要另起第二个麦克风读取者。
 
-将准备好的部署目录复制到板端一个新的版本目录，例如 `/opt/amazinghand/voice-usb-20261018`。
-在该目录执行（不依赖板端联网）：
+支持明确的红、绿、蓝关键词及停止表达；否定、多颜色歧义、低置信度和部分识别结果不会生成新颜色请求。最新请求必须等待同一请求号的真实新帧，旧画面和旧坐标不能用于新播报。具体阈值及消息字段见[语音接口](../../fpga/color_locator/VOICE.md)。
 
-```sh
-python3 -m venv .venv
-.venv/bin/python -m pip install --no-index --find-links wheels pip==24.0
-.venv/bin/python -m pip install --no-index --find-links wheels --require-hashes -r requirements-voice.lock
-export VOICE_PYTHON=/opt/amazinghand/voice-usb-20261018/.venv/bin/python
-sh host/scripts/voice_usb.sh check
-```
+## 故障检查
 
-若板端没有venv/ensurepip，不要使用系统级强制安装或从PC复制Windows环境；保留报错，再为该镜像补齐对应组件。
-离线包包含模型、按Python3.7/AArch64解析的依赖、固定版本hash锁文件；原生共享库仅静态核对ELF架构，未在PC执行板端库。包内pip24.0是Python3.7兼容的独立环境安装工具。
-`check`只报告环境和模型文件是否存在，不表示模型已推理成功，也不启动录音。
+在板端已准备的语音原生运行环境中用 `arecord -l` 确认声卡枚举（部分部署的 arecord 不在全局 PATH），核对设备名称、权限和唯一使用者。页面显示最新识别状态及音频电平；麦克风拔出、采音停滞或依赖错误会进入错误状态，不生成虚构识别结果。
 
-## 麦克风到货后
-
-### 1. 列出录音设备
-
-```sh
-sh host/scripts/voice_usb.sh devices
-```
-
-输出中会有类似 `plughw:CARD=Device,DEV=0`。这只是示例，以实际设备为准。
-只有一个USB录音设备时，下列命令可以省略 `--device`。
-
-### 2. 录10秒真人语音
-
-```sh
-sh host/scripts/voice_usb.sh record /tmp/usb_voice_001.wav --seconds 10
-```
-
-录制时说“抓起香蕉”“放下”“停下”“复位”。录音只保存在指定位置，已有文件会拒绝覆盖；失败时可能保留部分录音以便排查。
-不需要另接喇叭就能录音和识别。建议利用随附USB延长线调整位置，实际对比风扇噪声下的拾音效果。
-
-### 3. 从录音识别
-
-```sh
-sh host/scripts/voice_usb.sh wav /tmp/usb_voice_001.wav
-```
-
-### 4. 实时输出命令
-
-```sh
-sh host/scripts/voice_usb.sh listen --seconds 60
-```
-
-Ctrl+C关闭本工具自己的录音进程。拔出设备、音频停滞或识别失败会报错退出。
-**本命令输出JSON，不直接让手运动。** 每次listen会话seq从1开始，跨进程接入应另加session/接收时间校验。
-
-## 麦克风未到时可用的入口
-
-在仓库 `host/` 目录：
-
-```sh
-python -m app.voice text "抓起香蕉"
-python -m app.voice normalize existing_stereo_48k.wav voice_16k.wav
-python -m app.voice wav voice_16k.wav --model /path/to/vosk-model-small-cn-0.22
-```
-
-text只解析文字，不是语音识别证据。WAV识别需要真实录音及模型；本次没有用合成输入冒充真人录音。
-
-## 主程序的sim演示入口
-
-完整原host主程序仍按仓库要求使用Python3.10+；本板现有Python3.7先使用上面的独立CLI。
-
-```sh
-python -m app.main --backend sim --voice-wav voice_16k.wav
-python -m app.main --backend sim --mic --seconds 60
-```
-
-真实语音输入仅开放sim后端，避免接到尚未冻结的旧FPGA ABI。
-这里的sim是已有软件后端，**不是当前桌面MuJoCo/真实PL闭环**。视觉仍为固定banana的MockVision，只能用于“抓起香蕉”基础演示；其他目标没有匹配视觉结果时会超时，不会拿banana计划代替。
-WAV入口为单条命令；包含多句的文件使用语音CLI逐句输出，不用它做整段手动作回放。
-麦克风模式按实际时间推进，新增语音路径每拍查看停止/释放；退出时请求停止并关闭采音。
-
-## 命令输出契约 amazinghand.voice/1
-
-```json
-{"schema":"amazinghand.voice/1","source":"microphone","seq":1,"text":"抓起香蕉","accepted":true,"confidence":0.92,"reason":"accepted","command":{"action":"grasp","target":"banana"}}
-```
-
-上例为格式说明，非实测。action为grasp/release/stop/reset，target为既有物品表内部名称。
-置信度为该句最低词置信度，默认阈值0.65，需真人录音后再定，不是准确率。
-默认完整中文模型解码后过滤，SetGrammar仅保留为显式可选接口；没有未经验证就把整句中文当成模型词条加载。
-空白、未知词、低置信度和非完整白名单语句不形成控制命令；如“不要抓香蕉”“打开音乐”“抓起香蕉放下”均拒绝。
-MicVoiceSource限制队列长度、丢弃超过2秒的普通事件、抑制1秒内重复命令；停止优先且锁住后续运动，复位后仍需新运动命令。
-USB断开错误优先报告，接入控制器时必须将采集错误转成停止；语音“停”不能代替实体急停。
-
-## 到货后的验收顺序
-
-1. Linux枚举到USB声卡；查看实际支持格式，确认16kHz/mono PCM转换可用。
-2. 录音可听、无削波/长段静音；拔插后明确报错并能重新启动。
-3. 真人分别说命令、否定句、聊天、连续命令；记录识别结果、错误和结束到命令的时间。
-4. 明确说话距离/噪声/人数，再统计命令成功率及误触发率；当前没有这些数据。
-5. 经接口联调将命令交给MJC1现有进程，核对停止锁存、显式复位、丢弃旧命令和反馈ACK。
-6. 最后做相机、语音、PL/虚拟手并发验收。当前相机+MJC1集成固件另有时序问题，不能算本次语音已解决。
-
-## 官方依据
-
-- 产品：https://www.waveshare.net/wiki/USB_TO_AUDIO （USB/Linux/16kHz录音资料）
-- Vosk：https://alphacephei.com/vosk/install （Linux arm64、PCM16k mono要求）
-- ALSA：https://www.alsa-project.org/main/index.php/Asoundrc （plug转换机制）
-
-本次没有新增或运行测试；源码静态检查、依赖与模型打包结果记入开发日志。真实录音和端到端验证待麦克风到货后执行。
-
-## 重建离线资料与部署包（PC）
-
-所有输出目录必须为新的空白路径，不覆盖旧交付物：
-
-```powershell
-python tools/prepare_voice_model.py D:/Vitis/project_1/voice-assets-NEW
-```
-
-在PC隔离的Python3.9打包环境准备依赖（仅构建纯Python srt wheel，其他板端依赖只下载不安装）：
-
-```powershell
-python -m pip wheel --no-deps --wheel-dir D:/Vitis/project_1/voice-assets-NEW/wheels srt==3.5.3
-python -m pip download --platform manylinux2014_aarch64 --platform linux_aarch64 --python-version 37 --implementation cp --abi cp37m --only-binary=:all: --find-links D:/Vitis/project_1/voice-assets-NEW/wheels --dest D:/Vitis/project_1/voice-assets-NEW/wheels -r host/requirements-voice.txt pip==24.0 setuptools==67.8.0 wheel==0.42.0
-python tools/package_voice_usb.py D:/Vitis/project_1/voice-package-NEW --model-assets D:/Vitis/project_1/voice-assets-NEW --wheels D:/Vitis/project_1/voice-assets-NEW/wheels
-```
-
-依赖解析会随上游更新；本次交付的实际版本、文件hash保留于包内manifest和lock。下载模型hash为本地记录，不声称厂商签名验证。
+程序不保存持续 PCM 录音，最新识别文本保存在 RAM 状态文件中用于展示。坐标播报期间忽略麦克风输入，播报结束后恢复；声音播放成功与现场可听清楚分别验收。该链路只输出颜色和板面坐标，不发送机械臂动作。

@@ -1,250 +1,27 @@
-# FPGA辅助视觉抓取系统 — Codex 开发规范
+# Repository working rules
 
-## Windows workspace layout (owner instruction, 2026-10-21)
+## Active scope
 
-On Citlali6's current Windows PC, work under `F:\嵌入式fpga比赛`.
-All new engineering work belongs under `F:\嵌入式fpga比赛\工程project开发`;
-the active checkout is `F:\嵌入式fpga比赛\工程project开发\VisionGrasp-Z19`.
-Read `docs/development/WORKSPACE_LAYOUT.md` before local setup or directory work.
-Do not create new project/build folders at the root of F:.
-Historical repositories and worktrees are archived, not development entrypoints.
-The old `F:\Amazing_Hand`, `F:\ARM` and `F:\FPGA` paths are compatibility
-entries into the organized tree; preserve them while still referenced.
+The active project and only GitHub write target is **Citlali6/VisionGrasp-Z19**. Maintain two independent systems: the verified DOFBOT voice/vision sorting application and the Z19 FPGA perception chain. Read [architecture](docs/ARCHITECTURE.md), [development](docs/DEVELOPMENT.md), [validation](docs/VALIDATION.md) and the relevant module README before editing.
 
-## 2026-10-20 mechanical-arm pre-arrival Codex task order (owner-approved task publishing)
+The DOFBOT demo uses fixed pickup coordinates. Preserve its verified wake/start semantics, classification-audio-before-grasp ordering (the existing observation preparation may move before recognition), motion parameters, detector conditions, UI and startup interface unless the user requests a behavior change. FPGA perception does not currently control DOFBOT. Documentation must distinguish software checks, command completion, user observations and independently measured physical performance.
 
-The owner's primary Windows development environment is **Anaconda**. Use an isolated **Conda env `visiongrasp` with Python 3.10**, not an additional mandatory `venv`; read **`docs/development/ANACONDA_SETUP_WINDOWS.md`**. #14 owns the reproducible `pc/environment.yml` or equivalent environment specification and must not modify the user's existing base environment. Before working on `#14`, `#7`, `#8` or `#18`, read **`docs/development/PRE_ARRIVAL_EXECUTION.md`** and **`docs/development/PC_MVP_CONTRACT.md`**. The current camera board `SIM1319-HD720P` has displayed live video in the owner's Windows Camera app, but OpenCV capture has NOT yet been verified; RoArm-M2-S is ordered but NOT received. PC implementation is **independent of existing mixed root `requirements.txt`** and legacy `host/app/control/backend_serial.py` (the latter is the old SCS 1 Mbps eight-servo backend, NOT the RoArm ESP32 UART JSON protocol). Use a dedicated `pc/` package and respect exclusive ownership of its shared `pyproject.toml` / `contracts.py` (#14), `robot/` (#7), `vision/` (#8), and `app/` (#18). All tests are mock/synthetic until real hardware tests are explicitly authorized by Citlali6 on site. No serial device opening, motor commands, FPGA image changes or automated real-device control in offline development.
+## Preserve work and use Pull Requests
 
-## 2026-10-20 demo-first scope — mandatory before every Codex task
+Before edits, inspect `git status`, `git branch --show-current` and `git remote get-url origin`. Work on a named branch based on the latest remote `main`; do not edit or commit on `main`. If another checkout contains uncommitted work, preserve it and use a separate worktree. Do not automatically stash, discard, reset or mix unrelated changes.
 
-**Owner's latest decision: THE DEMO MUST NOT WAIT FOR FPGA.** The top priority is a stable real tabletop vision pick-and-place result on **PC + lab USB camera + Waveshare RoArm-M2-S via its stock ESP32 / Python SDK**. Build and test R0 official SDK → R1 physical pick/place → R2 live-image detection, calibration, changing target position, GUI and logs. **Z19 PS/PL work is separate P1 and must never gate R0/R1/R2.**
+Follow [Git workflow](docs/GIT_WORKFLOW.md): focused branch → checks and diff review → commits → branch push → PR → authorized merge. Never push directly to `main`, force-push, rewrite history, remove remote branches, bypass hooks or silently alter branch protection. Activate `.githooks` in the local clone. Review the diff and applicable checks before merging. Another person's approval is optional under the owner's policy, but actual GitHub protection still applies; never report an approval that did not occur.
 
-Always read `docs/relaunch_20261020/DEMO_FIRST_POLICY.md`, `SYSTEM_ARCHITECTURE.md`, `TEN_DAY_EXECUTION.md`, `ROARM_OPEN_SOURCE_AUDIT.md` and the current Issue (#14 SDK, #7 RoArm, #8 vision, #10 integration, #11 verification; #9 PL optional parallel, #12 speech HOLD). Prior v0.1 "PL grant before RoArm movement" and old Issue dependencies have been superseded. PC directly controlling the arm under an independent safety controller is an approved DEVELOPMENT ARCHITECTURE; do not add unnecessary FPGA MMIO, Vivado synthesis, ROS2 or board reconfiguration to the P0 dependency graph.
+Commit, push and merge only within the user's authorized task. Authorization already given for the current task remains valid; do not ask repeatedly for the same step. Do not write to upstream source repositories, including `Tom-mr33/AmazingHand-based-on-FPGA`; these are read-only provenance sources.
 
-**Important truth boundary:** PC-only demo is NOT FPGA-controlled; the team should still aim to verify a real PL feature for FPGA-category contest requirements without risking the complete demo. The old MJC1 R2 is virtual-hand HIL only; the old camera+HIL diagnostic bit is NOT DEPLOYABLE. The official firmware/SDK is open-source but NOT yet fully vendored in this repository. Never pretend that link verification is complete local source backup or that factory firmware has been built/tested. Reuse vendor capabilities; PC scripts must default to dry-run, with real physical actions requiring Citlali6's current on-site permission, fixed base, workspace safety checks and accessible independent 12V disconnect.
+## Hardware and deployment
 
-Retain the existing exclusive-repo rule (`Citlali6/VisionGrasp-Z19` only), branch → PR → authorized merge, preservation of historical results, and no direct push to main. The old wearable 8×SCS servo/FMC/force-control project remains a historical asset, not a live milestone.
+Repository work and CI default to offline tests with mocked devices. Do not open real serial ports, send actuator commands, load FPGA images, probe unknown MMIO, write SD cards or restart a deployed demo without task-specific authorization. A previous test or log is not authorization for a new hardware action.
 
-## Project
+Repository packaging does not require replacing the running virtual-machine application. Use the installer's isolated staging mode to verify generated scripts. Keep generated builds and runtime data outside source directories. Preserve required source, constraints, Tcl, BD/IP configuration and validated manifests; do not blindly edit generated IP or upgrade the camera project to another Vivado version.
 
-- Repository: Citlali6/VisionGrasp-Z19
-- Upstream source: Tom-mr33/AmazingHand-based-on-FPGA (preserve attribution)
-- Current project display name: FPGA辅助视觉抓取系统; current repository slug: VisionGrasp-Z19; former repository slug: AmazingHand-Z19 (historical only).
-- Main hardware platform: ALINX Z19
-- Device: Xilinx Zynq UltraScale+ MPSoC XCZU19EG
+## Attribution and release quality
 
-These team rules apply to every future Codex agent working in this repository.
-Read `docs/GIT_WORKFLOW.md`, the current development log, and relevant design
-files before working. Preserve existing work and do not invent missing hardware
-or software implementation from design documents.
+Root Apache-2.0 applies to project-authored code; third-party material retains its own notices and licenses. Follow [THIRD_PARTY.md](THIRD_PARTY.md). Do not attribute detector weights, vendor SDKs, existing motion routines or upstream IP to the team. Keep compatibility device/module/deployment names where required by an existing ABI.
 
-## Exclusive repository policy (owner instruction, 2026-10-20)
-
-**The ONLY active project development and GitHub write target is `Citlali6/VisionGrasp-Z19`.**
-Its default development branch is `main`. Migration PR #2 and PR #3 are merged;
-`feature/migration-ready-20261019` remains a preserved historical checkpoint,
-NOT the default branch or a starting point for new feature work.
-
-`Tom-mr33/AmazingHand-based-on-FPGA` is strictly a **READ-ONLY historical source**.
-Never create, edit, comment on, close, assign, label or merge an Issue/PR there;
-never push commits, tags, branches, releases or settings changes there; never
-run Codex tasks against it. This prohibition applies even if an old Issue,
-comment, PR, branch, archive, link or task description refers to that repository.
-Past references and attribution are retained only for factual provenance.
-
-**Preflight EVERY GitHub or Git write:** verify the actual selected repository
-(owner/name) is exactly `Citlali6/VisionGrasp-Z19`. For local work, check
-`git remote get-url origin` and `git branch --show-current` before writing;
-SSH or HTTPS URLs are acceptable only if they resolve to the exact new owner/name.
-The former repository may exist as an `upstream` remote for fetch/read ONLY.
-If the context, connected account, checkout, task URL or remote differs or is
-ambiguous, STOP without writing and report it. Do not silently rewrite another
-person's remotes or worktrees.
-
-All new issues, Codex prompts, development branches, PRs and review/merge
-actions must explicitly use the new repository, with new issue/PR numbers.
-Old #6/#16/#17/#20 and PR #15/#18/#19 are **historical identifiers**;
-use the migration archive and issue mapping to continue work in this repo,
-never post follow-ups to the old repository. Existing evidence and git history
-are not permission to re-run any hardware operation.
-
-Citlali6 retains final project-management authority. Members with GitHub
-Write/Maintain/Admin access may merge PRs without another person's approval
-(0 required approvals), after inspecting changes and applicable checks.
-Retain PR-based work, and no-force-push/no-deletion safety boundaries.
-No Codex merge or hardware action without the user's current explicit task
-authorization. Changes in repository ownership or this exclusive target
-require a new explicit owner decision; do not infer one from old links.
-
-## Main Branch Protection
-
-main is a protected development baseline.
-
-NEVER:
-
-- develop or commit directly on main
-- push directly to main, including pushing another local branch to remote main
-- force push main
-- merge code into main without a Pull Request
-- treat a review/approval as completed when none occurred
-- merge or enable auto-merge without explicit authorization in the current task
-- delete remote branches automatically
-
-Before every new task, inspect `git status` and `git branch --show-current`.
-If uncommitted work exists, preserve it and stop to report the situation; do not
-stash, discard, commit, or carry it to main without user authorization.
-With a clean working tree, synchronize main first:
-
-```sh
-git checkout main
-git pull --ff-only origin main
-```
-
-If synchronization fails, diverges, or cannot fast-forward, stop and report the
-full error. Do not merge, rebase, or reset to resolve it automatically.
-Then create a new branch from the updated main:
-
-```sh
-git checkout -b feature/<name>
-# Alternatives:
-git checkout -b fix/<name>
-git checkout -b docs/<name>
-git checkout -b chore/<name>
-```
-
-Use one appropriate command, not all four. Confirm the new branch before editing.
-
-## Pull Request Rule
-
-All changes must follow:
-
-latest main → new working branch → development → local validation → git diff
-review → commit → push working branch → Pull Request → merge by the repository
-owner or a collaborator with Write/Maintain/Admin access.
-
-**Owner decision (2026-10-19):** Another person's Review/Approve is **not** a
-mandatory merge gate. A write-authorized collaborator may merge a PR, including
-their own PR, after checking the diff, conflict status and applicable test
-results. Reviews remain welcome but optional. Citlali6 retains ownership and
-may stop, defer, or reject a change; ownership does not automatically override
-GitHub branch protection settings.
-
-Codex may create, merge, or enable auto-merge only when the current user task
-explicitly authorizes that operation and GitHub permits it. Do not fabricate
-review approval, disable protection secretly, or automatically delete branches.
-
-## Before Editing
-
-Before modifying any project file:
-
-1. Run `git status`.
-2. Run `git branch --show-current`.
-3. Verify the branch is a named working branch and is NOT main.
-4. Inspect the existing implementation and applicable instructions.
-5. Explain intended changes.
-6. Avoid unrelated modifications.
-
-If the branch is main, detached, invalid, or unclear: STOP. Do not modify project
-files. Normal checkout/pull operations for the required main synchronization are
-allowed; feature edits and commits on main are not.
-
-Before ANY Git write operation, check the current branch again. Do not change
-branches or refs to conceal or bypass these rules. Preserve existing files and
-history. Do not overwrite a nonempty clone destination.
-
-## Before Commit
-
-Before creating a commit:
-
-1. Run `git status` and `git branch --show-current`.
-2. Run `git diff`, inspect untracked files, and review `git diff --cached` if staged.
-3. Inspect every changed file and confirm the branch is NOT main.
-4. Confirm there are no generated temporary files or secrets.
-5. Run available tests/build checks appropriate to the changes; report unavailable checks.
-6. Summarize changes.
-7. Stage explicit paths, preferably not `git add .`.
-
-Do not commit unless explicitly requested by the user.
-
-## Before Push
-
-Before pushing:
-
-1. Verify the branch name and confirm it is NOT main.
-2. Run `git status` and verify the intended origin repository.
-3. Show the commits that will be pushed (relative to the upstream if it exists,
-   otherwise relative to origin/main).
-4. Push only the current working branch to the same named remote branch.
-5. Confirm `git config --get core.hooksPath` returns `.githooks`.
-
-Never execute:
-
-```sh
-git push origin main
-git push --force origin main
-```
-
-Do not push unless explicitly requested by the user. Do not use `--no-verify`,
-disable hooks, change hooksPath, or use an alternate refspec to bypass protection.
-Do not use broad pushes such as `--all` or `--mirror`.
-
-## Local Guard and Team Enforcement
-
-The tracked `.githooks/pre-push` rejects every update targeting
-`refs/heads/main`, including deletion and explicit refspecs from other branches.
-Activate it in each clone with repository-local configuration:
-
-```sh
-git config --local core.hooksPath .githooks
-```
-
-Local hooks are an accidental-push guard, not GitHub branch protection. The
-owner-selected GitHub policy is PR-based merge with **zero required approvals**;
-write-authorized collaborators may merge without an independent review. Retain
-no-force-push/no-deletion protection when configured. GitHub's actual rule must
-be verified after an administrator changes it; policy text alone does not change
-settings. Never change remote settings without explicit owner authorization.
-
-## FPGA Project Rules
-
-This repository may contain Vivado, Vitis, Verilog/SystemVerilog, C/C++, Python,
-Zynq PS software, FPGA PL logic, Linux, AI/computer vision, and robotic hand control.
-
-Before editing FPGA-related files, determine whether they are source code,
-generated files, build products, IP configuration, constraints, or hardware
-platform files. Prefer source and reproducible configuration files. Do not
-blindly edit generated Vivado/Vitis files or delete hardware project files.
-
-Do not ignore necessary source, XDC, TCL, BD/IP configuration, or critical project
-configuration. Review existing `.gitignore` and suggest changes before broad
-updates. Only obvious logs, caches, and temporary build files may be cautiously
-added without compromising reproducibility.
-
-Read `docs/relaunch_20261020/SYSTEM_ARCHITECTURE.md` and the applicable current
-source/profile before PS/PL interface changes. For PC integration, also read
-`docs/development/PC_MVP_CONTRACT.md`. The old `docs/design/interface.md` is now
-a historical pointer, not the RoArm contract. Record authorized
-structure, interface, code, or parameter changes in `docs/log/YYYY-MM-DD.md`.
-Distinguish implemented features from planned features in reports. Do not install
-board-targeted dependencies into a PC environment without checking compatibility.
-
-## Safety
-
-Never execute destructive Git commands without explicit user authorization:
-
-```sh
-git reset --hard
-git clean -fd
-git clean -fdx
-git push --force
-git push --force-with-lease
-# Also prohibited: rebase followed by force push
-```
-
-Do not remove, move, or overwrite existing user files to make a task succeed.
-Do not alter global Git configuration, substitute repository URLs, use someone
-else's token, or bypass access permissions. Never print credentials.
-If unsure, stop and ask with the concrete issue and preserved state.
-
-Unless explicitly authorized, do not modify business code, FPGA design, Vitis
-applications, AI models, or hand-control code during workflow/setup tasks.
+Before submitting, run the relevant offline checks, inspect new files and staged diffs, check links and source references, and report unavailable checks honestly. Do not publish credentials, helper scripts containing credentials, personal path inventories, runtime logs, full VMs or restricted model/audio packages. Keep commits focused and explain the resulting behavior and verification.
