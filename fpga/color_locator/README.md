@@ -4,7 +4,8 @@
 1280×720 USB-camera processing passed.** The PC displays the original and the
 PL-highlighted image at `http://127.0.0.1:8774/` while the bench processes and
 SSH tunnel remain running. This is color segmentation and a global bounding
-rectangle. Grid localization, object separation and arm control remain incomplete.
+rectangle. The later browser grid mapping and coordinate speech are described below;
+same-color object separation and arm control remain unimplemented.
 
 **Optional voice selection (2026-10-22):** real user speech selected red and a later
 board status showed a voice-originated green request with matching camera/PL frame
@@ -32,8 +33,10 @@ USB UVC MJPEG -> Z19 PS JPEG decode -> native32 AXI-Lite PIO -> vg_color_axis
 ```
 
 The source must deliver one unpacked 32-bit word per pixel (`0x00RRGGBB`). MJPEG,
-YUYV, RGB565 and packed 24-bit byte streams cannot be connected directly. No
-target detection, masking or coordinate calculation is delegated to a PC.
+YUYV, RGB565 and packed 24-bit byte streams cannot be connected directly.
+PL color masking, pixel counts and the global bounding box are computed on the board.
+The browser maps that box center onto the calibrated physical grid; it does not
+replace the PL color algorithm.
 
 All ports are in `aclk`. Assert `aresetn` low for at least one clock, and deassert
 synchronously. Any other clock domain requires a reviewed AXI-stream clock FIFO;
@@ -81,9 +84,9 @@ Choose new output directories; scripts refuse to overwrite evidence.
 
 ```powershell
 & fpga/color_locator/scripts/sim.ps1 `
-  -VivadoBin 'D:\Vivado\Vivado\2020.1\bin' `
-  -PythonExe 'D:\anaconda3\python.exe' `
-  -OutputDirectory 'D:\Vitis\project_1\color-sim-new'
+  -VivadoBin "$env:VIVADO_2020_1_BIN" `
+  -PythonExe 'python' `
+  -OutputDirectory '../color-sim-new'
 ```
 
 Success requires `HSV_PASS`, `COLOR_AXIS_PASS` and `COLOR_AXI_PASS`; the runner checks markers and
@@ -99,13 +102,18 @@ fatal errors rather than trusting xsim's process exit code alone.
 
 ## OOC synthesis
 
+Set `VIVADO_2020_1_BIN` to the installed Vivado 2020.1 `bin` directory.
 Run Vivado from a separate scratch working directory to keep its logs out of the
-source tree; pass this script and a new report directory as absolute paths:
+source tree; from the repository root, resolve the script before changing directory:
 
 ```powershell
-& 'D:\Vivado\Vivado\2020.1\bin\vivado.bat' -mode batch `
-  -source 'D:/Vitis/project_1/VisionGrasp-Z19/fpga/color_locator/scripts/synth_ooc.tcl' `
-  -tclargs 'D:/Vitis/project_1/color-synth-new'
+$script = (Resolve-Path 'fpga/color_locator/scripts/synth_ooc.tcl').Path
+$scratch = New-Item -ItemType Directory '../color-synth-scratch-new'
+Push-Location $scratch.FullName
+try {
+  & "$env:VIVADO_2020_1_BIN/vivado.bat" -mode batch -source $script `
+    -tclargs "$($scratch.FullName)/reports-new"
+} finally { Pop-Location }
 ```
 
 Actual first OOC run: XCZU19EG-FFVC1760-2-I, 379 LUTs, 374 FFs, 0 BRAM tiles,
@@ -126,9 +134,9 @@ reviewed color image; do not probe it with the factory, MIPI or MJC1 image.
 
 The reusable stream accelerator produces per-pixel masks. The diagnostic AXI
 bridge adds PL pixel count and one global bounding rectangle; separate same-color
-objects are merged. Grid coordinates, component separation and calibrated arm
-coordinates remain unimplemented. Do not use the legacy MIPI camera firmware or
-MJC1 profile as if it already contained this IP.
+objects are merged. Browser grid coordinates use the [separate grid mapping](GRID.md);
+component separation and calibrated arm coordinates remain unimplemented.
+Only the reviewed color firmware contains this IP; the MIPI camera profile is separate.
 
 ## Board profile, safety checks and reproduction
 

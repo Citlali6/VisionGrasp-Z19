@@ -23,14 +23,19 @@ PS解码为RGB，送PL执行HSV/阈值/高亮/像素统计，再由PS编码JPEG�
 ## 可复现构建
 
 源码目录为本目录，生成物必须放仓库外的**新目录**。构建依赖已存在的
-`../mjc1_fpd/src/ps_config.tcl`，不修改它。
+`../scripts/alinx/ps_config.tcl`，不修改它。此共享配置与已验证构建使用的 PS 配置逐字节一致。
 
 ```powershell
-& 'D:\Vivado\Vivado\2020.1\bin\vivado.bat' -mode batch `
-  -source 'D:/Vitis/project_1/VisionGrasp-Z19/fpga/color_locator/scripts/build_board.tcl' `
-  -tclargs 'D:/Vitis/project_1/color-board-new'
+$script = (Resolve-Path 'fpga/color_locator/scripts/build_board.tcl').Path
+$scratch = New-Item -ItemType Directory '../color-board-scratch-new'
+Push-Location $scratch.FullName
+try {
+  & "$env:VIVADO_2020_1_BIN/vivado.bat" -mode batch -source $script `
+    -tclargs "$($scratch.FullName)/output-new"
+} finally { Pop-Location }
 ```
 
+先将 `VIVADO_2020_1_BIN` 设置为 Vivado 2020.1 的 `bin` 目录。
 从仓库外工作目录执行；成功要求 `COLOR_BOARD_BUILD_PASS`，同时检查timing/DRC。
 导出 `color.bit`、`color.xsa` 和报告；不用2020.2相机BD、不调用旧工程生成物。
 Verilog顶层壳用于兼容2020.1不支持SystemVerilog模块作为BD引用顶层的限制。
@@ -45,11 +50,11 @@ all:
 ```
 
 ```powershell
-& 'D:\Vivado\Vitis\2020.1\bin\bootgen.bat' -image color.bif -arch zynqmp -process_bitstream bin
+& "$env:VITIS_2020_1_BIN/bootgen.bat" -image color.bif -arch zynqmp -process_bitstream bin
 Get-FileHash color.bit.bin -Algorithm SHA256
 ```
 
-本轮外部生成物：`D:\Vitis\project_1\pl_color_validation_20261022\board_image_02`。
+将 `VITIS_2020_1_BIN` 设置为 Vitis 2020.1 的 `bin` 目录；生成物留在新建外部目录。
 实际raw BIN SHA256：
 `901f2f1fc6a812c25ed92e64f05bc5f15fc87c0ea417b9c3d26ce18454ebeb29`。
 源代码重建后的哈希可能不同，必须重新计算并核查，不能套用此哈希。
@@ -109,8 +114,9 @@ HTTP只监听板子127.0.0.1。电脑通过SSH本地转发8774→板端127.0.0.1
 |0x040|相机帧序号，空闲时写，读回验证对应帧|
 
 C程序当前每批最多送16像素再取16结果，匹配本固件的16项FIFO。配置按帧生效。
-框是**所有选中颜色像素的全局外包框**，多个同色物体会合并；尚未实现连通域、
-网格坐标、相机标定、抓取点或安全运动控制。HSV默认阈值仍需按照明校准。
+框是**所有选中颜色像素的全局外包框**，多个同色物体会合并。PL 镜像不包含连通域、
+抓取点或运动控制。[网格映射](GRID.md)在浏览器端使用该框中心计算板面坐标；
+不等于机械臂标定。HSV默认阈值仍需按照明校准。
 
 ## 卡顿优化后的运行方式与实测
 

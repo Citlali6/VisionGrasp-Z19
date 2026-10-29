@@ -1,3 +1,3 @@
-# Voice-only board environment; do not install the mixed root requirements.txt.
+# Voice-only Z19 board environment; separate from the DOFBOT VM environment.
 # ALSA capture uses the board's alsa-utils (arecord); no PyAudio required.
 vosk==0.3.45

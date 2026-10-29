@@ -1,2 +1,0 @@
-# Install AFTER environment.yml, using --no-build-isolation (upstream setup imports runtime modules).
-roarm_sdk @ git+https://github.com/waveshareteam/waveshare_roarm_sdk.git@d9893632aa7f5a9cb283136ab024faf3143ea7db

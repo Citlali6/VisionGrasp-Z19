@@ -1,8 +1,0 @@
-{
-  "archive": "rtl-generated-configs-20261019.zip",
-  "sha256": "e88a81c55142410e7bd4f00c3a44b94c14ff96e11f98d1af1a0e224b1d7b9c05",
-  "compressed_bytes": 67187846,
-  "source_files": 586,
-  "source_bytes": 172319417,
-  "excludes": "Logs, caches, compiled checkpoints, old firmware binaries, environments, authentication and licenses with credentials."
-}
