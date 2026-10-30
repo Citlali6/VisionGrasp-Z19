@@ -20,16 +20,19 @@
     "initial_four_function_commit": "9dc4df9cce400b9fe9c8400fe991a690e465d663",
     "semantic_association_fix_commit": "0aa5adc6917d58b4a50d9e93d375d28d5b2f9a1e",
     "content_snapshot_commit": "562ba8e5b5a63780a715fe0b214a8ad4a7d7f901",
-    "content_snapshot_scope": "全部工程源码、冻结安装契约、产品/报告/真实交互/Skill及已批准CI分层；本manifest在随后仅元数据提交加入，最终身份由包含它的main发布标签解析。",
-    "observed_main_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-    "main_integration": "pending_normal_pr",
-    "pull_request": "not_created_yet_after_approved_workflow_split",
+    "content_snapshot_scope": "工程源码、冻结安装契约、产品/报告/真实交互/Skill及已批准CI分层。后续提交仅补发布状态、固定tag引用及分支清理记录；最终完整版本以release_tag为准。",
+    "main_integration": "merged",
+    "pull_request": "https://github.com/Citlali6/VisionGrasp-Z19/pull/43",
     "archive_tag": "archive/20261030/plan",
     "archive_tag_object": "86743168741c8b35eb7084227b3dff15fe95e3d8",
     "archive_target_commit": "e625341676c83495b3fb225b31064b3fcf1fbb18",
     "audit_baseline_commit": "19a09b90b5100dc99c5a5b3ecf07853063c3a011",
     "frozen_install_contract_fix_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
-    "recovery_inventory": "docs/competition/branch_inventory.csv"
+    "recovery_inventory": "docs/competition/branch_inventory.csv",
+    "starting_main_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
+    "main_integration_commit": "e259204f9ebcddb743b952d6408fbf15d033dd17",
+    "release_tag": "track33-source-20261030",
+    "release_commit_resolution": "最终main发布提交由refs/tags/track33-source-20261030解引用；本文件记录已发生的首次整合SHA，避免伪造包含自身的提交SHA。"
   },
   "source_profile": {
     "id": "z19_pspl_four_functions",
@@ -377,16 +380,22 @@
       "text_and_link_review",
       "file_hashes_and_archive_listing",
       "git_metadata_and_recovery_backups",
-      "normal_local_commits_and_safe_ref_delivery"
+      "normal_local_commits_and_safe_ref_delivery",
+      "approved_standard_git_only_ci"
     ],
     "engineering_checks_run": [],
     "local_branches_deleted": 4,
-    "remote_heads_deleted": 0,
+    "remote_heads_deleted": 34,
     "archive_tags_pushed": 19,
     "pr34": "kept_open_draft_due_to_unique_and_uncommitted_work",
     "hardware_or_vm_access_performed": false,
     "ci_configuration_changed": true,
-    "branch_protection_changed": false
+    "branch_protection_changed": false,
+    "remote_head_count_before": 42,
+    "remote_head_count_after": 8,
+    "pull_requests_merged": [
+      "https://github.com/Citlali6/VisionGrasp-Z19/pull/43"
+    ]
   },
   "ai_record": {
     "format": "selected_real_user_assistant_messages_and_original_audit_section",
@@ -409,6 +418,21 @@
     "runtime_dispatches_performed": 0,
     "branch_protection_changed": false,
     "required_status_contexts_changed": false,
-    "source_check_is_runtime_validation": false
+    "source_check_is_runtime_validation": false,
+    "source_review_evidence": {
+      "pull_request": 43,
+      "head_sha": "75de5548e63fa3780661103ed24c08af4678560c",
+      "run_id": 41039253270,
+      "url": "https://github.com/Citlali6/VisionGrasp-Z19/actions/runs/41039253270",
+      "conclusion": "success",
+      "scope": "Git text / paths / frozen blobs only; no runtime validation"
+    }
+  },
+  "release": {
+    "kind": "source_and_competition_materials",
+    "tag": "track33-source-20261030",
+    "prerelease": true,
+    "full_competition_submission_ready": false,
+    "status": "main contains the audited source and materials; fixed tag resolves final publication metadata"
   }
 }

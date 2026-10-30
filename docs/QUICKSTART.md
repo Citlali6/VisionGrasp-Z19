@@ -8,7 +8,7 @@
 | 原Z19颜色/语音/网格 | [颜色工程](../fpga/color_locator/README.md)、[网格](../fpga/color_locator/GRID.md) | 该profile自己的镜像/地址/环境，独立于演示 |
 | 四功能源码profile | [system_pspl](../fpga/system_pspl/README.md) → [PS软件](../host/app/perception/README.md) → [VM新入口](../robot/dofbot/PSPL.md) | 新XSA/镜像/UIO、合法模型契约、目标依赖/相机标定等；源码未联合运行 |
 
-收尾候选分支为 `source/track33-closeout-20261030`。当前开发目录含可选新展示接口，安装器默认源则是独立的 [deliverables/dofbot_demo_20261029/payload](../deliverables/dofbot_demo_20261029/README.md)。其中12个应用及清单/依赖/历史README来自冻结提交，原哈希严格保留。测试导入当前安装器并使用同一payload；这些修订本轮没有执行。不要把新入口覆盖到现用VM。
+源码与材料已进入main，固定版本为 `track33-source-20261030`；收尾来源分支为 `source/track33-closeout-20261030`。当前开发目录含可选新展示接口，安装器默认源则是独立的 [deliverables/dofbot_demo_20261029/payload](../deliverables/dofbot_demo_20261029/README.md)。其中12个应用及清单/依赖/历史README来自冻结提交，原哈希严格保留。测试导入当前安装器并使用同一payload；这些修订本轮没有执行。不要把新入口覆盖到现用VM。
 
 ## 冻结演示的适用环境
 
@@ -24,8 +24,8 @@
 ```bash
 git clone --depth 1 https://github.com/Citlali6/VisionGrasp-Z19.git
 cd VisionGrasp-Z19
-git fetch origin source/track33-closeout-20261030
-git checkout --detach FETCH_HEAD
+git fetch --depth 1 origin tag track33-source-20261030
+git checkout --detach track33-source-20261030
 bash robot/dofbot/install.sh --check
 bash robot/dofbot/install.sh
 ```

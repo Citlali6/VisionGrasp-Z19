@@ -192,7 +192,8 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
    ```bash
    git clone https://github.com/Citlali6/VisionGrasp-Z19.git
    cd VisionGrasp-Z19
-   git switch --detach origin/source/track33-closeout-20261030
+   git fetch origin tag track33-source-20261030
+   git switch --detach track33-source-20261030
    git rev-parse HEAD
    # 将实际解析的 SHA 与发布清单/交付说明核对。
    ```

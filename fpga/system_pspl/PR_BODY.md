@@ -1,3 +1,5 @@
+> 历史草稿：对应初次四功能源码交付阶段。后续源码和参赛材料已通过 [PR43](https://github.com/Citlali6/VisionGrasp-Z19/pull/43) 正常整合到main；当前状态见[发布清单](../../docs/competition/release_inventory.md)。下文保留当时范围，不作为当前发布状态。
+
 # Add Z19 PS/PL video, perception and PCM source profile
 
 新增独立Z19 PS/PL源码profile：PL执行RGB增益/偏置、HSV掩码、ROI计数/包围框/坐标矩，以及DC、63tap FIR和可配置软门；PS通过有序UIO/PIO完整收发，执行真实CPU YOLO适配、坐标/目标对应、Vosk受限命令和HTTP任务接口。可选VM入口复用原一次任务及固定工位动作，现用部署保持原入口。
