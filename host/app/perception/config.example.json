@@ -1,0 +1,71 @@
+{
+  "camera": {
+    "device": "/dev/v4l/by-id/usb-REQUIRED_CAMERA-video-index0",
+    "camera_id": "REQUIRED_CAMERA_ID",
+    "width": 1280,
+    "height": 720,
+    "fps": 30
+  },
+  "video": {
+    "library_path": "/REQUIRED/libpspl.so",
+    "uio_path": "/dev/uioREQUIRED_VIDEO",
+    "map_size": 4096,
+    "timeout_ms": 5000,
+    "width": 640,
+    "height": 360,
+    "gains": [256, 256, 256],
+    "biases": [0, 0, 0],
+    "bypass": false,
+    "hsv": [35, 85, 80, 255, 50, 255],
+    "roi": [0, 0, 639, 359],
+    "config_version": 1
+  },
+  "model_manifest": "/REQUIRED/model-manifest.json",
+  "input_source": "pl_rgb",
+  "capture_space_id": "capture-rgb1280x720",
+  "transform_id": "linear-resize1280x720-to640x360",
+  "pixel_to_capture": [2, 0, 0.5, 0, 2, 0.5, 0, 0, 1],
+  "calibration": null,
+  "guard": {
+    "library_path": "/REQUIRED/libpspl.so",
+    "uio_path": "/dev/uioREQUIRED_GUARD",
+    "timeout_ms": 5000,
+    "color": 2,
+    "min_s": 80,
+    "min_v": 50,
+    "roi": [0, 0, 639, 359],
+    "min_mask": 10,
+    "max_mask": 230400,
+    "required": 3,
+    "jitter": 8,
+    "timeout_cycles": 200000000,
+    "max_age_s": 2.0
+  },
+  "voice": {
+    "voice_source": "serial_id",
+    "library": "/REQUIRED/libpspl.so",
+    "uio_path": "/dev/uioREQUIRED_AUDIO",
+    "timeout_ms": 5000,
+    "alsa_device": "plughw:CARD=REQUIRED_USB_MIC,DEV=0",
+    "vosk_model": "/REQUIRED/vosk-model-small-cn-0.22",
+    "vosk_model_id": "REQUIRED_MODEL_ID_AND_HASH",
+    "min_confidence": 0.65,
+    "filter": {
+      "config_id": 1,
+      "dc": true,
+      "fir": true,
+      "gate": false,
+      "open_threshold": 400,
+      "close_threshold": 200,
+      "attack_step": 1024,
+      "release_step": 64,
+      "low_hz": 150.0,
+      "high_hz": 6500.0
+    }
+  },
+  "http": {
+    "bind": "127.0.0.1",
+    "port": 8765,
+    "token_file": "/REQUIRED/private-pspl-token.txt"
+  }
+}

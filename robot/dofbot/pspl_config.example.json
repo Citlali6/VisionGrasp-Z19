@@ -1,0 +1,9 @@
+{
+  "endpoint": "http://REQUIRED_Z19_HOST:8765",
+  "token_file": "/REQUIRED/private-pspl-token.txt",
+  "camera_id": "REQUIRED_CAMERA_ID",
+  "transform_id": "linear-resize1280x720-to640x360",
+  "timeout_s": 1.0,
+  "voice_source": "serial_id",
+  "vendor_single_file": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/single_garbage_identify.py"
+}
