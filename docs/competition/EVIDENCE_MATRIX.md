@@ -8,7 +8,7 @@
 |---|---|---|
 | 视频通道校正/HSV/mask | [perception_v2](../../fpga/perception_v2/README.md) | 定点算法、背压、帧参数快照和完整PIO源码 |
 | 垃圾识别分类 | [PS模型模块](../../host/app/perception/README.md) | 真实厂商图像调用和业务映射的PS CPU适配；权重、类序和框架资料缺项集中列明 |
-| 视觉定位与候选对应 | [coordinates](../../host/app/perception/coordinates.py)、[ROI RTL](../../fpga/perception_v2/rtl/vg_roi_moments_axis.sv)、[guard adapter](../../host/app/perception/guard_adapter.py) | 质心、框恢复、单应算法、同帧唯一对应和原GuardClient调用源码；无外部定位精度结论 |
+| 视觉定位与候选策略 | [coordinates](../../host/app/perception/coordinates.py)、[ROI RTL](../../fpga/perception_v2/rtl/vg_roi_moments_axis.sv)、[guard adapter](../../host/app/perception/guard_adapter.py) | 质心、框恢复、单应算法、默认语义框/可选颜色对应及原GuardClient规则复用；无外部定位精度结论 |
 | 音频滤波与噪声抑制 | [audio_frontend](../../fpga/audio_frontend/README.md) | DC/63tap FIR/软门、系数设计和USB PCM→Vosk接口源码；无降噪dB或识别收益结论 |
 | 完整工程/软件出口 | [system_pspl](../../fpga/system_pspl/README.md)、[libpspl](../../host/libpspl/README.md) | 新profile、AXI/FIFO、C/ctypes、Tcl、构建入口及PS/VM任务连接 |
 

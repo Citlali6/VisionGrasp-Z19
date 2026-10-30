@@ -7,7 +7,7 @@
 | 功能/层次 | 实际源码 | 输入与输出 | 部署条件与本轮范围 |
 |---|---|---|---|
 | 视频预处理 PL | [perception_v2/rtl](../perception_v2/rtl/)、[算法/流控](../perception_v2/README.md) | RGB888/SOF/EOL → 增益偏置 RGB、HSV 掩码、同帧统计 | 新 profile；新增源码仅文本审阅，无仿真/编译/综合/上板结果 |
-| 视觉定位 | `vg_roi_moments_axis`、[coordinates.py](../../host/app/perception/coordinates.py)、`guard_adapter.py` | ROI count/bbox/64 位矩 → 颜色质心、检测框中心、可选平面毫米坐标及候选状态 | 标定必须匹配相机/尺寸/transform；空掩码、歧义和失配返回无效；复用原 sort_guard |
+| 视觉定位 | `vg_roi_moments_axis`、[coordinates.py](../../host/app/perception/coordinates.py)、`guard_adapter.py` | ROI count/bbox/64 位矩 → 颜色质心；语义框 → 检测框中心、可选平面毫米坐标及候选状态 | 标定必须匹配相机/尺寸/transform；空掩码使颜色质心无效，不自动否决语义目标；复用原 sort_guard |
 | PS 垃圾分类 | [detector.py](../../host/app/perception/detector.py)、前后处理、模型清单与类别映射 | 无标注 RGB → CPU YOLO 已 NMS 检测、真实 label 与业务编号 | 厂商调用源已从既有备份读取；权重/框架精确版本/模型类序/YAML 尚缺，VM 关机；加载前严格核对，未运行模型 |
 | 音频 PL/PS | [audio_frontend](../audio_frontend/README.md)、[pl_frontend.py](../../host/app/voice/pl_frontend.py)、`coefficients.py`、`usb_pcm_pl.py` | 16kHz mono PCM16 → DC/FIR/可选软门 PCM → PS Vosk 受限任务事件 | 独立 USB PCM 输入，不使用语音串口编号作 PCM；需 ALSA/Vosk/新外设；未生成系数、采音、回放或 ASR |
 | PIO 与 Linux | [libpspl](../../host/libpspl/README.md)、`vg_axil_regs`、`vg_sync_fifo` | 独立 AXI-Lite AW/W 与 FIFO ↔ 有序 32 位 UIO MMIO | 设备路径显式配置；无探测、无 DMA、无自动加载；UIO 未打开 |
@@ -26,7 +26,7 @@ flowchart LR
   ROI --> READ[PS 完整读回 RGB / mask / 冻结统计]
   READ --> NN[PS CPU YOLO 真实模型]
   READ --> XY[PS 质心与平面映射]
-  NN --> JOIN[PS 同帧语义与颜色唯一对应]
+  NN --> JOIN[PS 语义框候选 / 显式可选颜色对应]
   XY --> JOIN
   JOIN --> GUARD[PL 既有 sort_guard]
   GUARD --> HTTP[PS 有界 HTTP/JSON 任务服务]
@@ -51,7 +51,21 @@ PL 各运算、PIO FIFO、门控统一使用 `ps0/pl_clk1`，目标 100MHz；该
 
 音频 DC 保留40位 Q24.15 状态、56位反馈乘积；FIR 为63tap Q1.15、48位累加；符号舍入采用最近、半值远离零。Blackman 窗带通设计函数在未来显式初始化时计算150–6500Hz初始带通并在1kHz归一化，不提交全零替代系数。63个系数装载并 commit 后才可 enable，参数只在 disabled 且 FIFO/流水排空时切换。软门默认关闭，双阈值迟滞、包络和 UQ1.15 增益0..32768提供精确0/1，attack/release按样本改变增益。块边界不复位；断流终止滤波和ASR会话。
 
-PS 图像输入显式选择 `pl_rgb` 或 `raw_rgb`，记录两份内容哈希与像素空间。分类前不画框或高亮。模型返回框先从厂商640×480空间恢复到输入图像；颜色质心和检测框中心分别保留。颜色连通区域不唯一、多个语义目标或来源不同，均不分配候选许可。平面单应变换不能当作机械臂基座三维姿态。
+PS 图像输入显式选择 `pl_rgb` 或 `raw_rgb`，记录两份内容哈希与像素空间。分类前不画框或高亮。模型返回框先从厂商640×480空间恢复到输入图像；颜色质心和检测框中心分别保留。平面单应变换不能当作机械臂基座三维姿态。
+
+### 语义任务与颜色条件
+
+双端显式配置并核对 `candidate_policy`。默认 `semantic_bbox` 面向垃圾语义任务：仅一个真实检测目标时，将同帧检测框覆盖的整数像素区域及其面积提交既有PL门控，检查ROI、面积范围、连续新帧、固定锚点抖动、超时和一次消费。颜色掩码为零或多连通区域仍照实输出，其状态不否决此模式。多个语义目标、来源失配、模型错误或几何/时效不合格仍不许可。
+
+`color_association` 只用于显式要求颜色的工位：保留唯一语义目标、单个PL颜色连通区且完全位于语义框内的条件。它使用真实PL匹配像素数，缺少指定颜色时不适用。示例绿色阈值是颜色统计设计参数，不能作为所有垃圾类别的共同物理属性。
+
+两个模式共享原 `GuardClient` 寄存器事务及PL规则；语义适配仅替换PS输入校验，原RTL、寄存器ID/版本及旧颜色适配不改。语义数据的source为 `Z19_PS_CPU_YOLO`、count_basis为 `bbox_area_px`；颜色模式count_basis为 `pl_mask_pixels`。旧寄存器沿用 `mask_count` 名称，语义模式写入的是明示的检测框面积数值，不声称该面积由PL掩码统计得到。标签、模型或配置改变会取消本段并重新累计。
+
+USB PCM与原串口交互统一为“你好小亚”唤醒、等待“在的”、再说“开始垃圾分拣”；两种源互斥选择。串口编号不经过PL FIR；只有USB PCM经过滤波后由PS识别。新VM入口复用原状态发布、识别图、事件日志和展示控件；独立输出目录与原部署隔离，相机预览通过明确标为原始采集的只读 `/preview` 旁路提供，不作为模型/PL结果或许可来源。
+
+### 传输与性能口径
+
+通道校正/HSV/统计的运算位置为PL，实际端到端效率还取决于PS逐像素PIO、图像转换及CPU推理。`timeout_ms=5000` 是可配置传输截止，不是5秒帧率保证；任务20秒上限与门控周期也不是实测耗时。PIO/推理瓶颈、吞吐和加速比本轮均未测定，旧7.26fps不转移到此profile。
 
 ## 寄存器与传输
 
