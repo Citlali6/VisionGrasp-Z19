@@ -4,6 +4,8 @@
 RGB888，PL 执行通道校正、HSV 掩码和区域统计，PS 完整回读 RGB 与掩码后
 计算质心并交给模型与坐标模块。模型图像不包含高亮、框线或背景压暗。
 
+该模块随四功能集成源码提供，目标环境与发布状态见[配置与部署](../../docs/CONFIGURATIONS.md)。
+
 | 源码 | 输入、计算和输出 |
 |---|---|
 | `rtl/vg_rgb_affine_axis.sv` | 逐通道 Q8.8 增益、整数偏置、舍入和饱和；一个弹性输出寄存器 |
@@ -41,8 +43,8 @@ count 为 32 位，最大 4096²=2²⁴；一阶矩各为 64 位，最坏不超�
 配置分为 staging、pending、active 三份。CONFIG_COMMIT 校验全部 staging，
 合格后生成 pending；首个 PIO SOF 写入输入 FIFO 的接受边沿把整个 pending
 复制为 active，该帧的增益、偏置、HSV、ROI、尺寸、版本和 bypass 一起生效。
-active 保持到快照 ACK，后续提交只改 pending。即使未来扩展允许 commit 与 SOF
-并行，同周期 SOF 仍使用边沿前的 pending，新的 commit 用于下一帧。
+active 保持到快照 ACK，后续提交只改 pending。commit 与 SOF 的配置优先级为：
+同周期 SOF 使用边沿前的 pending，新的 commit 用于下一帧。
 各计算级在自身接受 SOF 时读取这一冻结配置，首像素使用新参数。
 
 ## 寄存器与主机次序
@@ -84,5 +86,4 @@ bit4=非法寄存器或 WSTRB/控制操作。非对齐访问由共享 AXI 桥直
 只在对应结果实际输出时归还。其余流级按各自 ready/valid 接受数据，背压保持像素
 及 SOF/EOL。复位清空有效位、FIFO 和未完成帧，普通帧间 ACK 不复位累计计数。
 
-本轮交付为源码和文本/接口审阅，未运行新增仿真、编译、综合、工程生成或硬件流程。
-构建入口、地址计划与部署条件见 [`system_pspl`](../system_pspl/README.md)。
+构建入口和地址计划见 [`system_pspl`](../system_pspl/README.md)，环境准备与配置状态见[配置与部署](../../docs/CONFIGURATIONS.md)。

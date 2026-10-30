@@ -1,6 +1,6 @@
 # 小亚智分 · Z19 PS 软件索引
 
-PS负责采集/解码、完整PIO收发、CPU垃圾模型、坐标解释、Vosk和有界任务接口。先读[四功能工程](../fpga/system_pspl/README.md)的环境表，再按下列入口阅读。VM机械臂软件位于 [robot/dofbot](../robot/dofbot/README.md)，两个运行环境分别准备。
+PS负责采集/解码、完整PIO收发、CPU垃圾模型、坐标解释、Vosk和有界任务接口。先读[配置与兼容性](../docs/CONFIGURATIONS.md)核对目标环境，再从[四功能工程](../fpga/system_pspl/README.md)了解连接关系。VM机械臂软件位于 [robot/dofbot](../robot/dofbot/README.md)，两个运行环境分别准备。
 
 | 目录 | 用途 |
 |---|---|
@@ -17,4 +17,4 @@ PS负责采集/解码、完整PIO收发、CPU垃圾模型、坐标解释、Vosk�
 
 分类与ASR在PS，不表述为PL神经网络。`semantic_bbox` 默认不执行颜色连通域分析，颜色对应为显式选项；原始显示旁路标为 `pl_processed=false`。权重/环境等缺项明确报错，预览不作为任务许可。
 
-原颜色语音入口仍为 [fpga/color_locator](../fpga/color_locator/GRID.md)。`ah_camera0`、`/opt/amazinghand` 保留设备/部署兼容作用；相机驱动与脚本属于独立profile或基础支持，不另列灵巧手控制路线。本轮只整理源码入口，未执行服务、导入验证、模型、采音或设备访问。
+原颜色语音入口为 [fpga/color_locator](../fpga/color_locator/GRID.md)。`ah_camera0`、`/opt/amazinghand` 保留设备与部署兼容作用；相机驱动、镜像和脚本按各自profile使用。

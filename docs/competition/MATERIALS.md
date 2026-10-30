@@ -18,7 +18,7 @@
 
 | 内容 | 阅读入口与写法 |
 |---|---|
-| 背景与创新 | TECHNICAL_OUTLINE的摘要/1.1/1.5：固定工位、PS/PL职责、同帧数据与单次任务 |
+| 背景与创新 | [应用概览](../overview.md)与[正式报告第1节](../../report/design_report.md#section-background)：用户任务、固定工位、PS/PL职责、同帧数据与单次任务 |
 | 原理框图 | 分别使用system_pspl源码图和ARCHITECTURE现用运行图 |
 | 软硬件划分与接口 | DESIGN_DETAILS四功能表；统一寄存器、C UIO/PIO、HTTP任务及来源身份 |
 | 优化与资源/性能 | 新增定点/时分复用/背压设计说明；指标仅引用EVIDENCE_MATRIX中原对应版本 |

@@ -5,7 +5,7 @@
 | 现用固定工位演示 | 本页原安装/启动流程，对应冻结提交 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；不依赖新PS/PL服务 |
 | 四功能源码的可选VM客户端 | [PSPL.md](PSPL.md)：独立配置/输出、同一机械臂互斥锁、真实PS任务与只读远端预览；未替换现场部署 |
 
-原 `deployment_manifest.json` 保留冻结演示文件哈希。当前安装器默认读取独立[冻结payload](../../deliverables/dofbot_demo_20261029/README.md)，15个文件逐字节来自 `8a2a6fd`，开发目录的新展示接口不进入原演示安装。`--source` 可显式选择完整独立冻结检出，检查和安装报告记录实际目录。测试导入当前安装器并使用同一payload，不跳过原哈希断言。复现选择见[快速开始](../../docs/QUICKSTART.md)，新入口使用当前源码与PSPL说明。
+`deployment_manifest.json` 固定冻结演示文件哈希。安装器默认读取独立[冻结payload](../../deliverables/dofbot_demo_20261029/README.md)，15个文件来自 `8a2a6fd`。`--source` 可显式选择完整独立冻结检出，检查和安装报告记录实际目录。安装步骤见[快速开始](../../docs/QUICKSTART.md)，各配置的版本与依赖见[配置与兼容性](../../docs/CONFIGURATIONS.md)。
 
 固定工位下的单次语音任务执行与实时展示系统。每轮遵循：**唤醒 → 启动口令 → 稳定识别 → 分类播报完成 → 抓取投放 → 等待重新唤醒**。
 
@@ -15,7 +15,7 @@
 
 当前版本支持原 DOFBOT SE 配套 **Ubuntu 22.04、ROS 2 Humble、Python 3.10、普通 yahboom 用户**环境。它不是通用 Ubuntu 上从零安装模型、SDK 和 ROS 的脚本。完整依赖路径与已验证源码哈希见 [external_dependencies.json](external_dependencies.json)。
 
-以下是未来从当前仓库在配套VM使用的命令，默认安装仓库内的冻结payload；本轮未执行安装或程序：
+在配套 VM 中，从仓库根目录预检并安装冻结应用：
 
 ```bash
 bash robot/dofbot/install.sh --check
@@ -61,7 +61,7 @@ bash ~/停止垃圾分拣.sh
 | `dashboard*.py` | 只读界面、过期画面识别、单窗口激活 |
 | `launch_controller.py` / `ensure_kinematics.py` | 设备预检、单实例、后台启动及纯逆解服务就绪检测 |
 
-现用运行文件的历史字节基线由 [deployment_manifest.json](deployment_manifest.json) 固定；该记录不因新增候选源码而改写。协议提取的历史AST哈希与原UI/运行结果仍归原版本，当前新增接口只按源码审阅呈现。分类模型/底层SDK不作为团队自训/自研成果。
+运行文件的冻结基线由 [deployment_manifest.json](deployment_manifest.json) 固定，可选接口使用开发源码。分类模型与底层SDK的来源见[第三方说明](../../THIRD_PARTY.md)，对应版本结果见[验证说明](../../docs/VALIDATION.md)。
 
 语音模块输出命令编号，界面不是麦克风逐字转写。播报文案来自对应语音资源表；动作阶段依据实际下发的指令，不能替代物理抓取成功传感器。成功回调、界面同步和现场实物效果分别记录，见 [验证说明](../../docs/VALIDATION.md)。
 

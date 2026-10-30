@@ -2,31 +2,23 @@
 
 本 profile 把像素与 PCM 的定点运算放在 PL，将采集、模型语义、坐标解释、ASR 和任务协议放在 PS。它使用独立地址空间与工程入口；现用 USB 颜色、MIPI/IMX214 和 VM 分拣入口保留。
 
-本页是产品技术聚合入口。作品定位、3.3初级组材料与阅读路线见[产品首页](../../README.md)、[评委导航](../../docs/competition/judges_guide.md)，已有结果统一引用[证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。
+本页说明集成源码的算子、数据路径、寄存器与构建入口。项目背景见[项目概览](../../docs/overview.md)，各配置的版本、工具、依赖和部署状态见[配置与兼容性](../../docs/CONFIGURATIONS.md)。
 
-## 实现与环境
+## 功能与接口
 
-| 功能/层次 | 实际源码 | 输入与输出 | 部署条件与本轮范围 |
+| 功能/层次 | 源码入口 | 输入与输出 | 设计要点 |
 |---|---|---|---|
-| 视频预处理 PL | [perception_v2/rtl](../perception_v2/rtl/)、[算法/流控](../perception_v2/README.md) | RGB888/SOF/EOL → 增益偏置 RGB、HSV 掩码、同帧统计 | 新 profile；新增源码仅文本审阅，无仿真/编译/综合/上板结果 |
+| 视频预处理 PL | [perception_v2/rtl](../perception_v2/rtl/)、[算法/流控](../perception_v2/README.md) | RGB888/SOF/EOL → 增益偏置 RGB、HSV 掩码、同帧统计 | 参数按帧快照；完整读回后确认统计 |
 | 视觉定位 | `vg_roi_moments_axis`、[coordinates.py](../../host/app/perception/coordinates.py)、`guard_adapter.py` | ROI count/bbox/64 位矩 → 颜色质心；语义框 → 检测框中心、可选平面毫米坐标及候选状态 | 标定必须匹配相机/尺寸/transform；空掩码使颜色质心无效，不自动否决语义目标；复用原 sort_guard |
-| PS 垃圾分类 | [detector.py](../../host/app/perception/detector.py)、前后处理、模型清单与类别映射 | 无标注 RGB → CPU YOLO 已 NMS 检测、真实 label 与业务编号 | 厂商调用源已从既有备份读取；权重/框架精确版本/模型类序/YAML 尚缺；前轮取源时 VM 未开机，本轮未启动 VM；加载前严格核对，未运行模型 |
-| 音频 PL/PS | [audio_frontend](../audio_frontend/README.md)、[pl_frontend.py](../../host/app/voice/pl_frontend.py)、`coefficients.py`、`usb_pcm_pl.py` | 16kHz mono PCM16 → DC/FIR/可选软门 PCM → PS Vosk 受限任务事件 | 独立 USB PCM 输入，不使用语音串口编号作 PCM；需 ALSA/Vosk/新外设；未生成系数、采音、回放或 ASR |
-| PIO 与 Linux | [libpspl](../../host/libpspl/README.md)、`vg_axil_regs`、`vg_sync_fifo` | 独立 AXI-Lite AW/W 与 FIFO ↔ 有序 32 位 UIO MMIO | 设备路径显式配置；无探测、无 DMA、无自动加载；UIO 未打开 |
-| PS 服务/VM | [service.py](../../host/app/perception/service.py)、[PS 模块说明](../../host/app/perception/README.md)、[可选入口](../../robot/dofbot/pspl_entry.py) | 带身份的图像/语音/任务 JSON ↔ 现有一次任务状态机 | 新入口独立配置，默认部署仍使用原入口；未启动服务、部署 VM 或执行动作 |
-| 工程 | `create_project.tcl`、`build_bd.tcl`、`build_bitstream.tcl`、`profile.json` | PS、视频、音频、门控及统一时钟/复位/地址 | XCZU19EG；沿用 ALINX PS 配置及 Vivado 2020.1；脚本未执行，无新 bit/XSA/ELF |
+| PS 垃圾分类 | [detector.py](../../host/app/perception/detector.py)、前后处理、模型清单与类别映射 | 无标注 RGB → CPU YOLO 已 NMS 检测、真实 label 与业务编号 | 模型加载前核对权重、真实有序类名和框架契约；错误与成功空检测分别返回 |
+| 音频 PL/PS | [audio_frontend](../audio_frontend/README.md)、[pl_frontend.py](../../host/app/voice/pl_frontend.py)、`coefficients.py`、`usb_pcm_pl.py` | 16kHz mono PCM16 → DC/FIR/可选软门 PCM → PS Vosk 受限任务事件 | 独立 USB PCM 输入；串口语音模块的命令编号直接作为事件输入 |
+| PIO 与 Linux | [libpspl](../../host/libpspl/README.md)、`vg_axil_regs`、`vg_sync_fifo` | 独立 AXI-Lite AW/W 与 FIFO ↔ 有序 32 位 UIO MMIO | 显式设备路径；有序访问、交替收发、错误和超时传播 |
+| PS 服务/VM | [service.py](../../host/app/perception/service.py)、[PS 模块说明](../../host/app/perception/README.md)、[可选入口](../../robot/dofbot/pspl_entry.py) | 带身份的图像/语音/任务 JSON ↔ 一次任务状态机 | 独立配置与输出目录；沿用 VM 分类播报和固定工位 SDK 动作 |
+| 工程 | `create_project.tcl`、`build_bd.tcl`、`build_bitstream.tcl`、`profile.json` | PS、视频、音频、门控及统一时钟/复位/地址 | XCZU19EG、ALINX PS 配置、Vivado 2020.1 |
 
-### 配置、版本与环境对应
+### 配置选择
 
-| 配置 | 源码/产物版本与工具 | 环境及复现选择 |
-|---|---|---|
-| 现用 VM 演示 | 冻结源码 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，15文件原始payload随仓库保存；原部署清单不变 | Ubuntu VM 原 ROS/SDK、相机、串口语音和配套模型；当前安装器默认选择冻结payload，`--source`可指定独立冻结检出 |
-| 原 Z19 颜色/语音/网格 | Vivado/Vitis 2020.1；版本/bit/XSA 对应旧 deliverables manifest | 独立 PS Linux/颜色镜像；旧 FPS/延迟/资源仅属于其原配置 |
-| 独立 MIPI/裸机相机 | Vivado/Vitis 2020.2_AR75986，见 camera_hw manifest | IMX214/原 BSP 与独立镜像；不与颜色/四功能合并镜像 |
-| 独立候选门控 | 原 RTL 仿真与 OOC 记录，见 sort_guard/validation | 记录范围为独立模块，不是本 profile 完整实现或上板 |
-| 四功能源码 | 继承 `7cf7513a`，本轮源码修订 `0aa5adc`；Vivado 2020.1 配置目标 | AArch64 Linux、实际 UIO/设备树与 libpspl；尚需合法模型权重/类序/YAML、源/目标环境契约、匹配相机/平面标定、ALSA/Vosk 模型与中文词典覆盖。未构建新镜像、未联合部署 |
-
-冻结安装与可选源码入口见[配置选择](../../docs/QUICKSTART.md)。新 profile 的 100MHz、16kHz、63tap 为配置/算法参数。未在指南推荐的 2026.1/2025.2 运行；不升级 IP 或借旧报告声明通过。产物/依赖来源统一见[提交清单](../../deliverables/submission/manifest.json)。
+本 profile 发布的是集成源码与接口，完整构建和联合上板状态见[配置与兼容性](../../docs/CONFIGURATIONS.md)。该页集中列出 AArch64 Linux、UIO、模型契约、相机标定、ALSA/Vosk 的准备条件，并与冻结 VM 演示、独立颜色和 MIPI 工程对应。产物及依赖来源见[提交清单](../../deliverables/submission/manifest.json)。
 
 ## PS/PL 连接
 
@@ -53,7 +45,7 @@ flowchart LR
   AUDIO --> SDK[VM 既有 ROS/SDK 固定工位动作]
 ```
 
-这是本轮源码的连接图。现用演示的实际运行图单独见[架构](../../docs/ARCHITECTURE.md)，其模型和机械臂执行仍在原 VM 环境。
+图：`z19-pspl-four-functions-v1` 集成源码连接关系。现用 VM/DOFBOT 演示的运行图见[系统架构](../../docs/ARCHITECTURE.md)。
 
 PL 各运算、PIO FIFO、门控统一使用 `ps0/pl_clk1`，目标 100MHz；该值是配置目标，不是时序或板上测量。复位由同域 `proc_sys_reset` 输出。音频16kHz以样本握手表示，无派生采样时钟。门控 `external_busy` 在顶层固定为0，应用通过既有软件 busy/任务协议管理许可；没有机械臂输出引脚。
 
@@ -73,7 +65,7 @@ PS 图像输入显式选择 `pl_rgb` 或 `raw_rgb`，记录两份内容哈希与
 
 `color_association` 只用于显式要求颜色的工位：保留唯一语义目标、单个PL颜色连通区且完全位于语义框内的条件。它使用真实PL匹配像素数，缺少指定颜色时不适用。示例绿色阈值是颜色统计设计参数，不能作为所有垃圾类别的共同物理属性。
 
-默认 `semantic_bbox` 返回 `association={state:not_requested,reason:semantic_bbox_policy}`，不再为颜色关联复制掩码、清零ROI或分析连通区域；完整PL处理、回读、统计校验及独立颜色质心保持原接口。这里只移除不必要调用，没有执行加速测量。
+默认 `semantic_bbox` 返回 `association={state:not_requested,reason:semantic_bbox_policy}`，跳过颜色关联的掩码复制、ROI清零和连通区域分析；完整PL处理、回读、统计校验及独立颜色质心保持原接口。
 
 两个模式共享原 `GuardClient` 寄存器事务及PL规则；语义适配仅替换PS输入校验，原RTL、寄存器ID/版本及旧颜色适配不改。语义数据的source为 `Z19_PS_CPU_YOLO`、count_basis为 `bbox_area_px`；颜色模式count_basis为 `pl_mask_pixels`。旧寄存器沿用 `mask_count` 名称，语义模式写入的是明示的检测框面积数值，不声称该面积由PL掩码统计得到。标签、模型或配置改变会取消本段并重新累计。
 
@@ -81,11 +73,11 @@ USB PCM与原串口交互统一为“你好小亚”唤醒、等待“在的”�
 
 ### 传输与性能口径
 
-通道校正/HSV/统计的运算位置为PL，实际端到端效率还取决于PS逐像素PIO、图像转换及CPU推理。`timeout_ms=5000` 是可配置传输截止，不是5秒帧率保证；任务20秒上限与门控周期也不是实测耗时。PIO/推理瓶颈、吞吐和加速比本轮均未测定，旧7.26fps不转移到此profile。
+通道校正/HSV/统计在PL计算，端到端耗时还包含PS逐像素PIO、图像转换及CPU推理。`timeout_ms=5000` 配置传输截止，任务20秒上限和门控周期分别约束任务与候选等待；这些是配置参数。已有测量按对应配置见[验证结果](../../docs/VALIDATION.md)。
 
 ## 寄存器与传输
 
-唯一寄存器定义为 [registers.json](registers.json)，C [registers.h](../../host/libpspl/include/registers.h)、RTL [registers.svh](rtl/registers.svh)是投影，Python 直接读取该 JSON。未来改定义时用 `generate_contract.py`更新投影并审阅；本轮未运行该脚本。字段详解见两个模块 README。旧 sort_guard 保留其自己的 ABI，版本为0x00010000；新视频/音频版本为1。
+唯一寄存器定义为 [registers.json](registers.json)，C [registers.h](../../host/libpspl/include/registers.h)、RTL [registers.svh](rtl/registers.svh)是投影，Python 直接读取该 JSON。修改定义时用 `generate_contract.py`更新投影并审阅。字段详解见两个模块 README。sort_guard 保留自己的 ABI，版本为0x00010000；新视频/音频版本为1。
 
 | 公共偏移 | 语义 |
 |---|---|
@@ -99,11 +91,11 @@ USB PCM与原串口交互统一为“你好小亚”唤醒、等待“在的”�
 
 数据事务使用对齐32位访问、全 WSTRB；非法地址和不支持的写法返回 SLVERR。AW与W分别锁存，B/R响应在停顿时保持；读副作用只在AR接受时执行一次。PS排输出、填输入交替推进，不依赖16像素批次。C层核对读写计数、视频SOF/EOL、帧号和快照有效位；快照读取后显式ACK。超时或数量/帧身份错误终止会话，需 reset/reconfigure，禁止把部分结果当完整结果。
 
-## 地址与未来构建入口
+## 地址与构建入口
 
 [profile.json](profile.json)定义视频0xA1000000、音频0xA1010000、门控0xA1020000，各4KiB；Tcl使用其 [profile.tcl](profile.tcl)投影。设备树 [pspl-uio.dtsi](linux/pspl-uio.dtsi)对应相同规划。地址仅属于新profile，Linux集成者须核对保留区、实际UIO节点和map0大小，不得沿用旧设备节点或直接扫描地址。
 
-以下为未来由使用者明确执行的入口，本轮全部未执行：
+准备匹配工具、目标环境和私有配置后，从仓库根目录使用以下入口。输出目录应位于源码树之外：
 
 ```bash
 # 在匹配 Vivado 2020.1 环境，从仓库根目录：
@@ -116,12 +108,8 @@ cmake --build /new/output/pspl-c
 python -m host.app.perception.service --config /explicit/pspl-service.json
 ```
 
-PS程序面向Linux UIO，不需要凭旧XSA生成裸机程序；不提供指向旧平台的Vitis伪入口。如后续改为Vitis Linux应用，应只使用本profile新导出的XSA。源码交付不生成、加载或部署这些产物。
+PS程序面向Linux UIO，使用匹配目标Linux的工具链与sysroot。硬件集成使用本profile导出的XSA及对应设备树，不能套用独立颜色或MIPI平台的地址和镜像。
 
-## 资料与发布
+## 开发资料
 
-源码审阅范围：定点位宽/符号、流控与复位、配置快照、寄存器投影、客户端调用和文件引用、文件哈希、Git差异。没有执行新增代码、导入验证、系数生成、模型推理、仿真、编译、综合、实现、时序分析、设备访问或性能测量。旧证据保持其原版本归属。
-
-所有者已单独批准CI分层：`.github/workflows/ci.yml` 原测试/仿真完整保留为仅手动触发，`source_review.yml` 自动执行Git文本/路径/冻结来源检查。四功能原分支为 `source/pspl-four-functions-20261030`，完整收尾分支为 `source/track33-closeout-20261030`；已按原保护由PR43正常合入main，不触发运行类验证。[收尾发布记录](../../docs/competition/release_inventory.md)记录实际整合状态；原[四功能PR草稿](PR_BODY.md)保留历史范围。
-
-队友阅读顺序：本页 → [PS模块/真实模型依赖](../../host/app/perception/README.md) → [视频](../perception_v2/README.md)/[音频](../audio_frontend/README.md)/[PIO客户端](../../host/libpspl/README.md) → [七项设计报告](../../report/design_report.md) → [证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。
+从本页进入[PS 模块与模型契约](../../host/app/perception/README.md)、[视频](../perception_v2/README.md)、[音频](../audio_frontend/README.md)和[PIO 客户端](../../host/libpspl/README.md)。设计取舍见[设计报告](../../report/design_report.md)，检查入口见[开发指南](../../docs/DEVELOPMENT.md)，版本化结果见[证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。

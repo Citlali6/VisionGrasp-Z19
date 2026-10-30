@@ -19,11 +19,11 @@
 
 | 3.3.5.5 评测项 | 权重 | 本作品的材料入口 | 需要保持的判断范围 |
 |---|---:|---|---|
-| 创新性与应用价值 | 30 | [产品定位](product_brief.md)、[报告第1节](../../report/design_report.md#section-background)、[贡献与来源](../../THIRD_PARTY.md) | 教学/固定桌面交互工位；课程基础、厂商模型/SDK 与团队新增工程分开归属 |
+| 创新性与应用价值 | 30 | [产品定位](../overview.md)、[报告第1节](../../report/design_report.md#section-background)、[贡献与来源](../../THIRD_PARTY.md) | 教学/固定桌面交互工位；课程基础、厂商模型/SDK 与团队新增工程分开归属 |
 | 性能与资源优化效果 | 20 | [证据矩阵](EVIDENCE_MATRIX.md)、[报告第4节](../../report/design_report.md#section-optimization) | 旧颜色不同分辨率配置是系统取舍；原颜色完整实现与门控 OOC 资源不构成优化前后对比 |
 | 功能正确性与设计完整性 | 20 | [系统工程](../../fpga/system_pspl/README.md)、[报告第2—3节](../../report/design_report.md#section-principle)、原部署与模块记录 | 四功能源码、旧独立模块记录和现用 VM 演示分别核查；新 profile 无完整板级验证结论 |
 | 大模型协作与技能包 | 15 | [AI协作记录](../../report/ai_collaboration.md)、[Skill](../../skill/README.md)、[报告第5—6节](../../report/design_report.md#section-ai) | 使用真实提示词/审计/提交来源；提交摘要不冒充完整逐字对话；运行时 YOLO/Vosk 分工不是开发协作记录 |
-| 文档质量与可复现性 | 15 | [评委导航](judges_guide.md)、[报告第7节](../../report/design_report.md#section-reproduce)、[发布清单](../../deliverables/submission/manifest.json) | 当前安装器/测试共同选择独立冻结payload，新PS/PL入口使用开发源码；明确版本/环境与外部条件 |
+| 文档质量与可复现性 | 15 | [项目文档](../README.md)、[报告第7节](../../report/design_report.md#section-reproduce)、[发布清单](../../deliverables/submission/manifest.json) | 当前安装器/测试共同选择独立冻结payload，新PS/PL入口使用开发源码；明确版本/环境与外部条件 |
 
 权重用于材料组织，不用于预测得分或保证奖项。测试/断言次数、提交数和文件数不作为识别性能指标。
 
@@ -51,7 +51,7 @@
 | 3.3.5.2 | 普通 Skill 放入 `skill/`，含适用范围、用法、失效条件及效果依据 | [Skill入口](../../skill/README.md)与四项工作流；这是要求提交的材料 |
 | 3.3.2、3.3.5.2 | 通用 PYNQ Skill 另行加分 | 本轮不申报已经完成的 PYNQ Skill，不为加分临时更换数据通路；该加分方向与普通 Skill 提交要求分开 |
 | 3.3.5.4 | 推荐 `src/sim/build/board/data/skill/report` 结构；可保留其他组织方式并给映射 | 根 README 提供设计源码、仿真、构建、板端产物、数据与材料的目录对照；原模块路径保留 |
-| 3.3.5.4 | 文件名要求纯英文小写等；示例同时使用 `README.md` | 普通新文件使用小写英文；GitHub/工具入口、第三方和历史名称差异及处置见[收尾清单](release_inventory.md)，未声称取得额外豁免 |
+| 3.3.5.4 | 文件名要求纯英文小写等；示例同时使用 `README.md` | 普通新文件使用小写英文；GitHub/工具入口、第三方和历史名称差异及处置见[收尾清单](../maintenance/release-20261030.md)，未声称取得额外豁免 |
 | 第六部分 | 决赛自主选题队伍按 AMD 模板制作一页英文 PPT 海报，不含队伍信息，A4 彩印 | [英文内容稿](../../report/poster_copy_en.md)及素材映射已准备；官方 PPT 模板未取得，尚无模板成品 |
 
 本轮只交付源码小修、材料与 Git 整理，没有新增执行类结果。当前材料可以说明已实现的工程及历史证据，尚不能据此宣布四功能 profile 已满足完整上板/实测提交条件。

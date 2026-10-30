@@ -1,14 +1,8 @@
-# 小亚智分：配置选择与复现入口
+# 小亚智分 · 快速开始
 
-先选择实际配置，再准备环境。下面所有安装/构建/运行命令供未来使用者按各配置执行，本次收尾没有运行。
+本页介绍 VM/DOFBOT 固定工位分拣应用的安装与使用。安装器默认读取[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)，其15个文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，按原部署清单校验。
 
-| 配置 | 源码与复现方式 | 使用条件 |
-|---|---|---|
-| 现用VM/DOFBOT固定工位演示 | 当前安装器默认读取仓库内冻结payload，文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` | 原Ubuntu22.04/ROS2/SDK/模型/音频环境；保留现场配置 |
-| 原Z19颜色/语音/网格 | [颜色工程](../fpga/color_locator/README.md)、[网格](../fpga/color_locator/GRID.md) | 该profile自己的镜像/地址/环境，独立于演示 |
-| 四功能源码profile | [system_pspl](../fpga/system_pspl/README.md) → [PS软件](../host/app/perception/README.md) → [VM新入口](../robot/dofbot/PSPL.md) | 新XSA/镜像/UIO、合法模型契约、目标依赖/相机标定等；源码未联合运行 |
-
-源码与材料已进入main，固定版本为 `track33-source-20261030`；收尾来源分支为 `source/track33-closeout-20261030`。当前开发目录含可选新展示接口，安装器默认源则是独立的 [deliverables/dofbot_demo_20261029/payload](../deliverables/dofbot_demo_20261029/README.md)。其中12个应用及清单/依赖/历史README来自冻结提交，原哈希严格保留。测试导入当前安装器并使用同一payload；这些修订本轮没有执行。不要把新入口覆盖到现用VM。
+其他配置与完整环境对应见[配置与兼容性](CONFIGURATIONS.md)。开发 Z19 四功能集成源码时，从[工程入口](../fpga/system_pspl/README.md)、[PS 服务](../host/app/perception/README.md)和[可选 VM 客户端](../robot/dofbot/PSPL.md)开始。
 
 ## 冻结演示的适用环境
 

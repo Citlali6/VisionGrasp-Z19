@@ -46,7 +46,8 @@ jobs:
           required=(
             README.md
             docs/README.md
-            docs/competition/judges_guide.md
+            docs/overview.md
+            docs/CONFIGURATIONS.md
             docs/competition/requirements_map.md
             docs/competition/EVIDENCE_MATRIX.md
             report/design_report.md

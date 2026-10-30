@@ -1,28 +1,18 @@
-# 小亚智分 · 3.3 初级组参赛材料
+# 提交规范与材料附件
 
-**听见指令，看清目标，让分类落到行动。** 本目录组织固定桌面语音视觉分拣工作站的产品、工程、证据和参赛材料。仓库技术标识仍为 VisionGrasp-Z19。
+本目录保留 3.3 初级组的规则映射、指标依据及提交素材。项目使用与开发从[项目文档](../README.md)进入，产品背景和场景见[应用概览](../overview.md)。
 
-| 入口 | 内容 |
+| 材料 | 用途 |
 |---|---|
-| [评委导航](judges_guide.md) | 作品价值 → PS/PL/VM → 对应版本的成果 → 贡献与复现 |
-| [产品说明](product_brief.md) | 用户、任务工作流、已有方案、团队增加的工程与扩展路线 |
-| [要求映射](requirements_map.md) | 用户附件第 3.3 节的五项权重、七项报告、普通 Skill、上板与交付条件 |
-| [设计报告](../../report/design_report.md) | 七项正文底稿：背景、原理、划分、优化、AI 协作、技能、复现 |
-| [证据矩阵](EVIDENCE_MATRIX.md) | 指标、条件、版本与原始入口的单一事实表 |
-| [技术细节](DESIGN_DETAILS.md) | 具体算法、输入输出和软件/硬件接口素材 |
-| [图表素材](MATERIALS.md) | 现有截图/架构、照片缺项和真实开发协作材料 |
-| [AI 开发协作](../../report/ai_collaboration.md)、[Skill](../../skill/README.md) | 提交/审计可追溯的纠错案例及四项可复用流程 |
-| [英文海报内容](../../report/poster_copy_en.md) | 一页匿名英文海报的内容与素材映射；尚未套用官方模板 |
-| [发布清单](release_inventory.md)、[提交 manifest](../../deliverables/submission/manifest.json) | 历史/分支/PR 处置、恢复材料、profile、构建入口、产物哈希与依赖 |
+| [要求映射](requirements_map.md) | 用户提供指南的条款、报告结构与提交条件 |
+| [正式设计报告](../../report/design_report.md) | 背景、原理、软硬件划分、优化、AI 协作、Skill 与复现 |
+| [证据矩阵](EVIDENCE_MATRIX.md) | 各配置的指标、测量条件和原始来源 |
+| [技术细节](DESIGN_DETAILS.md) | 算法、输入输出和接口材料 |
+| [图表素材](MATERIALS.md) | 截图、分配置架构与现场资料准备 |
+| [AI 开发协作](../../report/ai_collaboration.md)、[Skill](../../skill/README.md) | 真实纠错记录与可复用流程 |
+| [英文海报内容](../../report/poster_copy_en.md) | 匿名英文文案及素材映射 |
+| [提交清单](../../deliverables/submission/manifest.json) | profile、产物、依赖、报告及来源 |
 
-## 规则与报告的对应
+规则依据为用户提供的 28 页《全国大学生嵌入式芯片与系统设计竞赛'2026 FPGA 创新设计赛道选题指南（AMD）》第 3.3 节；原件 SHA-256、页码、报名条件及模板状态集中于要求映射。正式设计报告为当前唯一报告主线，旧模板写作提纲由 Git 历史保存。
 
-本轮规则依据为用户提供的 28 页《全国大学生嵌入式芯片与系统设计竞赛'2026 FPGA 创新设计赛道选题指南（AMD）》第 3.3 节。页码、SHA-256、五项评分与正式缺项统一见要求映射。PYNQ 为推荐实现方式；本工程保留实际 UIO/PIO 路径，普通技能包与通用 PYNQ 加分方向分别说明。
-
-正式技术主入口为 [system_pspl](../../fpga/system_pspl/README.md)，完整材料以七项设计报告为主。现用 DOFBOT、原 Z19 颜色链、独立候选门控和新四功能源码分别保留其版本，不拼接为一次全功能实测。模型、SDK、机构和上游 IP 归属见 [THIRD_PARTY](../../THIRD_PARTY.md)。
-
-## 历史模板素材的使用范围
-
-[TECHNICAL_OUTLINE](TECHNICAL_OUTLINE.md)保留先前按《技术文档模板(2).docx》整理的摘要/概述/系统/成果/总结写作素材。原模板未在本次本地附件中取得，故其中 800 字、400 字等为**历史模板转录限制**，不是本轮指南的字数要求。正式填报若另发模板，先核对原文件，再将七项正文映射到对应栏目。
-
-本轮完成源码小修、材料组织与 Git 收尾，不执行工程验证或更新现场部署；新 profile 的环境和结果缺项集中列于工程环境表及要求映射。
+分支、PR 和恢复资料另存[维护记录](../maintenance/README.md)。运行配置与版本选择见[配置和部署](../CONFIGURATIONS.md)。
