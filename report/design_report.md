@@ -2,18 +2,18 @@
 
 **听见指令，看清目标，让分类落到行动。**
 
-参赛定位：3.3 自主选题赛道、初级组，实际资格由报名审核确认。硬件平台为 ALINX Z19，器件 `xczu19eg-ffvc1760-2-i`。本收尾稿继承四功能源码基线 `7cf7513a42d5b5f3b3c66eec1e950786b6478b83`；最终发布提交与主线整合状态以[发布清单](../deliverables/submission/manifest.json)为准。
+硬件平台为 ALINX Z19，器件 `xczu19eg-ffvc1760-2-i`。本报告说明语音视觉分拣任务、PS/PL 计算与接口，以及 VM 执行软件的设计。源码、配置与材料版本由[提交清单](../deliverables/submission/manifest.json)记录。
 
-本报告按用户提供的 2026 AMD 指南 3.3.5.3 的七项内容组织，规则页码、附件哈希与五项评分材料见[要求映射](../docs/competition/requirements_map.md)。配置/版本/环境集中于[系统工程表](../fpga/system_pspl/README.md)，指标仅在[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)维护；[附录 A](#appendix-a)提供固定版本的数值快照，随报告一起独立导出。
+报告按背景、原理、软硬件划分、优化、AI 协作、技能与复现七项展开。配置、版本、依赖与部署状态集中于[配置与兼容性](../docs/CONFIGURATIONS.md)，指标在[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)维护；[附录 A](#appendix-a)保留固定版本数值，便于独立导出。赛事要求另见[提交规范附件](../docs/competition/requirements_map.md)。
 
 <a id="section-background"></a>
 ## 1. 选题背景与创新点
 
-垃圾分类的交互展示需要让使用者理解一次任务如何从口令走向行动。小亚智分把唤醒、识别、分类反馈和机械执行组织成固定桌面工位上的单轮任务，并用只读窗口呈现过程。目标使用场景包括环保科普、嵌入式/FPGA 教学和创客原型展示；这些是产品面向的场景，尚无站点部署或教学效果评估记录。
+一件物品被放入分类容器之前，需要完成识别、判断与投放。小亚智分把语音指令、视觉判断、分类反馈和机械执行组织成固定桌面工位上的单次任务，让使用者在同一界面观察从发起任务到投放结束的过程。
 
-现用记录覆盖固定拾取位置的单物块演示，物块材质与真实废弃物覆盖未形成核验清单。本稿保持限定演示对象的范围，不将模型的物品标签当作实际城市混合垃圾或危险废弃物的处理能力。
+面向校园绿色生活实践，教师或志愿者准备支持的样本与固定拾取台，学生先判断类别，再放置样本、移开手、发出唤醒和启动口令，观察系统播报与投放。面向社区展示，工作人员管理工位，公众按一次唤醒对应一次任务轮流体验。面向嵌入式教学，开发者沿同一任务阅读像素/PCM处理、AXI/FIFO、模型调用和执行接口。完整场景与适用条件见[项目概览](../docs/overview.md)。
 
-Yahboom 已有识别、语音播报和机械臂分拣教程，工业方案则面向连续物料流及回收设施。本作品沿用合法取得的检测模型、SDK、机构和既有动作，把团队贡献放在交互编排、可编程数据处理、接口一致性和工程复用。外部一手资料及差异分析集中于[产品简介](../docs/competition/product_brief.md)，来源责任见[第三方说明](../THIRD_PARTY.md)。
+项目复用 [Yahboom 识别与语音分拣教程](https://www.yahboom.net/study/DOFBOT_SE/)中的模型、SDK、机构和既有动作，将设计重点放在交互编排、可编程数据处理、接口一致性和工程复用。[TOMRA AUTOSORT](https://www.tomra.com/waste-metal-recycling/products/machines/autosort)与[AMP](https://ampsortation.com/technologies)面向回收设施的连续物料处理，应用层次与本项目的固定桌面交互不同。第三方来源与许可统一见[THIRD_PARTY](../THIRD_PARTY.md)。
 
 团队形成的主要设计包括：
 
@@ -24,7 +24,7 @@ Yahboom 已有识别、语音播报和机械臂分拣教程，工业方案则面
 
 ![现用 VM 分拣界面](../docs/assets/dashboard.png)
 
-图1：现用 VM/DOFBOT 配置的真实界面记录，展示固定工位画面、类别、语音事件和任务阶段。该图对应原部署记录；图中的 LIVE 状态不是四功能源码 profile 的运行结果。完整物块/机构照片以实际取得且来源明确的素材为准。
+图1：VM/DOFBOT 固定工位分拣界面，显示画面、类别、语音事件和任务阶段。
 
 <a id="section-principle"></a>
 ## 2. 设计原理与功能框图
@@ -45,7 +45,7 @@ flowchart LR
   E[Z19 PS/PL 可编程感知工程] -. 可选配置 .-> P
 ```
 
-图2：产品功能图，表达用户体验和可选模块的功能位置，不表示全部配置已在同一现场同时运行。一次任务的实际顺序为“唤醒→启动→准备→识别→分类播报完成→抓取投放→等待唤醒”。
+图2：产品功能关系。一次任务按“唤醒→启动→准备→识别→分类播报完成→抓取投放→等待唤醒”进行；可选模块的配置身份见配置页。
 
 ### 2.2 现用演示运行配置
 
@@ -63,7 +63,7 @@ flowchart LR
   K -->|成功下发的指令阶段| UI
 ```
 
-图3：现用 VM 演示的运行关系。模型与任务运行在 VM，语音模块输出编号，机械臂沿用固定工位动作。原 Z19 独立 USB 颜色/网格工程另有自己的位流、地址与[板端记录](../fpga/color_locator/README.md)，不与此图拼成已经联动的系统。
+图3：现用 VM/DOFBOT 演示运行关系。模型与任务运行在 VM，语音模块输出编号，机械臂沿用固定工位动作。独立 Z19 USB 颜色/网格工程见[对应模块](../fpga/color_locator/README.md)。
 
 ### 2.3 四功能源码 profile 的连接关系
 
@@ -185,7 +185,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 <a id="section-reproduce"></a>
 ## 7. 从零复现说明
 
-以下是供后续使用者执行的步骤，**本轮未执行其中的安装、构建、程序、设备或验证流程**。必须先选择复现对象；旧演示、旧 Z19 独立 profile 与新四功能 profile 不共用验收结论。
+先在[配置与兼容性](../docs/CONFIGURATIONS.md)选择复现对象，再准备对应依赖与工具。以下分别给出冻结应用、独立模块和集成源码的入口。
 
 1. **取得并固定版本。** 从唯一仓库获取源码，按[发布清单](../deliverables/submission/manifest.json)记录当前交付 SHA。原 VM 演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)已随当前源码保存，字节来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希。当前安装器默认读取这份 payload；开发目录中新展示接口不进入原演示安装，不需要先切换到旧提交。
 
@@ -198,7 +198,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
    # 将实际解析的 SHA 与发布清单/交付说明核对。
    ```
 
-2. **准备合法依赖和目标环境。** 按系统工程表取得原 VM SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认 VM 来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。缺少权重、类序或契约时停止相应路径，保留明确错误；不以样例 manifest、固定类别或随机框代替。
+2. **准备合法依赖和目标环境。** 按配置页取得 VM SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认 VM 来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。缺少权重、类序或契约时停止相应路径，保留明确错误；不以样例 manifest、固定类别或随机框代替。
 
 3. **选择原部署复现时，使用当前安装器与冻结 payload。** 在配套 Ubuntu/ROS 环境从当前源码根目录，按[快速开始](../docs/QUICKSTART.md)和[VM 组件说明](../robot/dofbot/README.md)执行以下入口。安装器继续按原清单核对 payload，并记录实际来源；缺失或校验失败即停止，不回退到开发目录。现用程序仍运行时不覆盖它；这条路径使用原串口语音和 VM 检测，不需要新 profile。
 
@@ -230,13 +230,13 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
    python3 -m host.app.perception.enroll_model --weights /legal/best.pt --framework-root /legal/ultralytics --names-yaml /legal/data.yaml --source-contract /private/source_contract.json --output /private/model_manifest.json
    ```
 
-7. **核对新硬件平台与 Linux 集成。** 按 `profile.json`、`pspl-uio.dtsi` 和实际目标 Linux 的集成方式配置新 bit/XSA、设备树与 UIO；核对器件、时钟/复位、保留地址、设备 ID/协议及 map 尺寸。该步骤需要另行授权的板级流程，本轮没有设备操作；仓库没有自动扫描未知 MMIO 或替换现场镜像的入口。
+7. **核对硬件平台与 Linux 集成。** 按 `profile.json`、`pspl-uio.dtsi` 和实际目标 Linux 的集成方式配置 bit/XSA、设备树与 UIO；核对器件、时钟/复位、保留地址、设备 ID/协议及 map 尺寸，显式选择对应设备节点。
 
 8. **填写 PS/VM 私有配置。** 从真实示例复制并替换所有 `REQUIRED` 字段，配置模型清单、库、相机 by-id、明确 UIO、两端相同的 `candidate_policy`、语音来源、绑定地址与 token。VM 跨机连接时 PS 地址需可达；`runtime_root` 放在源码/安装目录之外。无匹配标定时保留像素输出，`calibration=null` 不是毫米标定。USB PCM 需另备麦克风、ALSA 与覆盖任务词的 Vosk 模型；串口编号不经过 FIR。
 
-9. **在未来允许运行的阶段启动所选新路径。** PS 从当前交付源码根目录使用 `python3 -m host.app.perception.service --config /private/pspl-service.json`。VM 使用 `/usr/bin/python3 -B /absolute/path/robot/dofbot/pspl_entry.py --config /private/vm-pspl.json`，按 [PSPL说明](../robot/dofbot/PSPL.md)选择是否显式执行机械臂及打开只读窗口。旧部署保持独立，不能同时争用设备。任务图像、来源 JSON、事件、实际指令记录和软件错误进入该新入口的独立输出目录。
+9. **启动所选新路径。** PS 从当前交付源码根目录使用 `python3 -m host.app.perception.service --config /private/pspl-service.json`。VM 使用 `/usr/bin/python3 -B /absolute/path/robot/dofbot/pspl_entry.py --config /private/vm-pspl.json`，按 [PSPL说明](../robot/dofbot/PSPL.md)选择是否显式执行机械臂及打开只读窗口。旧部署保持独立，不能同时争用设备。任务图像、来源 JSON、事件、实际指令记录和软件错误进入该新入口的独立输出目录。
 
-10. **保存可复核输出。** 在另行允许的验证阶段，按对应输入与版本核对 RGB/掩码/一阶矩/PCM、模型结果与参考数据，保存配置、输入、原始输出、工具报告及失败记录；分别判断软件、RTL、完整实现和板级结果。本轮不运行旧检查给新 profile 背书。提交时以新增真实记录更新证据矩阵；未取得新完整实现/板级与参考比对前，不宣布四功能 profile 已满足指南全部实测条件。
+10. **保存可复核输出。** 按对应输入与版本核对 RGB/掩码/一阶矩/PCM、模型结果与参考数据，保存配置、输入、原始输出、工具报告及失败记录；分别记录软件、RTL、完整实现和板级结果。新记录进入证据矩阵时附上对应配置、源码与测量条件。
 
 <a id="appendix-a"></a>
 ## 附录 A. 性能与资源数值快照

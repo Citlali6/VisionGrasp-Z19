@@ -1,18 +1,23 @@
-# 开发与离线验证
+# 开发指南
 
-## 3.3 参赛收尾范围
+围绕一次分拣任务选择要修改的层次：PL 处理像素、PCM 和候选规则，PS 完成采集、模型、坐标与任务服务，VM 组织分类播报和机械臂动作。先阅读[系统架构](ARCHITECTURE.md)及[配置与兼容性](CONFIGURATIONS.md)，再进入对应模块。
 
-当前产品为“小亚智分”，四功能源码从 [system_pspl](../fpga/system_pspl/README.md)进入，评分/报告/Skill从[评委导航](competition/judges_guide.md)进入。2026-10-30收尾与19a审计返修包括有限源码修正、冻结安装源/测试契约、文本/接口/引用/哈希/Git审阅及发布组织；未运行下列测试、工具链、模型、系数、ASR或设备流程。下文保留未来获授权时的已有检查入口，不是本轮执行记录。
+## 模块与版本
 
-默认VM演示的重现使用[冻结payload](../deliverables/dofbot_demo_20261029/README.md)，当前安装器与测试共同选择同一源；新PS/PL客户端使用开发源码，旧安装清单的文件哈希不随可选UI扩展改写。目标环境、工具版本和缺项见聚合工程表。
+| 开发目标 | 入口 |
+|---|---|
+| 视频定点计算、ROI 与帧统计 | [perception_v2](../fpga/perception_v2/README.md) |
+| 音频 DC、FIR、软门及样本流控 | [audio_frontend](../fpga/audio_frontend/README.md) |
+| 候选区域、连续帧与一次许可 | [sort_guard](../fpga/sort_guard/README.md) |
+| AXI-Lite、FIFO、UIO 与 C/Python 传输 | [集成工程](../fpga/system_pspl/README.md)、[libpspl](../host/libpspl/README.md) |
+| 模型契约、坐标与 PS 任务服务 | [perception](../host/app/perception/README.md) |
+| 任务状态、播报、动作接口与只读展示 | [DOFBOT](../robot/dofbot/README.md)、[可选 PS/PL 客户端](../robot/dofbot/PSPL.md) |
 
-所有者已单独批准CI分层和正常PR/main发布：`source_review.yml` 自动做标准Git文本、入口路径及冻结blob核对；`ci.yml` 保留全部原测试/仿真命令，但仅手动触发，本轮不dispatch。来源检查成功只说明这些文本/来源条件，不表示运行类验证通过；分支保护保持原配置。
+默认安装器与安装测试使用同一份[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)。开发源码中的可选接口独立演进；修改开发目录不会改变冻结安装源。调整冻结基线时，应作为单独的版本更新核对部署清单与依赖。
 
-## 选择模块
+## 软件检查
 
-DOFBOT 应用位于 `robot/dofbot/`，Z19 感知位于 `fpga/`、`host/`，新增候选门控位于 `fpga/sort_guard/`。各模块独立验证，修改一个模块不要求启动其他模块。系统关系见[架构](ARCHITECTURE.md)。
-
-普通软件检查使用 Python 3.10 或更新版本及仓库开发依赖；部署兼容性仍以各模块声明为准。DOFBOT 配套环境是 Python 3.10，旧 Z19 语音环境使用 AArch64 / Python 3.7，不要将板端 wheel 安装到 PC。
+普通软件检查使用 Python 3.10 或更新版本及仓库开发依赖。板端原生包必须与 AArch64 目标环境匹配，不能直接安装到 PC 或复制 VM 的 x86 库。
 
 ```bash
 python -m pip install -r requirements-dev.txt
@@ -21,34 +26,38 @@ python -B -m unittest discover -s host/tests -p test_audio.py -v
 python -B tools/test_z19_sd.py
 ```
 
-历史定稿记录为 DOFBOT 78 项、音频 10 项、SD 格式 9 项，以及候选门控 94 项，对应当时共191项Python检查；实际版本与来源见[验证记录](VALIDATION.md)。本轮安装测试新增和修订仅是源码，没有重跑或把新增用例计入旧通过数。合成回放入口另列下节。
+上述检查使用伪设备和固定输入。历史检查结果及其源码版本见[验证记录](VALIDATION.md)；新增用例应记录自己的执行结果。
 
-这些检查使用伪设备和固定输入，不启动 ROS 节点、摄像头、串口、语音播放或 FPGA MMIO。安装包可单独生成到临时目录审阅：
+安装器可生成隔离布局，便于审阅安装文件与用户脚本：
 
 ```bash
 python robot/dofbot/install.py --staging-root /tmp/dofbot-install-review
 ```
 
-不要执行测试生成的启动脚本。安装器真实部署的前提和外部依赖见[快速开始](QUICKSTART.md)。
+该模式不操作真实桌面或设备。配套 VM 的正式安装步骤见[快速开始](QUICKSTART.md)。Windows 的 `tools/test_prepare_z19_sd.ps1` 使用模拟磁盘，`-Package` 必须指向已通过清单校验的离线测试包；先阅读脚本参数并准备 fixture。
 
-Windows 的 `tools/test_prepare_z19_sd.ps1` 覆盖 12 个模拟磁盘守卫场景，使用替身而非真实磁盘。它的 `-Package` 参数必填，需指向预先生成且通过清单校验的离线测试包；阅读脚本参数并准备 fixture 后再运行，不能直接省略参数。仓库结构和文档检查执行 `python .github/scripts/check_repository.py`。
+仓库结构、Markdown 链接、来源和证据哈希检查入口为：
 
-## 新门控离线回放
+```bash
+python .github/scripts/check_repository.py
+```
+
+## 候选规则回放
 
 ```bash
 python -m fpga.sort_guard.host.replay tests/sort_guard/fixtures/synthetic_stable.jsonl
 ```
 
-该 JSONL 是标记为 `synthetic_fixture=true` 的合成输入，输出注明 `evidence_level=software_model` 与 `hardware_accessed=false`。回放使用软件寄存器模型，不探测地址、不打开串口，不代表真实相机或机械臂验收。接口和计时语义见 [sort_guard/INTERFACE.md](../fpga/sort_guard/INTERFACE.md)。
+此 JSONL 使用合成输入，输出标记 `evidence_level=software_model`、`hardware_accessed=false`。回放通过软件寄存器模型观察候选规则；真实外设接入另按[接口说明](../fpga/sort_guard/INTERFACE.md)核对来源、寄存器、帧序和计时单位。
 
-## FPGA 检查
+## FPGA 工具与检查
 
-颜色模块的三套仿真覆盖 HSV 数值、视频流背压和 AXI-Lite 寄存器行为，使用 Vivado 2020.1；命令、成功标记与输出目录规则见[颜色模块说明](../fpga/color_locator/README.md)。仿真不加载板卡。新增门控的 RTL 测试与 OOC 综合入口位于 `fpga/sort_guard/scripts/`；成功标记、参数及报告以[模块说明](../fpga/sort_guard/README.md)为准。OOC 时钟约束不是板上已测频率，综合资源不等于完整系统布局布线资源。
+颜色工程使用 Vivado 2020.1，三套仿真覆盖 HSV 数值、视频背压和 AXI-Lite 事务；命令、成功标记与输出目录见[颜色模块](../fpga/color_locator/README.md)。候选门控的 RTL 仿真与 OOC 综合入口位于 `fpga/sort_guard/scripts/`，条件及结果见[模块文档](../fpga/sort_guard/README.md)。
 
-MIPI 相机源工程要求 Vivado 2020.2_AR75986。保留其原 IP 配置，不为迁就本机工具自动升级或降级。源码引用、构建产物 SHA-256、驱动测试和板端实测是不同检查项，应分别报告。
+四功能集成源码同样采用 Vivado 2020.1 配置。独立 MIPI 相机工程要求 Vivado 2020.2_AR75986，保留原 IP 与 BSP。输出放在源码目录之外，并为每项记录对应的源码、工具、配置和报告阶段。
 
-## 维护定稿版本
+## CI 与提交
 
-运行源码与已验证基线通过 `deployment_manifest.json` 关联，外部依赖由 `external_dependencies.json` 描述。正常的功能演进应同步修改清单和验证记录；仓库整理不能悄悄调整动作参数或检测条件。
+`source_review.yml` 在 PR 与主线更新时自动核对 Git 文本、必需路径和冻结文件来源。`ci.yml` 保留软件检查和 RTL 仿真，通过 `workflow_dispatch` 手动执行；维护者按变更范围选择运行检查。两类流程分别报告结果。
 
-状态机、协议、展示模型和进程管理可在以后获授权时用离线测试验证；真实 USB 枚举、音频听感、抓取效果和相机标定仍需现场验证。本轮只审阅相对链接、来源、敏感信息、哈希和差异，不运行导入或Shell语法检查。自动CI仅做上述Git来源检查，运行类CI保留手动入口；完整历史记录见[验证结果](VALIDATION.md)。
+按[Git 工作流](GIT_WORKFLOW.md)从最新 `main` 创建短期分支，经差异审阅、适用检查和 PR 合并后删除远端功能分支。真实设备、FPGA 镜像及现场应用的更新需有明确的目标配置与操作授权；仓库合并与现场部署分别管理。

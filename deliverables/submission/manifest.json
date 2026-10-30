@@ -15,7 +15,10 @@
     "full_submission_ready": false
   },
   "git": {
-    "delivery_branch": "source/track33-closeout-20261030",
+    "release_metadata_scope": "historical source release track33-source-20261030; current documentation maintenance is recorded separately",
+    "default_branch": "main",
+    "branch_policy": "main is the only long-lived remote branch; delete short-lived heads after merging; preserve historical versions with tags",
+    "historical_delivery_branch": "source/track33-closeout-20261030",
     "inherited_source_commit": "7cf7513a42d5b5f3b3c66eec1e950786b6478b83",
     "initial_four_function_commit": "9dc4df9cce400b9fe9c8400fe991a690e465d663",
     "semantic_association_fix_commit": "0aa5adc6917d58b4a50d9e93d375d28d5b2f9a1e",
@@ -28,17 +31,17 @@
     "archive_target_commit": "e625341676c83495b3fb225b31064b3fcf1fbb18",
     "audit_baseline_commit": "19a09b90b5100dc99c5a5b3ecf07853063c3a011",
     "frozen_install_contract_fix_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
-    "recovery_inventory": "docs/competition/branch_inventory.csv",
+    "recovery_inventory": "docs/maintenance/branch_inventory.csv",
     "starting_main_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
     "main_integration_commit": "e259204f9ebcddb743b952d6408fbf15d033dd17",
     "release_tag": "track33-source-20261030",
-    "release_commit_resolution": "最终main发布提交由refs/tags/track33-source-20261030解引用；本文件记录已发生的首次整合SHA，避免伪造包含自身的提交SHA。"
+    "release_commit_resolution": "本段历史源码发布提交由refs/tags/track33-source-20261030解引用；当前文档维护另见documentation_maintenance及其record。"
   },
   "source_profile": {
     "id": "z19_pspl_four_functions",
     "entry": "fpga/system_pspl/README.md",
     "part": "xczu19eg-ffvc1760-2-i",
-    "tool_configuration": "Vivado 2020.1; not run in this closeout",
+    "tool_configuration": "Vivado 2020.1",
     "target_clock_mhz": 100,
     "transport": "AXI-Lite FIFO / Linux UIO / ordered 32-bit PIO",
     "default_candidate_policy": "semantic_bbox",
@@ -348,9 +351,10 @@
     "restriction": "根Apache-2.0只覆盖项目自有内容；模型/SDK/厂商IP/媒体沿用各自权利，不因清单收录获得再分发授权。"
   },
   "materials": {
-    "judges_guide": "docs/competition/judges_guide.md",
+    "documentation": "docs/README.md",
     "requirements": "docs/competition/requirements_map.md",
-    "product": "docs/competition/product_brief.md",
+    "product": "docs/overview.md",
+    "configurations": "docs/CONFIGURATIONS.md",
     "design_report": "report/design_report.md",
     "ai_collaboration": "report/ai_collaboration.md",
     "poster_copy": "report/poster_copy_en.md",
@@ -361,8 +365,9 @@
       "skill/voice_task_boundary/SKILL.md",
       "skill/readonly_observability/SKILL.md"
     ],
-    "release_inventory": "docs/competition/release_inventory.md",
-    "branch_inventory": "docs/competition/branch_inventory.csv",
+    "release_inventory": "docs/maintenance/release-20261030.md",
+    "branch_inventory": "docs/maintenance/branch_inventory.csv",
+    "maintenance_record": "docs/maintenance/main-only-20261030.md",
     "ai_interaction_excerpt": "report/ai_interaction_excerpt.md",
     "report_numeric_appendix": "report/design_report.md#appendix-a"
   },
@@ -374,7 +379,8 @@
     "另行允许阶段取得新完整实现/板级输出/同输入参考比对",
     "官方英文PPT模板、排版与匿名检查"
   ],
-  "operations": {
+  "previous_closeout_operations": {
+    "scope": "track33-source-20261030_snapshot",
     "allowed_performed": [
       "source_and_interface_review",
       "text_and_link_review",
@@ -396,6 +402,13 @@
     "pull_requests_merged": [
       "https://github.com/Citlali6/VisionGrasp-Z19/pull/43"
     ]
+  },
+  "documentation_maintenance": {
+    "baseline_commit": "24d0be3efa29b4dd4783874eed9556e579338ef9",
+    "scope": "product documentation, navigation, required paths and recoverable remote-head consolidation",
+    "record": "docs/maintenance/main-only-20261030.md",
+    "engineering_checks_run": [],
+    "frozen_installation_source_changed": false
   },
   "ai_record": {
     "format": "selected_real_user_assistant_messages_and_original_audit_section",

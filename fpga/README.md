@@ -1,6 +1,6 @@
 # 小亚智分 · Z19 PS/PL 工程索引
 
-先看[四功能聚合工程](system_pspl/README.md)：统一职责、数据流、寄存器、地址与构建入口。它连接硬件像素/PCM算子与PS软件，机械臂执行仍由VM客户端编排。旧镜像及记录按各自profile保存。
+从[四功能集成工程](system_pspl/README.md)了解职责、数据流、寄存器、地址与构建入口。它连接硬件像素/PCM算子与PS软件，机械臂执行由VM客户端编排。各配置的工具版本、镜像与部署状态见[配置与兼容性](../docs/CONFIGURATIONS.md)。
 
 | 模块 | 当前能力与入口 |
 |---|---|
@@ -13,6 +13,4 @@
 | [camera_baremetal](camera_baremetal/README.md) | 保留相机初始化历史验证输入；当前实时视频使用 [Linux 相机](../host/camera_linux/README.md) |
 | [scripts/alinx](scripts/alinx/) | ALINX 板卡 PS 配置；颜色构建使用此共享预设 |
 
-四功能/颜色源码使用Vivado 2020.1；独立MIPI工程保留2020.2_AR75986。指南允许其他工具版本时需说明和复现，现有工程未在推荐的2026.1/2025.2重新构建。PS配置继续来自 [scripts/alinx](scripts/alinx/)，HSV共享核继续保留固定来源与MIT许可，不当作过时文件删除。
-
-颜色固件、MIPI镜像和新四功能profile分别选择，不能拼成同一已运行系统。既有检查入口和报告留作追溯，本轮没有运行仿真、编译、工程生成、综合、实现或设备流程。实际证据统一见[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)，提交目录对照见[产品首页](../README.md)。
+PS配置来自 [scripts/alinx](scripts/alinx/)，HSV共享核保留固定来源与MIT许可。颜色固件、MIPI镜像和四功能profile分别管理；原结果与测量条件见[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)，检查入口见[开发指南](../docs/DEVELOPMENT.md)。
