@@ -14,6 +14,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parent
+DEFAULT_SOURCE = ROOT.parents[1]/'deliverables/dofbot_demo_20261029/payload'
 HOME = Path('/home/yahboom')
 DESTINATION = HOME/'codex_voice_sorting_20261029'
 APP_FILES = (
@@ -29,7 +30,7 @@ class InstallError(RuntimeError):
     pass
 
 
-def verify_source(source=ROOT):
+def verify_source(source=DEFAULT_SOURCE):
     source = Path(source)
     manifest = json.loads((source/'deployment_manifest.json').read_text(encoding='utf-8'))
     if set(manifest.get('files', {})) != set(APP_FILES):
@@ -65,7 +66,7 @@ def active_processes(destination, proc=Path('/proc')):
     return found
 
 
-def check_environment(source=ROOT):
+def check_environment(source=DEFAULT_SOURCE):
     """Only reads dependency files and device links; never opens a device."""
     if sys.platform != 'linux' or Path.home() != HOME or os.getuid() == 0:
         raise InstallError('正式安装请在配套 Ubuntu 虚拟机中以普通 yahboom 用户运行，不要 sudo。')
@@ -161,7 +162,7 @@ def payload(source, destination, home, desktop):
     return planned
 
 
-def install(source=ROOT, *, staging_root=None, check_only=False, proc=Path('/proc')):
+def install(source=DEFAULT_SOURCE, *, staging_root=None, check_only=False, proc=Path('/proc')):
     source = Path(source).resolve()
     manifest = verify_source(source)
     staging = staging_root is not None
@@ -189,7 +190,8 @@ def install(source=ROOT, *, staging_root=None, check_only=False, proc=Path('/pro
         if path.absolute() != path.resolve():
             raise InstallError('安装目标经过符号链接，拒绝覆盖：'+str(path))
     if check_only:
-        return dict(state='checked', destination=str(destination), warnings=warnings, files=len(planned))
+        return dict(state='checked', source=str(source), destination=str(destination),
+                    warnings=warnings, files=len(planned))
     with exclusive_install(destination, staging):
         if active_processes(destination, proc):
             raise InstallError('检测到并发启动，未覆盖安装。')
@@ -215,7 +217,7 @@ def install(source=ROOT, *, staging_root=None, check_only=False, proc=Path('/pro
                 else:
                     path.unlink(missing_ok=True)
             raise
-        report = dict(state='installed', installed_at=time.time(), destination=str(destination),
+        report = dict(state='installed', source=str(source), installed_at=time.time(), destination=str(destination),
                       backup=str(backup), staging=staging, warnings=warnings,
                       files=[str(path) for path in planned], source_files=manifest['files'],
                       backup_files={str(path): str(stored) for path, (stored, _) in originals.items()},
@@ -239,11 +241,13 @@ def install(source=ROOT, *, staging_root=None, check_only=False, proc=Path('/pro
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description='安装定稿版文件；不会启动机械臂或修改当前音量')
+    parser.add_argument('--source', type=Path, default=DEFAULT_SOURCE,
+                        help='安装源目录；默认使用仓库内的冻结演示payload，也可指定独立冻结检出的robot/dofbot目录')
     parser.add_argument('--check', action='store_true', help='只读检查，不写入文件')
     parser.add_argument('--staging-root', type=Path, help='在隔离目录演练安装，不检查/操作系统与硬件')
     args = parser.parse_args(argv)
     try:
-        result = install(staging_root=args.staging_root, check_only=args.check)
+        result = install(source=args.source, staging_root=args.staging_root, check_only=args.check)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         if result['state'] == 'installed':
             print('安装完成，未启动控制程序。正式使用：bash ~/启动垃圾分拣.sh')

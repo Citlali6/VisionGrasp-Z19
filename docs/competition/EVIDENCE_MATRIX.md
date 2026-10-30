@@ -1,6 +1,20 @@
 # 事实、证据与性能指标
 
+本页为[小亚智分](../../README.md)的指标唯一入口，产品/技术/复现路线见[评委导航](judges_guide.md)，环境与配置见[四功能工程表](../../fpga/system_pspl/README.md)。本轮参赛收尾未新增运行结果，下列历史数字与来源保持原归属。
+
 同一数值必须连同条件和证据级别引用。这里的级别描述证据类型，不是比赛评分：**现场**为真实设备记录或现场反馈；**软件**为离线测试/回放；**RTL**为逻辑仿真；**综合**为指定器件及约束的工具报告；**待测**为尚无对应测量。
+
+## 本轮四功能源码（2026-10-30）
+
+| 工程内容 | 可定位源码 | 可报告范围 |
+|---|---|---|
+| 视频通道校正/HSV/mask | [perception_v2](../../fpga/perception_v2/README.md) | 定点算法、背压、帧参数快照和完整PIO源码 |
+| 垃圾识别分类 | [PS模型模块](../../host/app/perception/README.md) | 真实厂商图像调用和业务映射的PS CPU适配；权重、类序和框架资料缺项集中列明 |
+| 视觉定位与候选策略 | [coordinates](../../host/app/perception/coordinates.py)、[ROI RTL](../../fpga/perception_v2/rtl/vg_roi_moments_axis.sv)、[guard adapter](../../host/app/perception/guard_adapter.py) | 质心、框恢复、单应算法、默认语义框/可选颜色对应及原GuardClient规则复用；无外部定位精度结论 |
+| 音频滤波与噪声抑制 | [audio_frontend](../../fpga/audio_frontend/README.md) | DC/63tap FIR/软门、系数设计和USB PCM→Vosk接口源码；无降噪dB或识别收益结论 |
+| 完整工程/软件出口 | [system_pspl](../../fpga/system_pspl/README.md)、[libpspl](../../host/libpspl/README.md) | 新profile、AXI/FIFO、C/ctypes、Tcl、构建入口及PS/VM任务连接 |
+
+上述内容只完成源码与文本/接口审阅，未运行新增代码或工具链。设计100MHz、16kHz采样率、63tap和定点位宽是配置/算法参数；不是Fmax、吞吐或音质测量。下列原有指标保持原版本，不转移给本profile，也不将旧颜色完整设计与旧门控OOC资源当作本次优化前后对比。
 
 ## 可直接引用的已有成果
 
@@ -21,9 +35,9 @@
 | 原颜色链完整实现 | 1,885 LUT、1,936 FF、0 BRAM、6 DSP；WNS 4.580 ns、WHS 0.017 ns | 原颜色镜像布局布线报告；Vivado 2020.1、XCZU19EG-FFVC1760-2、2026-10-22 | [资源](../../deliverables/pl_color_z19/validation/utilization.rpt)、[时序](../../deliverables/pl_color_z19/validation/timing.rpt) |
 | 独立 MIPI 预览 | 1920×1080，757 张不同 JPEG，接收测量 25.1607 fps | 现场；独立相机 profile | [原始记录](../fpga/evidence/2026-10-10/hd-stream-guard30-validation-20261010.json) |
 
-## 新增候选目标门控
+## 原独立候选目标门控的结果
 
-新模块处理候选区域的空间与时序条件，不输出垃圾类别。这里的面积指 `mask_count` 匹配像素数，ROI 使用 PL 像素坐标；抖动指 bbox 四边界相对本段首个合格帧固定锚点的最大绝对差。连续帧指连续提交的合格新帧，序号需严格更新，但不要求相邻数值恰好加一。软件端还需验证来源、任务身份、相机/PL 帧关联和新鲜度；这些元数据并不证明由硬件认证了整幅图像的真实性。
+该模块处理候选区域的空间与时序条件，不输出垃圾类别。以下历史独立记录的面积指 `mask_count` 匹配像素数，ROI 使用 PL 像素坐标；抖动指 bbox 四边界相对本段首个合格帧固定锚点的最大绝对差。连续帧指连续提交的合格新帧，序号需严格更新，但不要求相邻数值恰好加一。软件端还需验证来源、任务身份、相机/PL 帧关联和新鲜度；这些元数据并不证明由硬件认证了整幅图像的真实性。新四功能默认语义适配明示使用 PS 检测框面积 `bbox_area_px`，仅复用原规则与数值槽；该适配没有新的运行结果，不能将此处旧颜色测试外推为全类别验证。
 
 | 项目 | 当前可报告内容 | 证据级别/完成状态 |
 |---|---|---|

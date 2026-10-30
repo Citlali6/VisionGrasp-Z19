@@ -102,13 +102,13 @@ def timeline(events):
     return rows[-40:]
 
 
-def load_view(root, now=None, proc=Path('/proc')):
+def load_view(root, now=None, proc=Path('/proc'), runtime_check=runtime_alive):
     root = Path(root).resolve()
     now = time.time() if now is None else now
     records = root/'records'
     boot = read_json(records/'bootstrap.json')
     status = read_json(records/'status.json')
-    alive = runtime_alive(root, boot, proc)
+    alive = runtime_check(root, boot, proc)
     started = number(boot.get('started_at'))
     try:
         status_fresh = (records/'status.json').stat().st_mtime >= started
@@ -172,6 +172,8 @@ def load_view(root, now=None, proc=Path('/proc')):
     except OSError:
         thumbnail_valid = False
     return dict(online=online, runtime_pid=boot.get('pid') if alive else None, state=state,
+                status_generation=status.get('generation'),
+                status_runtime_session_id=status.get('runtime_session_id'),
                 title=titles.get(state, '等待状态更新'), description=descriptions.get(state, ''),
                 error=status.get('error') or (live.get('camera_error') if matches else None),
                 camera_live=camera_live, image_path=str(preview/'latest.jpg'),

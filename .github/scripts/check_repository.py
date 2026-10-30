@@ -14,6 +14,58 @@ FORBIDDEN = ('AmazingHand', 'pc', 'sim', 'fpga/hand_control', 'fpga/mjc1_fpd',
              'deliverables/local_sources', 'start_virtual_hand.bat', 'start_mjc1_observer.bat')
 LARGE_ASSETS = {'deliverables/voice_usb/voice_usb_package_20261018_v2.zip'}
 TEXT_SUFFIXES = {'.py', '.md', '.json', '.yml', '.yaml', '.toml', '.sh', '.ps1', '.txt'}
+FROZEN_README = 'deliverables/dofbot_demo_20261029/payload/README.md'
+FROZEN_README_SOURCE = {
+    'source_commit': '8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d',
+    'source_path': 'robot/dofbot/README.md',
+    'source_git_blob': 'b4f6a9d51e0246ad063709516393d4fa27fdff06',
+    'sha256': 'f2e2613b3fdc1f93c79b48e22cff861d8bfd311b190c2ec9c4704f457f972c3b',
+}
+
+
+def markdown_prose(text):
+    """Remove paired backtick/tilde fences without treating shorter runs as closers."""
+    prose, fence = [], None
+    for line in text.splitlines(keepends=True):
+        match = re.match(r'^ {0,3}(`{3,}|~{3,})([^\r\n]*)[\r\n]*$', line)
+        if fence is None:
+            if match and not (match[1][0] == '`' and '`' in match[2]):
+                fence = match[1]
+            else:
+                prose.append(line)
+                continue
+        elif match and match[1] == fence and not match[2].strip():
+            fence = None
+        # Preserve separation around omitted blocks, including unclosed fences.
+        if line.endswith('\n'):
+            prose.append('\n')
+    return ''.join(prose)
+
+
+def markdown_link_base(path, errors):
+    """Use the original context only for the byte-pinned historical README."""
+    if path.relative_to(ROOT).as_posix() != FROZEN_README:
+        return path.parent
+    try:
+        provenance = json.loads((ROOT/'deliverables/dofbot_demo_20261029/provenance.json').read_text(encoding='utf-8'))
+        if not isinstance(provenance, dict) or provenance.get('source_commit') != FROZEN_README_SOURCE['source_commit']:
+            raise ValueError('source_commit does not match the frozen baseline')
+        records = provenance.get('files')
+        if not isinstance(records, list):
+            raise ValueError('files must be a list')
+        matching = [record for record in records if isinstance(record, dict) and record.get('path') == 'payload/README.md']
+        if len(matching) != 1:
+            raise ValueError('expected exactly one payload/README.md record')
+        record = matching[0]
+        for key in ('source_path', 'source_git_blob', 'sha256'):
+            if record.get(key) != FROZEN_README_SOURCE[key]:
+                raise ValueError(key+' does not match the frozen baseline')
+        if hashlib.sha256(path.read_bytes()).hexdigest() != FROZEN_README_SOURCE['sha256']:
+            raise ValueError('README bytes differ from the frozen SHA-256')
+    except (OSError, UnicodeError, ValueError) as error:
+        errors.append('Invalid frozen README provenance: '+str(error))
+        return None
+    return (ROOT/FROZEN_README_SOURCE['source_path']).parent
 
 
 def check_guard_evidence(errors):
@@ -49,7 +101,10 @@ def main():
         if re.search(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{50,}', data):
             errors.append('Possible credential material: '+relative)
         if path.suffix != '.md': continue
-        prose = re.sub(r'^```[^\n]*\n.*?^```\s*$', '', data, flags=re.M | re.S)
+        link_base = markdown_link_base(path, errors)
+        if link_base is None:
+            continue
+        prose = markdown_prose(data)
         for target in re.findall(r'!?\[[^\]\n]*\]\(([^)\n]+)\)', prose):
             target = target.strip()
             if target.startswith('<'): target = target.split('>')[0][1:]
@@ -58,7 +113,7 @@ def main():
             if parsed.scheme or target.startswith(('#', '//')): continue
             local = unquote(parsed.path)
             if local:
-                linked = Path(os.path.abspath(path.parent/local))
+                linked = Path(os.path.abspath(link_base/local))
                 if not linked.exists():
                     errors.append('Broken local link: '+relative+' -> '+target)
                 elif linked.is_relative_to(ROOT):

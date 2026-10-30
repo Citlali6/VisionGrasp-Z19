@@ -1,0 +1,26 @@
+/* Source fragment for the NEW profile only. Integrator must reserve these
+ * ranges, include under the matching PL bus, and enable uio_pdrv_genirq with
+ * its generic-uio match. Not installed or applied by this delivery. */
+/ {
+    pspl_pio_bus {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+        pspl_video: video@a1000000 {
+            compatible = "generic-uio";
+            reg = <0x0 0xa1000000 0x0 0x1000>;
+            linux,uio-name = "visiongrasp-video-v1";
+        };
+        pspl_audio: audio@a1010000 {
+            compatible = "generic-uio";
+            reg = <0x0 0xa1010000 0x0 0x1000>;
+            linux,uio-name = "visiongrasp-audio-v1";
+        };
+        pspl_guard: guard@a1020000 {
+            compatible = "generic-uio";
+            reg = <0x0 0xa1020000 0x0 0x1000>;
+            linux,uio-name = "visiongrasp-guard-v1";
+        };
+    };
+};

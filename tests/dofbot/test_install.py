@@ -1,13 +1,16 @@
 from pathlib import Path
+from contextlib import redirect_stdout
 import importlib.util
+import io
 import json
 import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
 
-SOURCE = Path(__file__).resolve().parents[2]/'robot/dofbot'
-spec = importlib.util.spec_from_file_location('dofbot_install', SOURCE/'install.py')
+REPOSITORY = Path(__file__).resolve().parents[2]
+SOURCE = REPOSITORY/'deliverables/dofbot_demo_20261029/payload'
+spec = importlib.util.spec_from_file_location('dofbot_install', REPOSITORY/'robot/dofbot/install.py')
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
 
@@ -30,6 +33,22 @@ class InstallerTests(unittest.TestCase):
         with patch.object(installer.subprocess, 'run', side_effect=AssertionError('Unexpected command')):
             result = self.install(check_only=True)
         self.assertEqual(result['state'], 'checked')
+        self.assertEqual(result['source'], str(SOURCE.resolve()))
+        self.assertFalse(self.stage.exists())
+
+    def test_cli_accepts_an_independent_frozen_source_directory(self):
+        source = self.root/'independent-frozen-checkout/robot/dofbot'
+        source.mkdir(parents=True)
+        for name in installer.PAYLOAD_FILES:
+            shutil.copyfile(SOURCE/name, source/name)
+        output = io.StringIO()
+        with patch.object(installer.subprocess, 'run', side_effect=AssertionError('Unexpected command')):
+            with redirect_stdout(output):
+                code = installer.main(['--source', str(source), '--staging-root', str(self.stage), '--check'])
+        self.assertEqual(code, 0)
+        result = json.loads(output.getvalue())
+        self.assertEqual(result['state'], 'checked')
+        self.assertEqual(result['source'], str(source.resolve()))
         self.assertFalse(self.stage.exists())
 
     def test_staging_install_writes_only_payload_and_compatible_launchers(self):
@@ -38,6 +57,7 @@ class InstallerTests(unittest.TestCase):
         self.assertFalse(result['started_runtime'])
         self.assertFalse(result['opened_devices'])
         self.assertFalse(result['changed_volume'])
+        self.assertEqual(result['source'], str(SOURCE.resolve()))
         for name in installer.PAYLOAD_FILES:
             self.assertEqual((self.destination/name).read_bytes(), (SOURCE/name).read_bytes())
         start = (self.home/'启动垃圾分拣.sh').read_text(encoding='utf-8')
@@ -54,7 +74,7 @@ class InstallerTests(unittest.TestCase):
         for name in installer.PAYLOAD_FILES:
             shutil.copyfile(SOURCE/name, source/name)
         (source/'standalone_voice.py').write_text('changed = True\n')
-        with self.assertRaisesRegex(installer.InstallError, '源码校验失败'):
+        with self.assertRaisesRegex(installer.InstallError, r'^源码校验失败：standalone_voice\.py$'):
             self.install(source=source)
         self.assertFalse(self.stage.exists())
 
@@ -64,7 +84,7 @@ class InstallerTests(unittest.TestCase):
         manifest = json.loads((SOURCE/'deployment_manifest.json').read_text(encoding='utf-8'))
         manifest['files']['../unrelated.py'] = '0'*64
         (source/'deployment_manifest.json').write_text(json.dumps(manifest))
-        with self.assertRaises(installer.InstallError):
+        with self.assertRaisesRegex(installer.InstallError, '^源码清单与安装文件列表不一致。$'):
             self.install(source=source)
         self.assertFalse(self.stage.exists())
 
@@ -73,7 +93,7 @@ class InstallerTests(unittest.TestCase):
         process.mkdir()
         command = '\0'.join(['/usr/bin/python3', '-B', str(self.destination/'standalone_runtime.py'), '--execute'])
         (process/'cmdline').write_bytes(command.encode())
-        with self.assertRaisesRegex(installer.InstallError, '仍在运行'):
+        with self.assertRaisesRegex(installer.InstallError, r'^现有实例仍在运行（PID \[123\]）'):
             self.install()
         self.assertFalse(self.stage.exists())
 
@@ -81,7 +101,7 @@ class InstallerTests(unittest.TestCase):
         process = self.proc/'234'
         process.mkdir()
         (process/'cmdline').write_bytes(('/usr/bin/python3\0-B\0'+str(self.destination/'dashboard.py')).encode())
-        with self.assertRaises(installer.InstallError):
+        with self.assertRaisesRegex(installer.InstallError, r'^现有实例仍在运行（PID \[234\]）'):
             self.install()
         self.assertFalse(self.stage.exists())
 

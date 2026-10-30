@@ -1,0 +1,16 @@
+{
+  "schema": "visiongrasp.pspl-profile/1",
+  "profile": "z19-pspl-four-functions-v1",
+  "part": "xczu19eg-ffvc1760-2-i",
+  "vivado_version": "2020.1",
+  "ps_config": "../scripts/alinx/ps_config.tcl",
+  "clock_mhz": 100,
+  "clock_source": "ps0/pl_clk1",
+  "devices": {
+    "video": {"base": "0xA1000000", "range": 4096, "id": "0x56475632", "protocol": 1},
+    "audio": {"base": "0xA1010000", "range": 4096, "id": "0x56474132", "protocol": 1},
+    "guard": {"base": "0xA1020000", "range": 4096, "id": "0x31444753", "protocol": 65536}
+  },
+  "transport": "Linux UIO map0 / 32-bit ordered MMIO / FIFO PIO",
+  "deployment": "new XSA, bitstream and device tree required; not enabled by this source delivery"
+}

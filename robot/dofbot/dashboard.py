@@ -61,9 +61,10 @@ def pill(p, rect, value, ink=ACCENT):
 
 
 class Dashboard(QWidget):
-    def __init__(self, root=ROOT, activation_token=None):
+    def __init__(self, root=ROOT, activation_token=None, view_loader=load_view):
         super().__init__()
         self.root = Path(root)
+        self.view_loader = view_loader
         self.records = self.root/'records'
         self.records.mkdir(parents=True, exist_ok=True)
         self.started_at = time.time()
@@ -103,7 +104,7 @@ class Dashboard(QWidget):
 
     def refresh(self):
         try:
-            view = load_view(self.root)
+            view = self.view_loader(self.root)
             if view['camera_live']:
                 if view['image_key'] != self.last_image_key:
                     pixmap = QPixmap(view['image_path'])

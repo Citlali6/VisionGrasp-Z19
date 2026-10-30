@@ -1,0 +1,54 @@
+/* Derived from fpga/system_pspl/registers.json. */
+#ifndef VG_PSPL_REGISTERS_H
+#define VG_PSPL_REGISTERS_H
+#define PSPL_R_ID 0x000u
+#define PSPL_R_VERSION 0x004u
+#define PSPL_R_CAPABILITIES 0x008u
+#define PSPL_R_CONTROL 0x00cu
+#define PSPL_R_STATUS 0x010u
+#define PSPL_R_ERROR 0x014u
+#define PSPL_R_IN_COUNT 0x018u
+#define PSPL_R_OUT_COUNT 0x01cu
+#define PSPL_R_INPUT 0x020u
+#define PSPL_R_OUTPUT 0x024u
+#define PSPL_R_CONFIG_VERSION 0x028u
+#define PSPL_R_COMPLETE 0x02cu
+#define PSPL_V_WIDTH 0x040u
+#define PSPL_V_HEIGHT 0x044u
+#define PSPL_V_GAIN_R 0x048u
+#define PSPL_V_GAIN_G 0x04cu
+#define PSPL_V_GAIN_B 0x050u
+#define PSPL_V_BIAS_R 0x054u
+#define PSPL_V_BIAS_G 0x058u
+#define PSPL_V_BIAS_B 0x05cu
+#define PSPL_V_HSV_MIN 0x060u
+#define PSPL_V_HSV_MAX 0x064u
+#define PSPL_V_ROI_XMIN 0x068u
+#define PSPL_V_ROI_YMIN 0x06cu
+#define PSPL_V_ROI_XMAX 0x070u
+#define PSPL_V_ROI_YMAX 0x074u
+#define PSPL_V_CONFIG_ID 0x078u
+#define PSPL_V_FRAME 0x080u
+#define PSPL_V_COUNT 0x084u
+#define PSPL_V_XMIN 0x088u
+#define PSPL_V_YMIN 0x08cu
+#define PSPL_V_XMAX 0x090u
+#define PSPL_V_YMAX 0x094u
+#define PSPL_V_SUM_X_LO 0x098u
+#define PSPL_V_SUM_X_HI 0x09cu
+#define PSPL_V_SUM_Y_LO 0x0a0u
+#define PSPL_V_SUM_Y_HI 0x0a4u
+#define PSPL_V_VALID 0x0a8u
+#define PSPL_V_CLIP_COUNT 0x0acu
+#define PSPL_A_COEFF_INDEX 0x040u
+#define PSPL_A_COEFF_VALUE 0x044u
+#define PSPL_A_GATE_OPEN 0x048u
+#define PSPL_A_GATE_CLOSE 0x04cu
+#define PSPL_A_ATTACK 0x050u
+#define PSPL_A_RELEASE 0x054u
+#define PSPL_A_FLAGS 0x058u
+#define PSPL_A_CONFIG_ID 0x05cu
+#define PSPL_A_COEFF_LOADED 0x060u
+#define PSPL_A_CLIP_COUNT 0x064u
+#define PSPL_A_OCCUPANCY 0x068u
+#endif

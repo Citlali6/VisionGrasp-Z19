@@ -1,0 +1,44 @@
+{
+  "schema": "visiongrasp.pspl-registers/1",
+  "word_bits": 32,
+  "byte_order": "little",
+  "common": {
+    "ID": 0, "VERSION": 4, "CAPABILITIES": 8, "CONTROL": 12,
+    "STATUS": 16, "ERROR": 20, "IN_COUNT": 24, "OUT_COUNT": 28,
+    "INPUT": 32, "OUTPUT": 36, "CONFIG_VERSION": 40, "COMPLETE": 44
+  },
+  "video": {
+    "WIDTH": 64, "HEIGHT": 68, "GAIN_R": 72, "GAIN_G": 76, "GAIN_B": 80,
+    "BIAS_R": 84, "BIAS_G": 88, "BIAS_B": 92, "HSV_MIN": 96, "HSV_MAX": 100,
+    "ROI_XMIN": 104, "ROI_YMIN": 108, "ROI_XMAX": 112, "ROI_YMAX": 116,
+    "CONFIG_ID": 120, "FRAME": 128, "COUNT": 132, "XMIN": 136,
+    "YMIN": 140, "XMAX": 144, "YMAX": 148, "SUM_X_LO": 152,
+    "SUM_X_HI": 156, "SUM_Y_LO": 160, "SUM_Y_HI": 164, "VALID": 168,
+    "CLIP_COUNT": 172
+  },
+  "audio": {
+    "COEFF_INDEX": 64, "COEFF_VALUE": 68, "GATE_OPEN": 72, "GATE_CLOSE": 76,
+    "ATTACK": 80, "RELEASE": 84, "FLAGS": 88, "CONFIG_ID": 92,
+    "COEFF_LOADED": 96, "CLIP_COUNT": 100, "OCCUPANCY": 104
+  },
+  "control_bits": {"ENABLE": 0, "BYPASS": 1, "RESET": 2, "COMMIT": 3, "ACK": 4},
+  "status_bits": {"INPUT_READY": 0, "OUTPUT_VALID": 1, "BUSY": 2, "CONFIG_VALID": 3, "SNAPSHOT": 4},
+  "pixel_bits": {"R_LSB": 16, "G_LSB": 8, "B_LSB": 0, "SOF": 24, "EOL": 25, "MASK": 26},
+  "audio_flags": {"DC": 0, "FIR": 1, "GATE": 2},
+  "audio_error_bits": {
+    "WRITE_REJECTED": 0, "READ_REJECTED": 1, "INPUT_FIFO_FULL": 2,
+    "OUTPUT_FIFO_EMPTY": 3, "CONTROL_REJECTED": 4
+  },
+  "video_error_bits": {
+    "CONFIG_REJECTED": 0, "MALFORMED_FRAME": 1, "INPUT_REJECTED": 2,
+    "OUTPUT_FIFO_EMPTY": 3, "ACCESS_REJECTED": 4
+  },
+  "video_valid_bits": {"COMPLETE_VALID_FRAME": 0, "HAS_MATCH_PIXELS": 1},
+  "audio_occupancy_fields": {"INPUT_LSB": 0, "OUTPUT_LSB": 16, "WIDTH": 5},
+  "counter_contract": {
+    "INPUT_OUTPUT_COMPLETE": "uint32 modular counters, reset by session reset",
+    "CLIP_COUNT": "uint32 saturating; audio counts per-stage clipping events, video counts clipped pixels",
+    "ERROR": "write-one-to-clear; new events dominate simultaneous clear",
+    "TIMEOUT": "PS C monotonic deadline returns ETIMEDOUT and poisons session; no PL timeout counter"
+  }
+}

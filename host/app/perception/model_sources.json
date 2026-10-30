@@ -1,0 +1,47 @@
+{
+  "schema": "visiongrasp.ps-model-sources/1",
+  "source_review_date": "2026-10-30",
+  "redistributed": false,
+  "sources": [
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/garbage_identify.py",
+      "sha256": "37716efc78d87e84be0cdf0231b82284079c25a7f682a0abd7b0d62e6518d741",
+      "read_from": "Existing owner-authorized vendor-source ZIP backup",
+      "observed": "OpenCV resize 640x480 BGR; YOLO(best.pt, task=detect); model(img, verbose=False, device=device, conf=0.65); model.names; boxes.xyxy and xywhn; excludes eight labels; (b,-a) legacy IK proxy"
+    },
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/single_garbage_identify.py",
+      "sha256": "60b414d3f02237b303222c6dcc85e048d66d584842b003d52af743814915649e",
+      "read_from": "Existing owner-authorized vendor-source ZIP backup",
+      "observed": "Sixteen label-to-item/category business mappings, fixed-position category actions; not neural model.names order"
+    },
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/garbage_grap.py",
+      "sha256": "7be829d73138a11fdb19f347bd3c0c1bedd543836c4c24681598684f72301d5b",
+      "read_from": "Existing owner-authorized vendor-source ZIP backup",
+      "observed": "External motion dependency; not imported by PS detector"
+    }
+  ],
+  "missing_external_artifacts": [
+    "/home/yahboom/ultralytics/ultralytics/data/yahboom_data/best.pt and its SHA-256",
+    "Matching ordered model.names or training data YAML",
+    "Matching ultralytics source including local changes, predictor, augment, NMS and default configuration hashes",
+    "Exact VM Python/OS/architecture and ultralytics, torch, numpy, cv2 library versions",
+    "Actual model stride, predictor image_size, letterbox fill/rect behavior, NMS IoU and max_det from matching framework/model configuration",
+    "Separate AArch64 Linux target Python/libc/library version record and legally supplied compatible native libraries; source-to-target compatibility notes"
+  ],
+  "missing_reason": "Companion VM was not powered on during an existing read-only guest file-copy attempt. It was not started. No local audited framework/weight backup was available.",
+  "backend_contract": {
+    "cpu_inference": true,
+    "batch": 1,
+    "external_input": "RGB888 uint8 HWC",
+    "vendor_outer_resize": [640, 480],
+    "backend_input": "BGR uint8 HWC numpy array",
+    "confidence": 0.65,
+    "normalization_letterbox_nms": "Owned by actual hash-pinned Ultralytics predictor; no duplicate normalization or NMS",
+    "unavailable_parameters": "model class order, actual model architecture, source and target environment versions, actual stride, inner image_size, actual letterbox fill/rect, NMS IoU and max_det require matching external artifacts",
+    "deployment_contract": "contract.example.json contains null for unavailable facts and is intentionally not an enrolled or runnable manifest",
+    "source_target_distinction": "VM reference versions are provenance, not an AArch64 binary installation. Target architecture/Python/libc/library versions are recorded separately and checked at explicit load. Matching Python framework files are checked by the same audited inventory at enrollment and runtime."
+  },
+  "delivery_status": "Real model-calling source supplied; runtime requires enrollment and explicitly fails on absent/mismatched dependencies. No model was loaded, exported or executed."
+}

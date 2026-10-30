@@ -1,0 +1,59 @@
+{
+  "schema": "visiongrasp.vm-backend-contract/1",
+  "weights_sha256": null,
+  "names_sha256": null,
+  "names": null,
+  "framework_files": {
+    "REQUIRED_ACTUAL_RELATIVE_FRAMEWORK_FILE": null
+  },
+  "source_environment": {
+    "machine": null,
+    "python": null,
+    "os": null,
+    "versions": {
+      "ultralytics": null,
+      "torch": null,
+      "numpy": null,
+      "cv2": null
+    }
+  },
+  "target_environment": {
+    "machine": null,
+    "python": null,
+    "os": null,
+    "libc": {
+      "name": null,
+      "version": null
+    },
+    "versions": {
+      "ultralytics": null,
+      "torch": null,
+      "numpy": null,
+      "cv2": null
+    }
+  },
+  "compatibility_notes": null,
+  "image_size": null,
+  "model_stride": null,
+  "confidence": 0.65,
+  "iou": null,
+  "max_detections": null,
+  "preprocess": {
+    "input": "RGB888",
+    "backend_input": "BGR_uint8_HWC",
+    "vendor_resize": [640, 480],
+    "batch": 1,
+    "backend": "ultralytics_numpy_predictor",
+    "normalization": "backend_divide_255",
+    "tensor_layout": "NCHW",
+    "tensor_color": "RGB",
+    "tensor_dtype": "float32",
+    "letterbox_fill": null,
+    "rect": null,
+    "half": false,
+    "augment": false,
+    "agnostic_nms": false,
+    "backend_nms": true,
+    "output": "post_nms_xyxy_conf_class"
+  }
+}
