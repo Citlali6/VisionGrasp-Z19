@@ -19,14 +19,17 @@
     "inherited_source_commit": "7cf7513a42d5b5f3b3c66eec1e950786b6478b83",
     "initial_four_function_commit": "9dc4df9cce400b9fe9c8400fe991a690e465d663",
     "semantic_association_fix_commit": "0aa5adc6917d58b4a50d9e93d375d28d5b2f9a1e",
-    "content_snapshot_commit": "4fb45958d3a7cef679e5f0ad534ea70aee1e7a89",
-    "content_snapshot_scope": "全部工程源码、产品导航、报告、Skill、证据及恢复清单；本manifest作为随后仅元数据提交加入，不伪造自引用SHA。最终提交身份以Git中包含此manifest的交付分支HEAD为准。",
+    "content_snapshot_commit": "562ba8e5b5a63780a715fe0b214a8ad4a7d7f901",
+    "content_snapshot_scope": "全部工程源码、冻结安装契约、产品/报告/真实交互/Skill及已批准CI分层；本manifest在随后仅元数据提交加入，最终身份由包含它的main发布标签解析。",
     "observed_main_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-    "main_integration": "not_merged",
-    "pull_request": "not_created_due_to_forbidden_automatic_checks",
+    "main_integration": "pending_normal_pr",
+    "pull_request": "not_created_yet_after_approved_workflow_split",
     "archive_tag": "archive/20261030/plan",
     "archive_tag_object": "86743168741c8b35eb7084227b3dff15fe95e3d8",
-    "archive_target_commit": "e625341676c83495b3fb225b31064b3fcf1fbb18"
+    "archive_target_commit": "e625341676c83495b3fb225b31064b3fcf1fbb18",
+    "audit_baseline_commit": "19a09b90b5100dc99c5a5b3ecf07853063c3a011",
+    "frozen_install_contract_fix_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
+    "recovery_inventory": "docs/competition/branch_inventory.csv"
   },
   "source_profile": {
     "id": "z19_pspl_four_functions",
@@ -101,8 +104,14 @@
     "install_source_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
     "selection": "docs/QUICKSTART.md",
     "deployment_manifest": "robot/dofbot/deployment_manifest.json",
-    "rule": "从独立冻结检出安装；本源码包含新可选界面扩展，不能替换原manifest哈希或覆盖现场。原串口语音/VM模型/SDK动作不经过新PCM滤波链。",
-    "deployment_changed": false
+    "rule": "当前安装器和默认测试共同选择独立冻结payload；15文件保持8a2原始字节，12项应用符合原manifest。--source可明确指定完整独立冻结目录，报告保留source；新Dashboard源码不进入原安装包，现场部署未更新。",
+    "deployment_changed": false,
+    "payload_path": "deliverables/dofbot_demo_20261029/payload",
+    "payload_provenance": "deliverables/dofbot_demo_20261029/provenance.json",
+    "installer_path": "robot/dofbot/install.py",
+    "installer_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
+    "payload_file_count": 15,
+    "application_hash_count": 12
   },
   "existing_artifacts": [
     {
@@ -248,6 +257,22 @@
       "profile": "actual_vm_demonstration_screenshot",
       "source_version": "2026-10-29",
       "new_profile_artifact": false
+    },
+    {
+      "path": "deliverables/dofbot_demo_20261029/provenance.json",
+      "sha256": "1654108c07e00bcef84c1931c3056dc25ce674e3b9b0d07b11820b95d6c71b30",
+      "bytes": 5057,
+      "profile": "frozen_vm_payload_snapshot",
+      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
+      "new_profile_artifact": false
+    },
+    {
+      "path": "deliverables/dofbot_demo_20261029/payload/deployment_manifest.json",
+      "sha256": "23de093ded945fcaef432a84935468e4bcf286f837bf7b539d1aeb1fef22b895",
+      "bytes": 3310,
+      "profile": "frozen_vm_payload_snapshot",
+      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
+      "new_profile_artifact": false
     }
   ],
   "existing_archive_entries": [
@@ -334,7 +359,9 @@
       "skill/readonly_observability/SKILL.md"
     ],
     "release_inventory": "docs/competition/release_inventory.md",
-    "branch_inventory": "docs/competition/branch_inventory.csv"
+    "branch_inventory": "docs/competition/branch_inventory.csv",
+    "ai_interaction_excerpt": "report/ai_interaction_excerpt.md",
+    "report_numeric_appendix": "report/design_report.md#appendix-a"
   },
   "remaining_conditions": [
     "队伍初级组报名信息确认",
@@ -342,9 +369,7 @@
     "新profile镜像/UIO/匹配Linux与原生依赖",
     "匹配标定与任务词典覆盖",
     "另行允许阶段取得新完整实现/板级输出/同输入参考比对",
-    "真实原始AI交互导出及准确模型元数据",
-    "官方英文PPT模板、排版与匿名检查",
-    "自动PR/main检查与本轮禁跑的冲突；未改变CI或保护"
+    "官方英文PPT模板、排版与匿名检查"
   ],
   "operations": {
     "allowed_performed": [
@@ -357,9 +382,33 @@
     "engineering_checks_run": [],
     "local_branches_deleted": 4,
     "remote_heads_deleted": 0,
-    "archive_tags_pushed": 1,
+    "archive_tags_pushed": 19,
     "pr34": "kept_open_draft_due_to_unique_and_uncommitted_work",
-    "ci_or_protection_changed": false,
-    "hardware_or_vm_access_performed": false
+    "hardware_or_vm_access_performed": false,
+    "ci_configuration_changed": true,
+    "branch_protection_changed": false
+  },
+  "ai_record": {
+    "format": "selected_real_user_assistant_messages_and_original_audit_section",
+    "message_count": 11,
+    "model_field": "gpt-6.1-sol",
+    "timestamp_format": "UTC ISO 8601",
+    "provenance": "real current-project JSONL; raw message SHA-256 and line numbers; private source records retained outside Git",
+    "private_content_removed": [
+      "local absolute paths",
+      "private attachment links and identifiers"
+    ],
+    "internal_reasoning_exported": false
+  },
+  "ci": {
+    "owner_separately_approved": true,
+    "automatic_workflow": ".github/workflows/source_review.yml",
+    "automatic_scope": "standard Git text/path/frozen blob checks only",
+    "manual_workflow": ".github/workflows/ci.yml",
+    "original_runtime_job_commands_preserved": true,
+    "runtime_dispatches_performed": 0,
+    "branch_protection_changed": false,
+    "required_status_contexts_changed": false,
+    "source_check_is_runtime_validation": false
   }
 }
