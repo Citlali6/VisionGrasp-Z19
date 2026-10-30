@@ -1,0 +1,134 @@
+{
+  "schema": "visiongrasp.dofbot-external-dependencies/1",
+  "supported_environment": {
+    "os": "Ubuntu 22.04",
+    "ros": "Humble",
+    "python": "3.10",
+    "user": "yahboom",
+    "profile": "Existing DOFBOT SE companion VM; not a generic Ubuntu installer"
+  },
+  "files": [
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/single_garbage_identify.py",
+      "sha256": "60b414d3f02237b303222c6dcc85e048d66d584842b003d52af743814915649e",
+      "provided_by": "DOFBOT SE companion VM"
+    },
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/garbage_identify.py",
+      "sha256": "37716efc78d87e84be0cdf0231b82284079c25a7f682a0abd7b0d62e6518d741",
+      "provided_by": "DOFBOT SE companion VM"
+    },
+    {
+      "path": "/home/yahboom/colcon_ws/src/dofbot_garbage_yolov11/garbage_grap.py",
+      "sha256": "7be829d73138a11fdb19f347bd3c0c1bedd543836c4c24681598684f72301d5b",
+      "provided_by": "DOFBOT SE companion VM"
+    },
+    {
+      "path": "/home/yahboom/colcon_ws/install/Arm_Lib/lib/python3.10/site-packages/Arm_Lib/Arm_Lib.py",
+      "sha256": "c5ffe6b11d7ab18cbf5e4d6760d40f678db504884d6eb757c11a231cf8270d2f",
+      "provided_by": "Serial Arm_Lib SDK in companion VM"
+    },
+    {
+      "path": "/home/yahboom/rosmaster/camera.py",
+      "sha256": "410c89474b151ed39f57560ed64233df8548675cb8a08a7e496480dad52c5b8a",
+      "provided_by": "Companion VM camera adapter"
+    },
+    {
+      "path": "/opt/ros/humble/setup.bash",
+      "provided_by": "Companion VM; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/dofbot_ws/install/setup.bash",
+      "provided_by": "Companion VM; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/LargeModel_ws/install/setup.bash",
+      "provided_by": "Companion VM; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/dofbot_ws/install/dofbot_info/lib/dofbot_info/dofbot_server",
+      "provided_by": "Companion VM; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/ultralytics/ultralytics/data/yahboom_data/best.pt",
+      "provided_by": "Companion VM; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer0.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer94.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer95.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer96.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer97.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer98.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer99.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer100.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer101.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer102.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer103.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer104.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer105.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer106.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer107.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer108.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    },
+    {
+      "path": "/home/yahboom/speech_music/answer109.mp3",
+      "provided_by": "Companion VM Chinese audio; not redistributed"
+    }
+  ],
+  "devices": [
+    "/dev/myserial",
+    "/dev/myspeech",
+    "/dev/v4l/by-id/usb-Sonix_Technology_Co.__Ltd._USB_2.0_Camera-video-index0"
+  ],
+  "audio_sink": "alsa_output.usb-C-Media_Electronics_Inc._USB_Audio_Device-00.analog-stereo",
+  "validated_demo_volume_percent": 75,
+  "english_audio": "answer0_en.mp3 and answer94_en.mp3 through answer109_en.mp3 are additionally required for English wake IDs; Chinese flow is the validated default",
+  "redistribution": "This repository does not redistribute the SDK, detector, model, camera adapter or audio assets. Original dependencies retain their own terms."
+}

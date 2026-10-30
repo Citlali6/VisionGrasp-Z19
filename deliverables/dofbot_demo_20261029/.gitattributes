@@ -1,0 +1,2 @@
+# Preserve the original frozen payload bytes on every platform.
+payload/** -text

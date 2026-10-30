@@ -20,7 +20,7 @@
 
 | 配置 | 源码/产物版本与工具 | 环境及复现选择 |
 |---|---|---|
-| 现用 VM 演示 | 冻结源码 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；原部署清单对应其文件哈希 | Ubuntu VM 原 ROS/SDK、相机、串口语音和配套模型；从独立冻结检出安装，不用当前源码替换校验清单 |
+| 现用 VM 演示 | 冻结源码 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，15文件原始payload随仓库保存；原部署清单不变 | Ubuntu VM 原 ROS/SDK、相机、串口语音和配套模型；当前安装器默认选择冻结payload，`--source`可指定独立冻结检出 |
 | 原 Z19 颜色/语音/网格 | Vivado/Vitis 2020.1；版本/bit/XSA 对应旧 deliverables manifest | 独立 PS Linux/颜色镜像；旧 FPS/延迟/资源仅属于其原配置 |
 | 独立 MIPI/裸机相机 | Vivado/Vitis 2020.2_AR75986，见 camera_hw manifest | IMX214/原 BSP 与独立镜像；不与颜色/四功能合并镜像 |
 | 独立候选门控 | 原 RTL 仿真与 OOC 记录，见 sort_guard/validation | 记录范围为独立模块，不是本 profile 完整实现或上板 |

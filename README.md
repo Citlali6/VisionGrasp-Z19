@@ -91,7 +91,7 @@ Z19 PS 负责采集、系统接口、模型和坐标解释；PL 负责固定精�
 
 ## 选择配置后再复现
 
-先读[快速开始的配置选择](docs/QUICKSTART.md)。现用演示安装使用单独的冻结提交 `8a2a6fd`；四功能源码使用本收尾分支，并按其依赖和独立入口准备。两类安装不能混用清单或覆盖现用 VM。
+先读[快速开始的配置选择](docs/QUICKSTART.md)。当前安装器默认读取仓库内[冻结演示安装源](deliverables/dofbot_demo_20261029/README.md)，15个文件逐字节来自 `8a2a6fd`；新四功能源码按独立入口准备。原部署清单不改写，现用 VM 未更新。
 
 本候选发布位于 `source/track33-closeout-20261030`。[提交清单](deliverables/submission/manifest.json)记录源提交、profile、产物来源、报告和技能入口；main 的实际整合状态见[发布清单](docs/competition/release_inventory.md)，分支推送不代表 main 已更新。
 

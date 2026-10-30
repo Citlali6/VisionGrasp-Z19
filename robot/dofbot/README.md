@@ -5,7 +5,7 @@
 | 现用固定工位演示 | 本页原安装/启动流程，对应冻结提交 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；不依赖新PS/PL服务 |
 | 四功能源码的可选VM客户端 | [PSPL.md](PSPL.md)：独立配置/输出、同一机械臂互斥锁、真实PS任务与只读远端预览；未替换现场部署 |
 
-原 `deployment_manifest.json` 保留冻结演示文件哈希。候选分支新增展示注入接口后不能再冒充该字节基线；旧安装器继续严格核对。因此复现本页旧演示时先按[快速开始](../../docs/QUICKSTART.md)检出指定提交，新入口使用当前候选源码并按PSPL说明准备。不要将新旧安装路径混写。
+原 `deployment_manifest.json` 保留冻结演示文件哈希。当前安装器默认读取独立[冻结payload](../../deliverables/dofbot_demo_20261029/README.md)，15个文件逐字节来自 `8a2a6fd`，开发目录的新展示接口不进入原演示安装。`--source` 可显式选择完整独立冻结检出，检查和安装报告记录实际目录。测试导入当前安装器并使用同一payload，不跳过原哈希断言。复现选择见[快速开始](../../docs/QUICKSTART.md)，新入口使用当前源码与PSPL说明。
 
 固定工位下的单次语音任务执行与实时展示系统。每轮遵循：**唤醒 → 启动口令 → 稳定识别 → 分类播报完成 → 抓取投放 → 等待重新唤醒**。
 
@@ -15,7 +15,7 @@
 
 当前版本支持原 DOFBOT SE 配套 **Ubuntu 22.04、ROS 2 Humble、Python 3.10、普通 yahboom 用户**环境。它不是通用 Ubuntu 上从零安装模型、SDK 和 ROS 的脚本。完整依赖路径与已验证源码哈希见 [external_dependencies.json](external_dependencies.json)。
 
-以下是未来在配套VM的冻结提交工作区中使用的命令，本轮收尾未执行安装或程序：
+以下是未来从当前仓库在配套VM使用的命令，默认安装仓库内的冻结payload；本轮未执行安装或程序：
 
 ```bash
 bash robot/dofbot/install.sh --check

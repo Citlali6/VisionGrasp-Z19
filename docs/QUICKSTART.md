@@ -4,11 +4,11 @@
 
 | 配置 | 源码与复现方式 | 使用条件 |
 |---|---|---|
-| 现用VM/DOFBOT固定工位演示 | 下文冻结提交 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；使用原安装器/启动器 | 原Ubuntu22.04/ROS2/SDK/模型/音频环境；保留现场配置 |
+| 现用VM/DOFBOT固定工位演示 | 当前安装器默认读取仓库内冻结payload，文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` | 原Ubuntu22.04/ROS2/SDK/模型/音频环境；保留现场配置 |
 | 原Z19颜色/语音/网格 | [颜色工程](../fpga/color_locator/README.md)、[网格](../fpga/color_locator/GRID.md) | 该profile自己的镜像/地址/环境，独立于演示 |
 | 四功能源码profile | [system_pspl](../fpga/system_pspl/README.md) → [PS软件](../host/app/perception/README.md) → [VM新入口](../robot/dofbot/PSPL.md) | 新XSA/镜像/UIO、合法模型契约、目标依赖/相机标定等；源码未联合运行 |
 
-收尾候选分支为 `source/track33-closeout-20261030`。它含可选新展示所需的接口扩展；原 `deployment_manifest.json` 保持2026-10-29字节基线，安装器仍严格核对。因此候选文件不能冒充该冻结安装包，下面的旧演示安装需单独检出指定提交。不要修改清单掩盖版本差异，也不要把新入口覆盖到现用VM。
+收尾候选分支为 `source/track33-closeout-20261030`。当前开发目录含可选新展示接口，安装器默认源则是独立的 [deliverables/dofbot_demo_20261029/payload](../deliverables/dofbot_demo_20261029/README.md)。其中12个应用及清单/依赖/历史README来自冻结提交，原哈希严格保留。测试导入当前安装器并使用同一payload；这些修订本轮没有执行。不要把新入口覆盖到现用VM。
 
 ## 冻结演示的适用环境
 
@@ -24,11 +24,13 @@
 ```bash
 git clone --depth 1 https://github.com/Citlali6/VisionGrasp-Z19.git
 cd VisionGrasp-Z19
-git fetch origin 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
-git checkout --detach 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
+git fetch origin source/track33-closeout-20261030
+git checkout --detach FETCH_HEAD
 bash robot/dofbot/install.sh --check
 bash robot/dofbot/install.sh
 ```
+
+先将实际检出SHA与[提交清单](../deliverables/submission/manifest.json)核对。上述默认安装不读取开发目录中的新Dashboard文件。已有独立冻结检出时，也可使用当前安装器的 `--source /path/to/frozen-checkout/robot/dofbot`；该目录必须提供完整原安装文件并通过同一哈希/环境检查。缺少冻结payload会明确失败，不自动回退开发源码。
 
 预检核对项目文件、依赖和运行状态。安装生成启动/停止脚本及桌面入口，不启动程序、不连接串口、不加载 FPGA，也不调整音量；运行中的应用会阻止覆盖。更新前先等任务完成，再使用停止入口退出。
 
