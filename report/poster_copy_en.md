@@ -1,12 +1,12 @@
-# English poster copy — Xiaoya SmartSort
+# English poster copy — Xinyu SmartSort
 
 Content draft for the required one-page final-round poster. The official AMD PPT template has not been supplied; no template-based PPT or print-ready poster has been created. After receiving it, place this copy into that template, omit team/institution information, and prepare the required A4 colour print. Rule provenance: [requirements map](../docs/competition/requirements_map.md), PDF physical page 28 / printed page 25.
 
 ## Title
 
-**Xiaoya SmartSort**
+**Xinyu SmartSort**
 
-**A Voice–Vision Sorting Workstation with Z19 PS/PL Co-design**
+**A Voice–Vision Waste Sorting System Based on Zynq Hardware–Software Co-design**
 
 *Hear the command. See the target. Put sorting into action.*
 

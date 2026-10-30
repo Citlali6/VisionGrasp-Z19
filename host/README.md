@@ -1,4 +1,4 @@
-# 小亚智分 · Z19 PS 软件索引
+# 芯语智分 · Z19 PS 软件索引
 
 PS负责采集/解码、完整PIO收发、CPU垃圾模型、坐标解释、Vosk和有界任务接口。先读[配置与兼容性](../docs/CONFIGURATIONS.md)核对目标环境，再从[四功能工程](../fpga/system_pspl/README.md)了解连接关系。VM机械臂软件位于 [robot/dofbot](../robot/dofbot/README.md)，两个运行环境分别准备。
 
