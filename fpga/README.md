@@ -1,14 +1,18 @@
-# Z19 FPGA 感知模块
+# 小亚智分 · Z19 PS/PL 工程索引
+
+先看[四功能聚合工程](system_pspl/README.md)：统一职责、数据流、寄存器、地址与构建入口。它连接硬件像素/PCM算子与PS软件，机械臂执行仍由VM客户端编排。旧镜像及记录按各自profile保存。
 
 | 模块 | 当前能力与入口 |
 |---|---|
+| [system_pspl](system_pspl/README.md) | 四功能源码profile，视频/音频/既有门控共享目标逻辑时钟；AXI-Lite FIFO/PIO、Tcl、Linux设备树源片段及源码清单 |
+| [perception_v2](perception_v2/README.md) | RGB定点通道校正、HSV掩码、ROI计数/框/一阶矩、背压和完整帧统计 |
+| [audio_frontend](audio_frontend/README.md) | DC、63tap Q1.15 FIR、可选软门、参数提交和完整PCM收发 |
 | [color_locator](color_locator/README.md) | USB 相机 RGB→HSV、颜色掩码、像素统计和全局框；板端语音选色、浏览器网格映射与坐标播报见 [GRID.md](color_locator/GRID.md) |
 | [sort_guard](sort_guard/README.md) | 独立 AXI 候选目标门控：区域、匹配像素数、连续帧、超时及单次许可；源码与离线验证，尚未上板 |
 | [camera_hw](camera_hw/README.md) | Z19 MIPI 相机硬件输入、已验证 bit/XSA；源工程要求 Vivado 2020.2_AR75986 |
 | [camera_baremetal](camera_baremetal/README.md) | 保留相机初始化历史验证输入；当前实时视频使用 [Linux 相机](../host/camera_linux/README.md) |
 | [scripts/alinx](scripts/alinx/) | ALINX 板卡 PS 配置；颜色构建使用此共享预设 |
 
-颜色模块使用 Vivado 2020.1；三组离线仿真入口是 `color_locator/scripts/sim.ps1`。
-生成物放仓库外的新目录，仿真不连接硬件。
+四功能/颜色源码使用Vivado 2020.1；独立MIPI工程保留2020.2_AR75986。指南允许其他工具版本时需说明和复现，现有工程未在推荐的2026.1/2025.2重新构建。PS配置继续来自 [scripts/alinx](scripts/alinx/)，HSV共享核继续保留固定来源与MIT许可，不当作过时文件删除。
 
-颜色固件与 MIPI 相机固件是独立的 PL 配置，不能同时加载。本 FPGA 链未连接 DOFBOT 动作控制；已验证范围与步骤见 [FPGA 指南](../docs/fpga/README.md)。
+颜色固件、MIPI镜像和新四功能profile分别选择，不能拼成同一已运行系统。既有检查入口和报告留作追溯，本轮没有运行仿真、编译、工程生成、综合、实现或设备流程。实际证据统一见[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)，提交目录对照见[产品首页](../README.md)。

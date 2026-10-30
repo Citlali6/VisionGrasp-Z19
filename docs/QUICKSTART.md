@@ -1,6 +1,16 @@
-# DOFBOT 展示版快速开始
+# 小亚智分：配置选择与复现入口
 
-## 适用环境
+先选择实际配置，再准备环境。下面所有安装/构建/运行命令供未来使用者按各配置执行，本次收尾没有运行。
+
+| 配置 | 源码与复现方式 | 使用条件 |
+|---|---|---|
+| 现用VM/DOFBOT固定工位演示 | 下文冻结提交 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；使用原安装器/启动器 | 原Ubuntu22.04/ROS2/SDK/模型/音频环境；保留现场配置 |
+| 原Z19颜色/语音/网格 | [颜色工程](../fpga/color_locator/README.md)、[网格](../fpga/color_locator/GRID.md) | 该profile自己的镜像/地址/环境，独立于演示 |
+| 四功能源码profile | [system_pspl](../fpga/system_pspl/README.md) → [PS软件](../host/app/perception/README.md) → [VM新入口](../robot/dofbot/PSPL.md) | 新XSA/镜像/UIO、合法模型契约、目标依赖/相机标定等；源码未联合运行 |
+
+收尾候选分支为 `source/track33-closeout-20261030`。它含可选新展示所需的接口扩展；原 `deployment_manifest.json` 保持2026-10-29字节基线，安装器仍严格核对。因此候选文件不能冒充该冻结安装包，下面的旧演示安装需单独检出指定提交。不要修改清单掩盖版本差异，也不要把新入口覆盖到现用VM。
+
+## 冻结演示的适用环境
 
 - Ubuntu 22.04、ROS 2 Humble，使用已验证的 yahboom 配套虚拟机和普通桌面用户。
 - 配套机械臂 SDK、识别源码/模型、中文音频及逆解服务已安装。
@@ -14,6 +24,8 @@
 ```bash
 git clone --depth 1 https://github.com/Citlali6/VisionGrasp-Z19.git
 cd VisionGrasp-Z19
+git fetch origin 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
+git checkout --detach 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
 bash robot/dofbot/install.sh --check
 bash robot/dofbot/install.sh
 ```

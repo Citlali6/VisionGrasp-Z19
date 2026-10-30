@@ -1,6 +1,8 @@
-# Z19 PS/PL 四功能源码工程
+# 小亚智分 · Z19 PS/PL 四功能源码工程
 
 本 profile 把像素与 PCM 的定点运算放在 PL，将采集、模型语义、坐标解释、ASR 和任务协议放在 PS。它使用独立地址空间与工程入口；现用 USB 颜色、MIPI/IMX214 和 VM 分拣入口保留。
+
+本页是产品技术聚合入口。作品定位、3.3初级组材料与阅读路线见[产品首页](../../README.md)、[评委导航](../../docs/competition/judges_guide.md)，已有结果统一引用[证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。
 
 ## 实现与环境
 
@@ -8,11 +10,23 @@
 |---|---|---|---|
 | 视频预处理 PL | [perception_v2/rtl](../perception_v2/rtl/)、[算法/流控](../perception_v2/README.md) | RGB888/SOF/EOL → 增益偏置 RGB、HSV 掩码、同帧统计 | 新 profile；新增源码仅文本审阅，无仿真/编译/综合/上板结果 |
 | 视觉定位 | `vg_roi_moments_axis`、[coordinates.py](../../host/app/perception/coordinates.py)、`guard_adapter.py` | ROI count/bbox/64 位矩 → 颜色质心；语义框 → 检测框中心、可选平面毫米坐标及候选状态 | 标定必须匹配相机/尺寸/transform；空掩码使颜色质心无效，不自动否决语义目标；复用原 sort_guard |
-| PS 垃圾分类 | [detector.py](../../host/app/perception/detector.py)、前后处理、模型清单与类别映射 | 无标注 RGB → CPU YOLO 已 NMS 检测、真实 label 与业务编号 | 厂商调用源已从既有备份读取；权重/框架精确版本/模型类序/YAML 尚缺，VM 关机；加载前严格核对，未运行模型 |
+| PS 垃圾分类 | [detector.py](../../host/app/perception/detector.py)、前后处理、模型清单与类别映射 | 无标注 RGB → CPU YOLO 已 NMS 检测、真实 label 与业务编号 | 厂商调用源已从既有备份读取；权重/框架精确版本/模型类序/YAML 尚缺；前轮取源时 VM 未开机，本轮未启动 VM；加载前严格核对，未运行模型 |
 | 音频 PL/PS | [audio_frontend](../audio_frontend/README.md)、[pl_frontend.py](../../host/app/voice/pl_frontend.py)、`coefficients.py`、`usb_pcm_pl.py` | 16kHz mono PCM16 → DC/FIR/可选软门 PCM → PS Vosk 受限任务事件 | 独立 USB PCM 输入，不使用语音串口编号作 PCM；需 ALSA/Vosk/新外设；未生成系数、采音、回放或 ASR |
 | PIO 与 Linux | [libpspl](../../host/libpspl/README.md)、`vg_axil_regs`、`vg_sync_fifo` | 独立 AXI-Lite AW/W 与 FIFO ↔ 有序 32 位 UIO MMIO | 设备路径显式配置；无探测、无 DMA、无自动加载；UIO 未打开 |
 | PS 服务/VM | [service.py](../../host/app/perception/service.py)、[PS 模块说明](../../host/app/perception/README.md)、[可选入口](../../robot/dofbot/pspl_entry.py) | 带身份的图像/语音/任务 JSON ↔ 现有一次任务状态机 | 新入口独立配置，默认部署仍使用原入口；未启动服务、部署 VM 或执行动作 |
 | 工程 | `create_project.tcl`、`build_bd.tcl`、`build_bitstream.tcl`、`profile.json` | PS、视频、音频、门控及统一时钟/复位/地址 | XCZU19EG；沿用 ALINX PS 配置及 Vivado 2020.1；脚本未执行，无新 bit/XSA/ELF |
+
+### 配置、版本与环境对应
+
+| 配置 | 源码/产物版本与工具 | 环境及复现选择 |
+|---|---|---|
+| 现用 VM 演示 | 冻结源码 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；原部署清单对应其文件哈希 | Ubuntu VM 原 ROS/SDK、相机、串口语音和配套模型；从独立冻结检出安装，不用当前源码替换校验清单 |
+| 原 Z19 颜色/语音/网格 | Vivado/Vitis 2020.1；版本/bit/XSA 对应旧 deliverables manifest | 独立 PS Linux/颜色镜像；旧 FPS/延迟/资源仅属于其原配置 |
+| 独立 MIPI/裸机相机 | Vivado/Vitis 2020.2_AR75986，见 camera_hw manifest | IMX214/原 BSP 与独立镜像；不与颜色/四功能合并镜像 |
+| 独立候选门控 | 原 RTL 仿真与 OOC 记录，见 sort_guard/validation | 记录范围为独立模块，不是本 profile 完整实现或上板 |
+| 四功能源码 | 继承 `7cf7513a`，本轮源码修订 `0aa5adc`；Vivado 2020.1 配置目标 | AArch64 Linux、实际 UIO/设备树与 libpspl；尚需合法模型权重/类序/YAML、源/目标环境契约、匹配相机/平面标定、ALSA/Vosk 模型与中文词典覆盖。未构建新镜像、未联合部署 |
+
+冻结安装与可选源码入口见[配置选择](../../docs/QUICKSTART.md)。新 profile 的 100MHz、16kHz、63tap 为配置/算法参数。未在指南推荐的 2026.1/2025.2 运行；不升级 IP 或借旧报告声明通过。产物/依赖来源统一见[提交清单](../../deliverables/submission/manifest.json)。
 
 ## PS/PL 连接
 
@@ -58,6 +72,8 @@ PS 图像输入显式选择 `pl_rgb` 或 `raw_rgb`，记录两份内容哈希与
 双端显式配置并核对 `candidate_policy`。默认 `semantic_bbox` 面向垃圾语义任务：仅一个真实检测目标时，将同帧检测框覆盖的整数像素区域及其面积提交既有PL门控，检查ROI、面积范围、连续新帧、固定锚点抖动、超时和一次消费。颜色掩码为零或多连通区域仍照实输出，其状态不否决此模式。多个语义目标、来源失配、模型错误或几何/时效不合格仍不许可。
 
 `color_association` 只用于显式要求颜色的工位：保留唯一语义目标、单个PL颜色连通区且完全位于语义框内的条件。它使用真实PL匹配像素数，缺少指定颜色时不适用。示例绿色阈值是颜色统计设计参数，不能作为所有垃圾类别的共同物理属性。
+
+默认 `semantic_bbox` 返回 `association={state:not_requested,reason:semantic_bbox_policy}`，不再为颜色关联复制掩码、清零ROI或分析连通区域；完整PL处理、回读、统计校验及独立颜色质心保持原接口。这里只移除不必要调用，没有执行加速测量。
 
 两个模式共享原 `GuardClient` 寄存器事务及PL规则；语义适配仅替换PS输入校验，原RTL、寄存器ID/版本及旧颜色适配不改。语义数据的source为 `Z19_PS_CPU_YOLO`、count_basis为 `bbox_area_px`；颜色模式count_basis为 `pl_mask_pixels`。旧寄存器沿用 `mask_count` 名称，语义模式写入的是明示的检测框面积数值，不声称该面积由PL掩码统计得到。标签、模型或配置改变会取消本段并重新累计。
 
@@ -106,6 +122,6 @@ PS程序面向Linux UIO，不需要凭旧XSA生成裸机程序；不提供指向
 
 源码审阅范围：定点位宽/符号、流控与复位、配置快照、寄存器投影、客户端调用和文件引用、文件哈希、Git差异。没有执行新增代码、导入验证、系数生成、模型推理、仿真、编译、综合、实现、时序分析、设备访问或性能测量。旧证据保持其原版本归属。
 
-当前 `.github/workflows/ci.yml` 对全部PR触发 `fpga_guard` 仿真，push仅包含 main/chore/feat/feature/fix/docs。故源码交付使用 `source/pspl-four-functions-20261030`，不创建PR、不合入main、不改变CI或保护；[PR正文草稿](PR_BODY.md)供将来符合运行约束时使用。
+当前 `.github/workflows/ci.yml` 对全部PR触发 `fpga_guard` 仿真，push仅包含 main/chore/feat/feature/fix/docs。四功能原分支为 `source/pspl-four-functions-20261030`，本轮完整收尾交付使用 `source/track33-closeout-20261030`，不创建PR、不合入main、不改变CI或保护；[收尾发布记录](../../docs/competition/release_inventory.md)及其PR正文草稿供将来符合运行约束时使用，原[四功能PR草稿](PR_BODY.md)保留历史范围。
 
-队友阅读顺序：本页 → [PS模块/真实模型依赖](../../host/app/perception/README.md) → [视频](../perception_v2/README.md)/[音频](../audio_frontend/README.md)/[PIO客户端](../../host/libpspl/README.md) → [比赛正文](../../docs/competition/TECHNICAL_OUTLINE.md) → [证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。
+队友阅读顺序：本页 → [PS模块/真实模型依赖](../../host/app/perception/README.md) → [视频](../perception_v2/README.md)/[音频](../audio_frontend/README.md)/[PIO客户端](../../host/libpspl/README.md) → [七项设计报告](../../report/design_report.md) → [证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。

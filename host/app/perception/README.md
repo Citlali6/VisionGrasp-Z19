@@ -29,7 +29,7 @@
 
 | 策略 | 候选与计数依据 | 颜色作用 |
 |---|---|---|
-| `semantic_bbox`（示例默认） | 同帧唯一真实语义框 → 包含该连续矩形的闭区间整数框；`bbox_area_px=(xmax-xmin+1)*(ymax-ymin+1)` | PL mask/颜色质心/连通区对应独立报告，零颜色或多个颜色区域不否决语义候选 |
+| `semantic_bbox`（示例默认） | 同帧唯一真实语义框 → 包含该连续矩形的闭区间整数框；`bbox_area_px=(xmax-xmin+1)*(ymax-ymin+1)` | PL mask/颜色质心独立报告；颜色关联为 `not_requested`，不做连通分析；零颜色不否决语义候选 |
 | `color_association`（显式颜色工位） | 唯一语义目标与唯一且包含于框内的PL连通区域 → `pl_mask_pixels` | 指定颜色是必要场景条件；零mask或歧义返回不适用/不确定 |
 
 两种模式继承既有 `GuardClient` 和PL门控的ROI、数值计数范围、连续新帧、固定锚点抖动、超时和一次消费。新 `SemanticGuardClient` 只替换PS输入校验，使用 `visiongrasp.ps-semantic-candidate/1` / `Z19_PS_CPU_YOLO`，绑定模型、标签、类别、相机、transform与配置；不伪造旧PL颜色状态，也不修改旧RTL/寄存器ID/ABI。原寄存器 `mask_count` 的数值槽在此模式明示承载PS框面积，颜色模式仍为真实PL掩码数。语义框面积不是分割面积或PL统计。

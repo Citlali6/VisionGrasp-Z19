@@ -1,5 +1,7 @@
 # 可选 PS/PL 分拣入口与展示
 
+该入口属于[四功能源码 profile](../../fpga/system_pspl/README.md)，配置与冻结演示的选择见[快速开始](../../docs/QUICKSTART.md)。原部署安装器应在 `8a2a6fd` 独立检出中使用；当前源码的可选界面扩展不改写原冻结文件哈希，也不由原安装器覆盖现场。
+
 `pspl_entry.py` 使用 Z19 PS 服务的真实检测结果和一次 PL 候选许可，复用现有
 `Session` 的一次唤醒/启动、准备先于识别、分类播报完成后抓取投放的顺序。
 `candidate_policy` 默认选择 `semantic_bbox`；颜色对应模式须显式选择并满足其场景条件。
