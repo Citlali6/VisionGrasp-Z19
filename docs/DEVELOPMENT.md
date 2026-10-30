@@ -1,6 +1,6 @@
 # 开发指南
 
-围绕一次分拣任务选择要修改的层次：PL 处理像素、PCM 和候选规则，PS 完成采集、模型、坐标与任务服务，VM 组织分类播报和机械臂动作。先阅读[系统架构](ARCHITECTURE.md)及[配置与兼容性](CONFIGURATIONS.md)，再进入对应模块。
+围绕一次分拣任务选择要修改的层次：PL 处理像素、PCM 和候选规则，PS 完成采集、模型、坐标与任务服务，VM 组织分类播报和机械臂动作。先阅读[系统架构](architecture.md)及[配置与兼容性](CONFIGURATIONS.md)，再进入对应模块。
 
 ## 模块与版本
 
@@ -11,7 +11,7 @@
 | 候选区域、连续帧与一次许可 | [sort_guard](../fpga/sort_guard/README.md) |
 | AXI-Lite、FIFO、UIO 与 C/Python 传输 | [集成工程](../fpga/system_pspl/README.md)、[libpspl](../host/libpspl/README.md) |
 | 模型契约、坐标与 PS 任务服务 | [perception](../host/app/perception/README.md) |
-| 任务状态、播报、动作接口与只读展示 | [DOFBOT](../robot/dofbot/README.md)、[可选 PS/PL 客户端](../robot/dofbot/PSPL.md) |
+| 任务状态、播报、动作接口与只读展示 | [DOFBOT](../robot/dofbot/README.md)、[可选 PS/PL 客户端](../robot/dofbot/pspl.md) |
 
 默认安装器与安装测试使用同一份[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)。开发源码中的可选接口独立演进；修改开发目录不会改变冻结安装源。调整冻结基线时，应作为单独的版本更新核对部署清单与依赖。
 
@@ -60,4 +60,4 @@ python -m fpga.sort_guard.host.replay tests/sort_guard/fixtures/synthetic_stable
 
 `source_review.yml` 在 PR 与主线更新时自动核对 Git 文本、必需路径和冻结文件来源。`ci.yml` 保留软件检查和 RTL 仿真，通过 `workflow_dispatch` 手动执行；维护者按变更范围选择运行检查。两类流程分别报告结果。
 
-按[Git 工作流](GIT_WORKFLOW.md)从最新 `main` 创建短期分支，经差异审阅、适用检查和 PR 合并后删除远端功能分支。真实设备、FPGA 镜像及现场应用的更新需有明确的目标配置与操作授权；仓库合并与现场部署分别管理。
+按[Git 工作流](git_workflow.md)从最新 `main` 创建短期分支，经差异审阅、适用检查和 PR 合并后删除远端功能分支。真实设备、FPGA 镜像及现场应用的更新需有明确的目标配置与操作授权；仓库合并与现场部署分别管理。

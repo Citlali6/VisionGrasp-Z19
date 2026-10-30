@@ -94,7 +94,7 @@ flowchart LR
 <a id="section-partition"></a>
 ## 3. 软硬件划分依据与接口设计
 
-逐像素和逐样本运算具有确定的整数计算与数据次序，适合用 RTL 描述。采集解码、模型框架、词典和坐标配置更依赖 Linux 与软件环境，因此由 PS 组织；VM 保留现有任务、播报和机械执行依赖。完整入口为 [`fpga/system_pspl`](../fpga/system_pspl/README.md)，软件出口为 [`host/app/perception`](../host/app/perception/README.md) 与 [`robot/dofbot/PSPL.md`](../robot/dofbot/PSPL.md)。
+逐像素和逐样本运算具有确定的整数计算与数据次序，适合用 RTL 描述。采集解码、模型框架、词典和坐标配置更依赖 Linux 与软件环境，因此由 PS 组织；VM 保留现有任务、播报和机械执行依赖。完整入口为 [`fpga/system_pspl`](../fpga/system_pspl/README.md)，软件出口为 [`host/app/perception`](../host/app/perception/README.md) 与 [`robot/dofbot/pspl.md`](../robot/dofbot/pspl.md)。
 
 ### 3.1 视频预处理与完整帧统计
 
@@ -187,15 +187,16 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
 先在[配置与兼容性](../docs/CONFIGURATIONS.md)选择复现对象，再准备对应依赖与工具。以下分别给出冻结应用、独立模块和集成源码的入口。
 
-1. **取得并固定版本。** 从唯一仓库获取源码，按[发布清单](../deliverables/submission/manifest.json)记录当前交付 SHA。原 VM 演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)已随当前源码保存，字节来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希。当前安装器默认读取这份 payload；开发目录中新展示接口不进入原演示安装，不需要先切换到旧提交。
+1. **取得并固定版本。** 本次源码与正式材料以 `xinyu-submission-materials-20261030` 标签固定，按[发布清单](../deliverables/submission/manifest.json)的 `materials_revision` 解析并记录交付 SHA。`track33-source-20261030` 保留为更名前的历史源码发布，不能代替当前完整文档版本。原 VM 演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)仍来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希；当前安装器默认读取它，开发目录中的可选接口独立维护。材料标签不表示新四功能配置已完成板级验收。
 
    ```bash
    git clone https://github.com/Citlali6/VisionGrasp-Z19.git
    cd VisionGrasp-Z19
-   git fetch origin tag track33-source-20261030
-   git switch --detach track33-source-20261030
+   git fetch origin tag xinyu-submission-materials-20261030
+   git switch --detach xinyu-submission-materials-20261030
    git rev-parse HEAD
-   # 将实际解析的 SHA 与发布清单/交付说明核对。
+   git rev-parse 'refs/tags/xinyu-submission-materials-20261030^{commit}'
+   # 两个 SHA 应一致；另行保存该 SHA、配置和依赖版本。
    ```
 
 2. **准备合法依赖和目标环境。** 按配置页取得 VM SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认 VM 来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。缺少权重、类序或契约时停止相应路径，保留明确错误；不以样例 manifest、固定类别或随机框代替。
@@ -234,7 +235,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
 8. **填写 PS/VM 私有配置。** 从真实示例复制并替换所有 `REQUIRED` 字段，配置模型清单、库、相机 by-id、明确 UIO、两端相同的 `candidate_policy`、语音来源、绑定地址与 token。VM 跨机连接时 PS 地址需可达；`runtime_root` 放在源码/安装目录之外。无匹配标定时保留像素输出，`calibration=null` 不是毫米标定。USB PCM 需另备麦克风、ALSA 与覆盖任务词的 Vosk 模型；串口编号不经过 FIR。
 
-9. **启动所选新路径。** PS 从当前交付源码根目录使用 `python3 -m host.app.perception.service --config /private/pspl-service.json`。VM 使用 `/usr/bin/python3 -B /absolute/path/robot/dofbot/pspl_entry.py --config /private/vm-pspl.json`，按 [PSPL说明](../robot/dofbot/PSPL.md)选择是否显式执行机械臂及打开只读窗口。旧部署保持独立，不能同时争用设备。任务图像、来源 JSON、事件、实际指令记录和软件错误进入该新入口的独立输出目录。
+9. **启动所选新路径。** PS 从当前交付源码根目录使用 `python3 -m host.app.perception.service --config /private/pspl-service.json`。VM 使用 `/usr/bin/python3 -B /absolute/path/robot/dofbot/pspl_entry.py --config /private/vm-pspl.json`，按 [PSPL说明](../robot/dofbot/pspl.md)选择是否显式执行机械臂及打开只读窗口。旧部署保持独立，不能同时争用设备。任务图像、来源 JSON、事件、实际指令记录和软件错误进入该新入口的独立输出目录。
 
 10. **保存可复核输出。** 按对应输入与版本核对 RGB/掩码/一阶矩/PCM、模型结果与参考数据，保存配置、输入、原始输出、工具报告及失败记录；分别记录软件、RTL、完整实现和板级结果。新记录进入证据矩阵时附上对应配置、源码与测量条件。
 

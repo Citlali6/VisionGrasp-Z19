@@ -7,7 +7,7 @@
 | 材料 | 用途 | 入口 |
 |---|---|---|
 | 实时展示截图 | 软件成果、任务状态与交互展示 | [dashboard.png](../assets/dashboard.png) |
-| 现用演示配置图 | 说明原 VM、串口语音、相机及机械臂的实际运行关系 | [系统架构](../ARCHITECTURE.md)，与新 profile 源码图分开引用 |
+| 现用演示配置图 | 说明原 VM、串口语音、相机及机械臂的实际运行关系 | [系统架构](../architecture.md)，与新 profile 源码图分开引用 |
 | 四功能源码协同图 | 说明 PS、PL、AXI/FIFO、模型/ASR 与 VM 的连接 | [system_pspl](../../fpga/system_pspl/README.md)，图示属于该源码 profile，不代表整链实测 |
 | 原颜色链资源、时序、仿真报告 | 量化实现成果 | [验证目录](../../deliverables/pl_color_z19/validation/) |
 | 相机 JSON 指标 | 独立相机完成情况 | [相机证据](../fpga/evidence/2026-10-10/README.md) |
@@ -26,7 +26,7 @@
 | 技能提炼 | [skill入口](../../skill/README.md)：帧契约、寄存器契约、语音任务边界和只读观测；分别列输入/输出、参数、失效条件、来源和证据层级 |
 | 复现说明 | system_pspl未来构建入口与配置条件；本轮禁跑，未执行这些步骤 |
 
-PS CPU模型、Vosk、PL算子和VM SDK之间的关系继续在[系统架构](../ARCHITECTURE.md)与[四功能工程](../../fpga/system_pspl/README.md)说明。指南所说的大模型协作是开发过程中提示词、模型回答、自我纠错轨迹及技能提炼；不能以一张运行时算法分工图替代。当前提供可复核提交整理的案例和[11条真实交互摘录](../../report/ai_interaction_excerpt.md)，附日期/角色/模型字段/原文本哈希，保留初次输出错误；未公开整个会话库。
+PS CPU模型、Vosk、PL算子和VM SDK之间的关系继续在[系统架构](../architecture.md)与[四功能工程](../../fpga/system_pspl/README.md)说明。指南所说的大模型协作是开发过程中提示词、模型回答、自我纠错轨迹及技能提炼；不能以一张运行时算法分工图替代。当前提供可复核提交整理的案例和[11条真实交互摘录](../../report/ai_interaction_excerpt.md)，附日期/角色/模型字段/原文本哈希，保留初次输出错误；未公开整个会话库。
 
 ## 现场补采
 

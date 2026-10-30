@@ -3,7 +3,7 @@
 | 使用路线 | 入口和版本 |
 |---|---|
 | 现用固定工位演示 | 本页原安装/启动流程，对应冻结提交 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；不依赖新PS/PL服务 |
-| 四功能源码的可选VM客户端 | [PSPL.md](PSPL.md)：独立配置/输出、同一机械臂互斥锁、真实PS任务与只读远端预览；未替换现场部署 |
+| 四功能源码的可选VM客户端 | [pspl.md](pspl.md)：独立配置/输出、同一机械臂互斥锁、真实PS任务与只读远端预览；未替换现场部署 |
 
 `deployment_manifest.json` 固定冻结演示文件哈希。安装器默认读取独立[冻结payload](../../deliverables/dofbot_demo_20261029/README.md)，15个文件来自 `8a2a6fd`。`--source` 可显式选择完整独立冻结检出，检查和安装报告记录实际目录。安装步骤见[快速开始](../../docs/QUICKSTART.md)，各配置的版本与依赖见[配置与兼容性](../../docs/CONFIGURATIONS.md)。
 

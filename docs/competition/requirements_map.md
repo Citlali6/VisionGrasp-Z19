@@ -50,8 +50,21 @@
 | 3.3.3.3 | 强烈要求 GitHub/Gitee 开源，采用可再分发许可 | 仓库与 Apache-2.0 项目代码；模型、SDK、媒体及第三方 IP 沿用各自许可，不以根许可覆盖外部材料 |
 | 3.3.5.2 | 普通 Skill 放入 `skill/`，含适用范围、用法、失效条件及效果依据 | [Skill入口](../../skill/README.md)与四项工作流；这是要求提交的材料 |
 | 3.3.2、3.3.5.2 | 通用 PYNQ Skill 另行加分 | 本轮不申报已经完成的 PYNQ Skill，不为加分临时更换数据通路；该加分方向与普通 Skill 提交要求分开 |
-| 3.3.5.4 | 推荐 `src/sim/build/board/data/skill/report` 结构；可保留其他组织方式并给映射 | 设计源码对应 `fpga/`、`host/`、`robot/`；仿真对应各模块的 `sim/`；构建入口在 `fpga/system_pspl/` 与 `host/libpspl/`，生成物放源码树外；板端产物与数据见 `deliverables/` 及其 manifest；技能与报告分别在 `skill/`、`report/` |
-| 3.3.5.4 | 文件名要求纯英文小写等；示例同时使用 `README.md` | 普通新文件使用小写英文；GitHub/工具入口、第三方和历史名称差异及处置见[收尾清单](../maintenance/release-20261030.md)，未声称取得额外豁免 |
+| 3.3.5.4 | 推荐 `src/sim/build/board/data/skill/report` 结构；可保留其他组织方式并给映射 | 根 [README 工程目录](../../README.md#工程目录)逐项列出 src、sim、build、board、data、skill、report 的实际位置；保留原工程目录 |
+| 3.3.5.4 | 文件名要求纯英文小写等；示例同时使用 `README.md` | 6 个可独立调整的当前文档已改为小写并同步引用；依赖绑定及工具惯用名见[文件命名](#filename-policy)，仍有保留项，未取得赛事豁免确认 |
 | 第六部分 | 决赛自主选题队伍按 AMD 模板制作一页英文 PPT 海报，不含队伍信息，A4 彩印 | [英文内容稿](../../report/poster_copy_en.md)及素材映射已准备；官方 PPT 模板未取得，尚无模板成品 |
 
-本轮只交付源码小修、材料与 Git 整理，没有新增执行类结果。当前材料可以说明已实现的工程及历史证据，尚不能据此宣布四功能 profile 已满足完整上板/实测提交条件。
+当前源码和正式材料以 `xinyu-submission-materials-20261030` 固定；更名前的 `track33-source-20261030` 是历史源码发布。本次仅调整文档、引用和材料版本，没有新增执行类结果。四功能 profile 的目标依赖、完整实现、板级输出及参考比对，同范围性能/资源前后对照、保留文件名的最终处理和决赛模板海报，仍按[提交清单](../../deliverables/submission/manifest.json)的缺项管理，`full_submission_ready` 保持 false。
+
+<a id="filename-policy"></a>
+## 文件命名与保留项
+
+当前可独立调整的文档已改为 `docs/architecture.md`、`docs/git_workflow.md`、`docs/hardware.md`、`docs/competition/design_details.md`、`docs/competition/materials.md` 和 `robot/dofbot/pspl.md`，活跃引用同步更新，代码目录与设备标识保留。
+
+| 保留类别 | 路径或约定 | 原因与提交状态 |
+|---|---|---|
+| 冻结上下文、验证与打包来源 | `THIRD_PARTY.md`、`docs/VALIDATION.md`、`fpga/sort_guard/INTERFACE.md`、原颜色板端文档及音频打包文档 | 冻结 README、验证哈希或历史包清单引用这些路径，原字节和来源继续保留 |
+| 仍有历史或现行引用的自有入口 | `docs/CONFIGURATIONS.md`、`docs/DEVELOPMENT.md`、`docs/QUICKSTART.md`、`docs/competition/EVIDENCE_MATRIX.md` | 保留现有历史链接、原验证记录及源码中的引用；不能因此标为逐字满足小写要求 |
+| 工具约定和第三方路径 | `README.md`、`AGENTS.md`、`CONTRIBUTING.md`、`SKILL.md`、`LICENSE`、`CMakeLists.txt`、`Makefile` 及厂商 IP 内部名称 | 保留工具入口与依赖身份，不批量改第三方名称或重写历史产物 |
+
+这些保留原因是工程处置依据，不等于赛方豁免。最终提交前仍需按实际规范处理保留项，或取得赛方明确解释；当前未获得该确认，也未取得独立《评分细则》或提交后台的额外要求。

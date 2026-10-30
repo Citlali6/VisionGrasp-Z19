@@ -24,7 +24,7 @@
 
 ## PS/PL 集成源码的部署条件
 
-该配置由 PS 采集媒体、执行 CPU YOLO / Vosk 并提供任务服务，PL 处理 RGB、HSV、ROI 统计、PCM 滤波和候选规则，VM 客户端组织播报与固定工位动作。完整连接和接口见[系统架构](ARCHITECTURE.md)、[PS 模块](../host/app/perception/README.md)与[VM 接入](../robot/dofbot/PSPL.md)。
+该配置由 PS 采集媒体、执行 CPU YOLO / Vosk 并提供任务服务，PL 处理 RGB、HSV、ROI 统计、PCM 滤波和候选规则，VM 客户端组织播报与固定工位动作。完整连接和接口见[系统架构](architecture.md)、[PS 模块](../host/app/perception/README.md)与[VM 接入](../robot/dofbot/pspl.md)。
 
 | 准备项 | 需要对应的内容 |
 |---|---|
@@ -40,6 +40,8 @@
 
 ## 发布与兼容性
 
-`main` 是唯一长期远端分支。开发使用短期分支和 PR，合并后删除远端 head；阶段源码和历史路线通过 tags、Release 与提交历史保存。固定源码发布为 [`track33-source-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/releases/tag/track33-source-20261030)，其预发布身份和指向保持不变。后续文档以当前 `main` 为准。
+`main` 是唯一长期远端分支。开发使用短期分支和 PR，合并后删除远端 head；阶段源码和历史路线通过 tags、Release 与提交历史保存。本次源码与中英文材料以 [`xinyu-submission-materials-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/tree/xinyu-submission-materials-20261030) 标签固定，实际提交 SHA 按[提交清单](../deliverables/submission/manifest.json)的 `materials_revision` 解析。该标签记录材料版本，不表示四功能配置已经完成联合上板或全部提交条件。
+
+历史源码发布 [`track33-source-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/releases/tag/track33-source-20261030) 的预发布身份和指向保持不变；VM 安装源仍是原冻结 payload。本次只新增材料标签，不创建 Release，后续开发文档以当前 `main` 为准。
 
 `ah_camera0`、`/dev/ah_camera0`、`/opt/amazinghand`、`/var/lib/amazinghand` 及原安装目录是已有接口或兼容路径。HSV / BSP、原位流、原报告与许可证按依赖保留。第三方来源见 [THIRD_PARTY](../THIRD_PARTY.md)，Git 维护和恢复资料见[维护记录](maintenance/README.md)。
