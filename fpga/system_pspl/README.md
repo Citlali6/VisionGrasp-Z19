@@ -45,7 +45,7 @@ flowchart LR
   AUDIO --> SDK[VM 既有 ROS/SDK 固定工位动作]
 ```
 
-图：`z19-pspl-four-functions-v1` 集成源码连接关系。现用 VM/DOFBOT 演示的运行图见[系统架构](../../docs/ARCHITECTURE.md)。
+图：`z19-pspl-four-functions-v1` 集成源码连接关系。现用 VM/DOFBOT 演示的运行图见[系统架构](../../docs/architecture.md)。
 
 PL 各运算、PIO FIFO、门控统一使用 `ps0/pl_clk1`，目标 100MHz；该值是配置目标，不是时序或板上测量。复位由同域 `proc_sys_reset` 输出。音频16kHz以样本握手表示，无派生采样时钟。门控 `external_busy` 在顶层固定为0，应用通过既有软件 busy/任务协议管理许可；没有机械臂输出引脚。
 

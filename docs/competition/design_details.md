@@ -1,6 +1,6 @@
 # 设计细节与接口写作素材
 
-本页对应模板第二部分，提供从模块到流程的说明。现用程序细节见[系统架构](../ARCHITECTURE.md)；新增门控字段及优先级以 [INTERFACE.md](../../fpga/sort_guard/INTERFACE.md) 为准。
+本页对应模板第二部分，提供从模块到流程的说明。现用程序细节见[系统架构](../architecture.md)；新增门控字段及优先级以 [INTERFACE.md](../../fpga/sort_guard/INTERFACE.md) 为准。
 
 ## 四功能 PS/PL 工程
 

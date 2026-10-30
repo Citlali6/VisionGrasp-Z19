@@ -97,7 +97,7 @@
         "robot/dofbot/pspl_client.py",
         "robot/dofbot/pspl_display.py"
       ],
-      "entry": "robot/dofbot/PSPL.md"
+      "entry": "robot/dofbot/pspl.md"
     }
   ],
   "build_entrypoints": [
@@ -381,6 +381,8 @@
     "新profile镜像/UIO/匹配Linux与原生依赖",
     "匹配标定与任务词典覆盖",
     "另行允许阶段取得新完整实现/板级输出/同输入参考比对",
+    "同一优化对象、同一统计范围和报告阶段的性能/资源前后对照",
+    "按最终提交规范处理保留的大写文件名，或取得赛方明确解释；当前无豁免确认",
     "官方英文PPT模板、排版与匿名检查"
   ],
   "previous_closeout_operations": {
@@ -413,6 +415,14 @@
     "record": "docs/maintenance/main-only-20261030.md",
     "engineering_checks_run": [],
     "frozen_installation_source_changed": false
+  },
+  "materials_revision": {
+    "tag": "xinyu-submission-materials-20261030",
+    "baseline_commit": "bddf691c4e97c9a481e4bf74dabd75849d45479c",
+    "scope": "source and current Chinese/English submission materials; not a completed board-validation release",
+    "commit_resolution": "git rev-parse refs/tags/xinyu-submission-materials-20261030^{commit}",
+    "historical_source_release_tag": "track33-source-20261030",
+    "full_submission_ready": false
   },
   "ai_record": {
     "format": "selected_real_user_assistant_messages_and_original_audit_section",

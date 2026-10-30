@@ -10,7 +10,7 @@
 
 **听见指令，看清目标，让分类落到行动。**
 
-[项目概览](docs/overview.md) · [快速开始](docs/QUICKSTART.md) · [配置与部署](docs/CONFIGURATIONS.md) · [系统架构](docs/ARCHITECTURE.md) · [项目文档](docs/README.md)
+[项目概览](docs/overview.md) · [快速开始](docs/QUICKSTART.md) · [配置与部署](docs/CONFIGURATIONS.md) · [系统架构](docs/architecture.md) · [项目文档](docs/README.md)
 
 ![VM/DOFBOT 固定工位分拣界面](docs/assets/dashboard.png)
 
@@ -63,7 +63,7 @@ Z19 PS/PL 源码将采集、语义理解与任务通信放在 PS，把视频、�
 | 视觉定位与候选复核 | ROI 计数、包围框、一阶矩与连续帧规则 | 检测框中心、颜色质心、可选平面映射及候选适配；[系统工程](fpga/system_pspl/README.md) |
 | 语音输入预处理 | DC、63 tap FIR、可选软门 | USB PCM、参数配置与 Vosk 受限命令；[音频模块](fpga/audio_frontend/README.md) |
 
-默认 `semantic_bbox` 策略按同帧语义检测框的区域、面积与稳定性接受候选；`color_association` 用于明确要求颜色条件的工位。定位输出包含像素坐标，工作平面坐标使用相机绑定标定；机械臂执行使用固定拾取动作。完整数据路径与分配置连接图见[系统架构](docs/ARCHITECTURE.md)。
+默认 `semantic_bbox` 策略按同帧语义检测框的区域、面积与稳定性接受候选；`color_association` 用于明确要求颜色条件的工位。定位输出包含像素坐标，工作平面坐标使用相机绑定标定；机械臂执行使用固定拾取动作。完整数据路径与分配置连接图见[系统架构](docs/architecture.md)。
 
 ## 选择配置，开始使用
 
@@ -81,12 +81,26 @@ Z19 PS/PL 源码将采集、语义理解与任务通信放在 PS，把视频、�
 | 想做的事 | 阅读入口 |
 |---|---|
 | 理解应用背景与使用流程 | [项目概览](docs/overview.md) |
-| 了解系统分工和模块接口 | [系统架构](docs/ARCHITECTURE.md)、[FPGA](fpga/README.md)、[PS 软件](host/README.md)、[机械臂应用](robot/dofbot/README.md) |
+| 了解系统分工和模块接口 | [系统架构](docs/architecture.md)、[FPGA](fpga/README.md)、[PS 软件](host/README.md)、[机械臂应用](robot/dofbot/README.md) |
 | 阅读完整设计 | [设计报告](report/design_report.md) |
-| 修改模块、准备检查和提交变更 | [开发指南](docs/DEVELOPMENT.md)、[Git 工作流](docs/GIT_WORKFLOW.md) |
+| 修改模块、准备检查和提交变更 | [开发指南](docs/DEVELOPMENT.md)、[Git 工作流](docs/git_workflow.md) |
 | 复用开发方法 | [Skill 技能包](skill/README.md)、[AI 开发协作记录](report/ai_collaboration.md) |
 
 所有文档从[项目文档](docs/README.md)进入。历史版本通过 Git 标签与 [Release](https://github.com/Citlali6/VisionGrasp-Z19/releases)保存。
+
+## 工程目录
+
+| 目录角色 | 本仓库位置 | 内容 |
+|---|---|---|
+| src | `fpga/`、`host/`、`robot/` | RTL、PS 软件、上位机任务与接口 |
+| sim | 各 FPGA 模块的 `sim/`、`tests/`、`host/tests/` | 仿真源文件、软件检查与输入样例 |
+| build | `fpga/system_pspl/`、`host/libpspl/` | Tcl、CMake 与工具链入口；生成物按构建说明输出到源码树外，已有报告见模块验证目录 |
+| board | `deliverables/`、各独立模块的板端说明 | 按配置保存的板端产物、运行脚本与说明 |
+| data | `docs/fpga/evidence/`、`docs/log/`、各模块验证目录及测试 fixtures | 原始记录、参考数据与显式标记的合成输入 |
+| skill | `skill/` | 可复用工作流、使用说明和经验来源 |
+| report | `report/` | 设计报告、AI 协作记录与海报内容稿 |
+
+各配置的状态与环境见[配置与部署](docs/CONFIGURATIONS.md)，各项结果的所属版本见[验证记录](docs/VALIDATION.md)和[指标与来源](docs/competition/EVIDENCE_MATRIX.md)。
 
 ## 来源与许可
 

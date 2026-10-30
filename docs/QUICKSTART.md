@@ -2,7 +2,7 @@
 
 本页介绍 VM/DOFBOT 固定工位分拣应用的安装与使用。安装器默认读取[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)，其15个文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，按原部署清单校验。
 
-其他配置与完整环境对应见[配置与兼容性](CONFIGURATIONS.md)。开发 Z19 四功能集成源码时，从[工程入口](../fpga/system_pspl/README.md)、[PS 服务](../host/app/perception/README.md)和[可选 VM 客户端](../robot/dofbot/PSPL.md)开始。
+其他配置与完整环境对应见[配置与兼容性](CONFIGURATIONS.md)。开发 Z19 四功能集成源码时，从[工程入口](../fpga/system_pspl/README.md)、[PS 服务](../host/app/perception/README.md)和[可选 VM 客户端](../robot/dofbot/pspl.md)开始。
 
 ## 冻结演示的适用环境
 
@@ -18,13 +18,13 @@
 ```bash
 git clone --depth 1 https://github.com/Citlali6/VisionGrasp-Z19.git
 cd VisionGrasp-Z19
-git fetch --depth 1 origin tag track33-source-20261030
-git checkout --detach track33-source-20261030
+git fetch --depth 1 origin tag xinyu-submission-materials-20261030
+git checkout --detach xinyu-submission-materials-20261030
 bash robot/dofbot/install.sh --check
 bash robot/dofbot/install.sh
 ```
 
-先将实际检出SHA与[提交清单](../deliverables/submission/manifest.json)核对。上述默认安装不读取开发目录中的新Dashboard文件。已有独立冻结检出时，也可使用当前安装器的 `--source /path/to/frozen-checkout/robot/dofbot`；该目录必须提供完整原安装文件并通过同一哈希/环境检查。缺少冻结payload会明确失败，不自动回退开发源码。
+先将实际检出 SHA 与[提交清单](../deliverables/submission/manifest.json)的 `materials_revision` 标签解析结果核对。该标签固定当前源码和中文、英文材料；`track33-source-20261030` 继续保存历史源码发布。上述默认安装仍读取原冻结 payload。已有独立冻结检出时，也可使用当前安装器的 `--source /path/to/frozen-checkout/robot/dofbot`；该目录必须提供完整原安装文件并通过同一哈希/环境检查。缺少冻结 payload 会明确失败，不自动回退开发源码。
 
 预检核对项目文件、依赖和运行状态。安装生成启动/停止脚本及桌面入口，不启动程序、不连接串口、不加载 FPGA，也不调整音量；运行中的应用会阻止覆盖。更新前先等任务完成，再使用停止入口退出。
 
@@ -33,7 +33,7 @@ bash robot/dofbot/install.sh
 ## 每次重新上电
 
 1. 给机械臂上电，启动虚拟机并登录 Ubuntu 桌面。
-2. 在 VMware「虚拟机 → 可移动设备」中连接机械臂 USB、语音 USB、摄像头与 USB 声卡，具体设备见[硬件连接](HARDWARE.md)。
+2. 在 VMware「虚拟机 → 可移动设备」中连接机械臂 USB、语音 USB、摄像头与 USB 声卡，具体设备见[硬件连接](hardware.md)。
 3. 双击桌面 **启动垃圾分拣 · 实时展示**，或执行：
 
 ```bash

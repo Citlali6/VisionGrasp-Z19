@@ -7,8 +7,8 @@
 | [要求映射](requirements_map.md) | 用户提供指南的条款、报告结构与提交条件 |
 | [正式设计报告](../../report/design_report.md) | 背景、原理、软硬件划分、优化、AI 协作、Skill 与复现 |
 | [证据矩阵](EVIDENCE_MATRIX.md) | 各配置的指标、测量条件和原始来源 |
-| [技术细节](DESIGN_DETAILS.md) | 算法、输入输出和接口材料 |
-| [图表素材](MATERIALS.md) | 截图、分配置架构与现场资料准备 |
+| [技术细节](design_details.md) | 算法、输入输出和接口材料 |
+| [图表素材](materials.md) | 截图、分配置架构与现场资料准备 |
 | [AI 开发协作](../../report/ai_collaboration.md)、[Skill](../../skill/README.md) | 真实纠错记录与可复用流程 |
 | [英文海报内容](../../report/poster_copy_en.md) | 匿名英文文案及素材映射 |
 | [提交清单](../../deliverables/submission/manifest.json) | profile、产物、依赖、报告及来源 |
