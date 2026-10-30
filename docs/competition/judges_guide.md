@@ -27,6 +27,6 @@
 
 现用演示安装的文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，保存为独立[冻结payload](../../deliverables/dofbot_demo_20261029/README.md)，匹配原部署清单；当前安装器和测试均明确使用该来源，新源码及可选界面不替换它。新四功能 profile 尚缺合法权重/类序、目标环境、新镜像/UIO、匹配标定、ASR 词典覆盖和联合运行结果，不能以旧独立结果证明其已上板完成。
 
-[英文海报内容稿](../../report/poster_copy_en.md)提供匿名英文文案与真实素材对应，取得官方 PPT 模板后再排版。[发布清单](release_inventory.md)记录分支/PR、历史资料、恢复备份和命名兼容。当前收尾在 `source/track33-closeout-20261030`；main 未整合，原因是创建 PR/推送 main 会自动执行本轮禁止的工程检查。
+[英文海报内容稿](../../report/poster_copy_en.md)提供匿名英文文案与真实素材对应，取得官方 PPT 模板后再排版。[发布清单](release_inventory.md)记录分支/PR、历史资料、恢复备份和命名兼容。本轮源码与材料已由[PR43](https://github.com/Citlali6/VisionGrasp-Z19/pull/43)正常进入main；最终版本由 `track33-source-20261030` 标签定位。所有者批准后已将运行类CI保留为手动，本轮PR/main仅做Git来源检查；34条冗余远端分支已可恢复清理，仍有工作树占用的分支保留。
 
 本轮仅做源码、接口、文件引用与 Git 交付审阅；没有新运行结果或新构建产物。

@@ -122,6 +122,6 @@ PS程序面向Linux UIO，不需要凭旧XSA生成裸机程序；不提供指向
 
 源码审阅范围：定点位宽/符号、流控与复位、配置快照、寄存器投影、客户端调用和文件引用、文件哈希、Git差异。没有执行新增代码、导入验证、系数生成、模型推理、仿真、编译、综合、实现、时序分析、设备访问或性能测量。旧证据保持其原版本归属。
 
-所有者已单独批准CI分层：`.github/workflows/ci.yml` 原测试/仿真完整保留为仅手动触发，`source_review.yml` 自动执行Git文本/路径/冻结来源检查。四功能原分支为 `source/pspl-four-functions-20261030`，完整收尾分支为 `source/track33-closeout-20261030`；按原保护正常PR合入，不触发运行类验证。[收尾发布记录](../../docs/competition/release_inventory.md)记录实际整合状态；原[四功能PR草稿](PR_BODY.md)保留历史范围。
+所有者已单独批准CI分层：`.github/workflows/ci.yml` 原测试/仿真完整保留为仅手动触发，`source_review.yml` 自动执行Git文本/路径/冻结来源检查。四功能原分支为 `source/pspl-four-functions-20261030`，完整收尾分支为 `source/track33-closeout-20261030`；已按原保护由PR43正常合入main，不触发运行类验证。[收尾发布记录](../../docs/competition/release_inventory.md)记录实际整合状态；原[四功能PR草稿](PR_BODY.md)保留历史范围。
 
 队友阅读顺序：本页 → [PS模块/真实模型依赖](../../host/app/perception/README.md) → [视频](../perception_v2/README.md)/[音频](../audio_frontend/README.md)/[PIO客户端](../../host/libpspl/README.md) → [七项设计报告](../../report/design_report.md) → [证据矩阵](../../docs/competition/EVIDENCE_MATRIX.md)。

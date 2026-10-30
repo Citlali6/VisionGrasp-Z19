@@ -93,7 +93,7 @@ Z19 PS 负责采集、系统接口、模型和坐标解释；PL 负责固定精�
 
 先读[快速开始的配置选择](docs/QUICKSTART.md)。当前安装器默认读取仓库内[冻结演示安装源](deliverables/dofbot_demo_20261029/README.md)，15个文件逐字节来自 `8a2a6fd`；新四功能源码按独立入口准备。原部署清单不改写，现用 VM 未更新。
 
-本候选发布位于 `source/track33-closeout-20261030`。[提交清单](deliverables/submission/manifest.json)记录源提交、profile、产物来源、报告和技能入口；main 的实际整合状态见[发布清单](docs/competition/release_inventory.md)，分支推送不代表 main 已更新。
+本轮源码与材料已通过[PR #43](https://github.com/Citlali6/VisionGrasp-Z19/pull/43)正常整合到main；固定发布标签为 `track33-source-20261030`。[提交清单](deliverables/submission/manifest.json)记录源提交、profile、产物来源、报告和技能入口；主线整合与分支清理的实际记录见[发布清单](docs/competition/release_inventory.md)。新profile尚缺完整板级结果等条件，源码发布不改变该范围。
 
 ## 工程目录对照
 

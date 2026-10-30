@@ -1,5 +1,7 @@
 # 发布范围、历史引用与恢复清单
 
+**审计返修已发布到main。** [PR #43](https://github.com/Citlali6/VisionGrasp-Z19/pull/43)正常合并提交为 `e259204f9ebcddb743b952d6408fbf15d033dd17`。34条冗余远端heads已在逐条复核SHA/保护/工作树和远端恢复标签后原子删除，远端42→8；保留5条被工作树使用的历史分支及main/两条源码分支。恢复标签共19个，原9个脏工作树状态不变，PR34保留。最终源码与材料版本由 `track33-source-20261030` 标签和提交manifest定位；赛事完整条件仍为false。
+
 本页汇总2026-10-30收尾时的文件、分支和PR处置，不把Git清单或备份核对称为工程运行验证。起始远端 `main=8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`；继承四功能源码 `7cf7513a42d5b5f3b3c66eec1e950786b6478b83`，在独立 `source/track33-closeout-20261030` 收尾。新的报告和导航不替换现场程序。
 
 ## 文件与配置分层
@@ -15,30 +17,30 @@
 
 `ah_camera0`、`/dev/ah_camera0`、`/opt/amazinghand` 和 `/var/lib/amazinghand` 是已有驱动/设备/部署兼容标识；保留其技术含义，不全仓替换。中文桌面入口属于现用部署产物，与公开仓库文件命名分开判断。
 
-## 分支/PR盘点与动作边界
+## 初始盘点与审计后的实际处置
 
-收尾开始读取实际远端41个heads、20个本地分支、15个工作树；本地远端跟踪SHA与 `ls-remote` 一致。[完整远端清单](branch_inventory.csv)逐行给出SHA、相对main的关系、patch-equivalence、当前仓库PR和是否被工作树使用，不包含个人目录或未提交文件内容。清单是删除前快照；后续正常推送收尾分支会新增交付head，不应据此误报原分支已清理。
+收尾开始读取实际远端41个heads、20个本地分支、15个工作树；本地远端跟踪SHA与 `ls-remote` 一致。[完整远端清单](branch_inventory.csv)逐行给出SHA、相对main的关系、patch-equivalence、当前仓库PR和是否被工作树使用，不包含个人目录或未提交文件内容。SHA/关系列是初始41条分支的删除前快照，disposition/archive_state列已更新为审计后的实际结果；新收尾分支是第42条。清理后API确认只保留8条heads，不能把历史SHA列当作当前全部远端清单。
 
 `ahead_main` 是未被main祖先关系包含的提交数；`patch_unique/patch_equivalent` 是 `git cherry` 对非merge提交的补丁比较，不等于功能独有/已经集成判定。没有当前仓库PR号的分支不冒配上游旧PR身份。
 
 | 盘点分类 | 远端数 | 处置 |
 |---|---:|---|
-| main / 当前四功能源码 | 1 / 1 | 保留；main正常整合前不移除源码交付分支 |
+| main / 当前四功能源码 | 1 / 1 | 保留；main已整合，原四功能源码分支仍有工作树绑定 |
 | 同名分支仍绑定工作树 | 5 | 全部保留，包含PR34；清洁工作树也不自动拆除 |
-| 已为main祖先、无工作树 | 16 | 内容冗余已确认；远端分支命中现有CI的push过滤，暂缓删除 |
-| 补丁等价、无工作树、命中CI过滤 | 4 | 保留原历史；不以API/UI删除绕过触发风险 |
-| 非祖先且仍有不同补丁、无工作树 | 13 | 已逐条完成内容审阅；独有历史适合恢复标签归档，具体价值与当前实现关系见下表；远端head删除继续受CI约束 |
-| `plan`：一个补丁等价提交、无工作树 | 1 | 建立恢复标签后仍保留远端head，不试验分支删除事件 |
+| 已为main祖先、无工作树 | 16 | 已删除；固定main基线标签及原SHA支持恢复 |
+| 补丁等价、无工作树、命中CI过滤 | 4 | 已删除；先保留各自完整提交身份的恢复标签 |
+| 非祖先且仍有不同补丁、无工作树 | 13 | 已逐条完成下表内容审阅、推送精确恢复标签并删除远端head；不恢复旧路线 |
+| `plan`：一个补丁等价提交、无工作树 | 1 | 原精确恢复标签保留，远端head已删除 |
 
-当前唯一工作流 `ci.yml` 对指定分支push，以及默认 `pull_request` 活动 `opened/synchronize/reopened` 执行软件检查和FPGA仿真；单独 `edited/closed` 不属于该默认PR触发范围。GitHub文档说明分支删除会涉及push事件及默认分支SHA回退，但SHA回退本身不足以断言所有分支删除都会命中branch过滤；也不能因为没有 `on: delete` 就认定删除安全。13条分支都属于现有push分支匹配范围，远端删除继续暂缓，不能以API/UI绕开本轮禁跑约束。[PR默认活动说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)、[push事件说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push)、[分支/标签过滤说明](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushbranchestagsbranches-ignoretags-ignore)。本轮不修改CI/保护，也不创建或更新PR触发运行。
+初次19a交付时，唯一CI对指定push及PR opened/synchronize/reopened执行测试/仿真，因此当时保留heads。审计后所有者单独批准分层，PR43将原运行类工作流改为仅workflow_dispatch，自动来源作业在删除事件跳过。删除前复核实际main、全部两份工作流、空webhooks、保护、SHA与恢复引用后，34条heads已正常原子删除；未dispatch工程验证，也未降低保护。单独编辑/关闭未合并PR不属于原默认PR活动；SHA回退本身也不代表所有删除都匹配branch过滤。[PR默认活动](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)、[push事件](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push)。
 
-### 13条独有历史的内容审阅与归档建议
+### 13条独有历史的内容审阅与已执行归档
 
 以下判断以 `19a09b90b5100dc99c5a5b3ecf07853063c3a011` 为当前内容基线，逐条读取原提交、差异、源码和记录；不是仅按分支名称或 `git cherry` 分类。13个源SHA均与本地远端跟踪引用一致，均已包含在既有 `refs_pre_cleanup.bundle`，且均未绑定已登记的15个工作树；所有活跃或脏工作树及其分支继续保留。旧结果仅按原文件说明其范围，本轮未执行工程程序或重跑结果。
 
 这13条均有可保存的独有历史，但没有需要恢复为当前产品入口的整套旧工程。下表区分已保留的具体依赖、历史设计参考、失败/负例记录和早期修订；完整恢复标签保留提交身份，不把内容相似称为已经移植。CSV新增 `review_class/content_review/recovery_tag/tag_trigger_review/archive_state` 记录逐条结论。
 
-| 分支 | 源SHA | 内容判断与当前实现关系 | 建议恢复标签 |
+| 分支 | 源SHA | 内容判断与当前实现关系 | 已推送恢复标签 |
 |---|---|---|---|
 | `chore/dev-workflow-setup` | `f6b51abe7d0adb92d2e8dc6ab588e9a57d826f92` | [旧治理规则](https://github.com/Citlali6/VisionGrasp-Z19/blob/f6b51abe7d0adb92d2e8dc6ab588e9a57d826f92/AGENTS.md)面向原团队/上游审批；现行治理已替代它。`pre-push` 与当前基线同blob，有效直推main保护已保留。归档旧规则来源，不回写旧审批要求。 | `archive/20261030/chore/dev-workflow-setup` |
 | `docs/fpga-implementation-roadmap` | `0e2cf0bb7808321bc40825a11080025d06941a98` | [v0.3接口草案](https://github.com/Citlali6/VisionGrasp-Z19/blob/0e2cf0bb7808321bc40825a11080025d06941a98/docs/fpga/interface_proposal.md)保留8路SCS/灵巧手需求、负角度、shadow/active及实机待定项。可作设计问题来源；不是现用DOFBOT/PSPL接口或已实现性能，不恢复旧路线图。 | `archive/20261030/docs/fpga-implementation-roadmap` |
@@ -54,9 +56,9 @@
 | `fix/fpga-xsim-bringup` | `97657ff9361699865269dafba6f506a9610af6cf` | [旧SCS RTL修正](https://github.com/Citlali6/VisionGrasp-Z19/blob/97657ff9361699865269dafba6f506a9610af6cf/fpga/README.md)涉及READ长度、ID 1至8、RX计数、帧尾超时和FSM复位。保留原3模块XSim记录与具体修正；不外推为AXI/UART位级/电气或新sort_guard/PSPL验收，不移回旧RTL。 | `archive/20261030/fix/fpga-xsim-bringup` |
 | `fix/host-failsafe-20261017` | `372500a0a4f2069cead464901c3ff713bb43215e` | [旧主机故障清理](https://github.com/Citlali6/VisionGrasp-Z19/blob/372500a0a4f2069cead464901c3ff713bb43215e/docs/fpga/host_failsafe.md)保留首错、`emergency_stop/close`、mmap/fd和信号退出方法；原文明确SIGKILL/断电/驱动阻塞不保证实机停机。可作故障设计参考，不恢复旧入口或宣称现链已移植/验证。 | `archive/20261030/fix/host-failsafe-20261017` |
 
-上述13个标签已逐条核对远端源SHA、已有bundle覆盖和无同名引用后建立，并正常原子推送；其远端解引用与原SHA一致。对应远端head尚待主线CI分层落地后清理。13个标签目标树的 `.github/workflows/` 文件数均为0；当前唯一CI仅声明分支push、默认PR活动和手动触发，没有标签push或 `create` 触发，因此本次标签交付不匹配该工作流。该判断只用于这13个固定源SHA的标签，不用于证明分支删除安全。完成标签及远端解引用核对后，独有历史可从活跃开发分支归档退出；远端head仍须等待CI策略与禁跑要求同时满足，不能先删再观察。CSV中这13条已记为 `tag_pushed_head_retained_pending_ci`。另为4条补丁等价分支建立各自恢复标签，并以 `archive/20261030/baseline-main@8a2a6fd` 保留16条祖先分支的共同恢复基线；连同此前plan，共19个恢复标签。远端删除将在实际执行后另行记数。
+上述13个标签已逐条核对远端源SHA、已有bundle覆盖和无同名引用后建立，并正常原子推送；其远端解引用与原SHA一致。对应13条远端head在CI分层经PR43正常进入main后已删除。13个标签目标树的 `.github/workflows/` 文件数均为0；当前唯一CI仅声明分支push、默认PR活动和手动触发，没有标签push或 `create` 触发，因此本次标签交付不匹配该工作流。该判断只用于这13个固定源SHA的标签，不用于证明分支删除安全。完成标签及远端解引用核对后，独有历史已从活跃开发分支归档退出；删除前重新检查实际main工作流（运行类仅manual、来源作业跳过删除事件）、webhooks为空及无分支保护/工作树占用，未以删除试探CI。CSV中这13条已记为 `deleted_reviewed_legacy` / `remote_head_deleted_exact_tag_verified`。另为4条补丁等价分支建立各自恢复标签，并以 `archive/20261030/baseline-main@8a2a6fd` 保留16条祖先分支的共同恢复基线；连同此前plan，共19个恢复标签。34条候选已全部按清单正常原子删除，最终远端heads为8条。
 
-以下4条本地引用已逐条核对SHA、main祖先关系及没有工作树使用后，以 `git branch -d` 删除；再次读取本地引用确认均已不存在。其远端heads继续保留：
+以下4条本地引用已逐条核对SHA、main祖先关系及没有工作树使用后，以 `git branch -d` 删除；再次读取本地引用确认均已不存在。其对应远端heads也在本次34条中删除：
 
 | 本地分支 | 删除前SHA |
 |---|---|
@@ -65,7 +67,7 @@
 | `feature/pc-sdk-issue14` | `5ee9936a30ca913ef8a0438c1e7272cb943b5677` |
 | `feature/roarm-r0-onsite-query-issue30` | `7b1163ed8ad734f5bf0ba31aaf4ac18291935273` |
 
-`plan@e625341676c83495b3fb225b31064b3fcf1fbb18` 的补丁ID `0b884b6e5dc8ce360e96e7dbd4290b312960aa79` 与main中的 `2835603a895881c8ecb43eaef991634eb76ac74e` 相同；提交身份仍不同。已建立并正常推送注释标签 `archive/20261030/plan`，标签对象 `86743168741c8b35eb7084227b3dff15fe95e3d8`，远端解引用仍为上述原提交。推送前重新核对plan的远端SHA及标签无冲突，目标提交不存在工作流；当前CI只配置分支push过滤，没有标签、create或delete触发。本次归档标签1个、本地删除4条、远端heads删除0条；plan的远端head继续保留。
+`plan@e625341676c83495b3fb225b31064b3fcf1fbb18` 的补丁ID `0b884b6e5dc8ce360e96e7dbd4290b312960aa79` 与main中的 `2835603a895881c8ecb43eaef991634eb76ac74e` 相同；提交身份仍不同。已建立并正常推送注释标签 `archive/20261030/plan`，标签对象 `86743168741c8b35eb7084227b3dff15fe95e3d8`，远端解引用仍为上述原提交。推送前重新核对plan的远端SHA及标签无冲突，目标提交不存在工作流；当前CI只配置分支push过滤，没有标签、create或delete触发。19a初次阶段归档标签1个、本地删除4条、远端删除0条。审计返修后plan的远端head也已删除；累计恢复标签19个，远端heads删除34条，本地删除仍为此前4条。
 
 ## PR34保留的价值与当前状态
 
@@ -134,7 +136,7 @@ robot/dofbot/PSPL.md
 
 收尾分支继承原四功能的2个返修提交及全部有效源码，新增产品导航、七项报告、四项Skill、真实AI开发案例和发布清单。旧PR34的独立检查点/坐标预览经验以固定提交引用及私有静态副本保留，不移植旧整套pc应用。其余独有分支不未经判断全量合并。
 
-只读查询得到main保护 `enforce_admins=true`、所需批准数0、`required_status_checks=null`，仓库rulesets为空；这不是“没有保护”，也不虚构必需检查。有效 `.githooks/pre-push` 和默认hooks中的同内容钩子只阻止直推main，不运行工程检查。本轮没有改钩子、CI或保护。唯一active工作流为 `.github/workflows/ci.yml`，全部PR触发软件测试与FPGA仿真，main push同样触发；这与本轮禁跑约束冲突。这是19a候选未发布的原因。审计返修后所有者已单独批准具体CI分层和正常PR/main发布：保留所有运行类命令为仅手动，自动检查仅用Git文本/路径/冻结blob，保护不变。主线实际合并及最终提交在完成后更新本页和manifest；不将来源检查称为运行验证。
+只读查询得到main保护 `enforce_admins=true`、所需批准数0、`required_status_checks=null`，仓库rulesets为空；这不是“没有保护”，也不虚构必需检查。有效 `.githooks/pre-push` 和默认hooks中的同内容钩子只阻止直推main，不运行工程检查。19a初次阶段没有改钩子、CI或保护；当时唯一active工作流全部PR/main push运行测试/仿真，与禁跑冲突。审计后用户单独批准CI分层；只改CI事件，不改钩子、保护或contexts。这是19a候选未发布的原因。审计返修后所有者已单独批准具体CI分层和正常PR/main发布：保留所有运行类命令为仅手动，自动检查仅用Git文本/路径/冻结blob，保护不变。PR43已正常合入main（完整SHA见页首），来源检查成功；运行类没有执行。最终版本由发布tag定位，manifest仍保留full_submission_ready=false。
 
 ### 19a候选阶段保存的 PR 正文草稿（历史）
 
