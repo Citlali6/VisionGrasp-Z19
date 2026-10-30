@@ -50,7 +50,7 @@
 | 3.3.3.3 | 强烈要求 GitHub/Gitee 开源，采用可再分发许可 | 仓库与 Apache-2.0 项目代码；模型、SDK、媒体及第三方 IP 沿用各自许可，不以根许可覆盖外部材料 |
 | 3.3.5.2 | 普通 Skill 放入 `skill/`，含适用范围、用法、失效条件及效果依据 | [Skill入口](../../skill/README.md)与四项工作流；这是要求提交的材料 |
 | 3.3.2、3.3.5.2 | 通用 PYNQ Skill 另行加分 | 本轮不申报已经完成的 PYNQ Skill，不为加分临时更换数据通路；该加分方向与普通 Skill 提交要求分开 |
-| 3.3.5.4 | 推荐 `src/sim/build/board/data/skill/report` 结构；可保留其他组织方式并给映射 | 根 README 提供设计源码、仿真、构建、板端产物、数据与材料的目录对照；原模块路径保留 |
+| 3.3.5.4 | 推荐 `src/sim/build/board/data/skill/report` 结构；可保留其他组织方式并给映射 | 设计源码对应 `fpga/`、`host/`、`robot/`；仿真对应各模块的 `sim/`；构建入口在 `fpga/system_pspl/` 与 `host/libpspl/`，生成物放源码树外；板端产物与数据见 `deliverables/` 及其 manifest；技能与报告分别在 `skill/`、`report/` |
 | 3.3.5.4 | 文件名要求纯英文小写等；示例同时使用 `README.md` | 普通新文件使用小写英文；GitHub/工具入口、第三方和历史名称差异及处置见[收尾清单](../maintenance/release-20261030.md)，未声称取得额外豁免 |
 | 第六部分 | 决赛自主选题队伍按 AMD 模板制作一页英文 PPT 海报，不含队伍信息，A4 彩印 | [英文内容稿](../../report/poster_copy_en.md)及素材映射已准备；官方 PPT 模板未取得，尚无模板成品 |
 
