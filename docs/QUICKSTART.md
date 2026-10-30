@@ -1,4 +1,4 @@
-# 小亚智分 · 快速开始
+# 芯语智分 · 快速开始
 
 本页介绍 VM/DOFBOT 固定工位分拣应用的安装与使用。安装器默认读取[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)，其15个文件来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，按原部署清单校验。
 

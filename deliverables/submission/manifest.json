@@ -4,8 +4,12 @@
   "project": {
     "repository": "https://github.com/Citlali6/VisionGrasp-Z19",
     "technical_id": "VisionGrasp-Z19",
-    "display_name": "小亚智分——基于 Z19 PS/PL 协同设计的语音视觉垃圾分拣工作站",
-    "tagline": "听见指令，看清目标，让分类落到行动。"
+    "display_name": "芯语智分——基于 Zynq 软硬件协同的语音视觉垃圾分拣系统",
+    "short_name": "芯语智分",
+    "display_name_en": "Xinyu SmartSort",
+    "subtitle_en": "A Voice–Vision Waste Sorting System Based on Zynq Hardware–Software Co-design",
+    "tagline": "听见指令，看清目标，让分类落到行动。",
+    "tagline_en": "Hear the command. See the target. Put sorting into action."
   },
   "competition": {
     "track": "AMD FPGA 创新设计赛道 3.3 自主选题",
