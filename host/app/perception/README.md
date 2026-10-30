@@ -34,6 +34,8 @@
 
 两种模式继承既有 `GuardClient` 和PL门控的ROI、数值计数范围、连续新帧、固定锚点抖动、超时和一次消费。新 `SemanticGuardClient` 只替换PS输入校验，使用 `visiongrasp.ps-semantic-candidate/1` / `Z19_PS_CPU_YOLO`，绑定模型、标签、类别、相机、transform与配置；不伪造旧PL颜色状态，也不修改旧RTL/寄存器ID/ABI。原寄存器 `mask_count` 的数值槽在此模式明示承载PS框面积，颜色模式仍为真实PL掩码数。语义框面积不是分割面积或PL统计。
 
+默认语义分支不复制/清零颜色关联掩码、不计算连通区域；`association` 保留稳定字段 `state=not_requested, reason=semantic_bbox_policy`。完整PL计算、整帧回读、统计/来源合法性检查和独立颜色质心仍保留。颜色模式才调用 `associate_color()`；这次仅移除不必要调用，没有实测加速比。
+
 标签、配置或模型改变取消本段并重新累计；来源失配、多目标或超时不许可。ARM帧是基线，后续 `required` 个合格新帧才累计就绪；一个已消费许可对应一次固定工位任务，不是机械安全联锁。缺guard配置只报告结果而不产生许可，不自动绕过门控。
 
 未来显式入口为 `python -m host.app.perception.service --config <private-config.json>`。构造不打开设备；`Runtime.open()` 才初始化 V4L2、UIO、真实模型及可选音频。配置至少包含：

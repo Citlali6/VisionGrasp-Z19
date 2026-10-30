@@ -245,16 +245,19 @@ class Runtime:
                 self._check(task)
                 for detection in detections:
                     detection['coordinates'] = self.mapper.map(detection['pixel_center'], identity)
-                # PL keeps the whole pixel stream; only statistics are ROI
-                # limited. Component matching must apply that same ROI.
-                matching = dict(stats)
-                matching['mask'] = stats['mask'].copy()
-                rx0,ry0,rx1,ry1 = self.config['video'].get('roi',[0,0,self.width-1,self.height-1])
-                matching['mask'][:ry0,:] = 0
-                matching['mask'][ry1+1:,:] = 0
-                matching['mask'][:,:rx0] = 0
-                matching['mask'][:,rx1+1:] = 0
-                association = associate_color(detections, matching, identity)
+                if self.candidate_policy == 'color_association':
+                    # PL keeps the whole stream. Apply the statistics ROI only
+                    # to the copy used by the explicitly requested color match.
+                    matching = dict(stats)
+                    matching['mask'] = stats['mask'].copy()
+                    rx0,ry0,rx1,ry1 = self.config['video'].get('roi',[0,0,self.width-1,self.height-1])
+                    matching['mask'][:ry0,:] = 0
+                    matching['mask'][ry1+1:,:] = 0
+                    matching['mask'][:,:rx0] = 0
+                    matching['mask'][:,rx1+1:] = 0
+                    association = associate_color(detections, matching, identity)
+                else:
+                    association = dict(state='not_requested',reason='semantic_bbox_policy')
                 centroid = color_centroid(stats)
                 if centroid['valid']:
                     centroid['coordinates'] = self.mapper.map(centroid['pixel_xy'], identity)
