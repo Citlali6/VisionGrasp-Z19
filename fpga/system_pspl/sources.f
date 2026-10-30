@@ -1,0 +1,19 @@
+# Paths relative to repository root. Header search path is system_pspl/rtl.
+fpga/color_locator/vendor/laperex/cv_types.sv
+fpga/color_locator/vendor/laperex/cv_rgb_to_hsv.sv
+fpga/system_pspl/rtl/registers.svh
+fpga/system_pspl/rtl/vg_sync_fifo.sv
+fpga/system_pspl/rtl/vg_axil_regs.sv
+fpga/system_pspl/rtl/vg_guard_axi_top.v
+fpga/perception_v2/rtl/vg_rgb_affine_axis.sv
+fpga/perception_v2/rtl/vg_hsv_mask_axis.sv
+fpga/perception_v2/rtl/vg_roi_moments_axis.sv
+fpga/perception_v2/rtl/vg_video_axi.sv
+fpga/perception_v2/rtl/vg_video_axi_top.v
+fpga/audio_frontend/rtl/vg_audio_dc_axis.sv
+fpga/audio_frontend/rtl/vg_audio_fir_axis.sv
+fpga/audio_frontend/rtl/vg_audio_gate_axis.sv
+fpga/audio_frontend/rtl/vg_audio_frontend_axi.sv
+fpga/audio_frontend/rtl/vg_audio_axi_top.v
+fpga/sort_guard/rtl/vg_sort_guard_core.sv
+fpga/sort_guard/rtl/vg_sort_guard_axi.sv
