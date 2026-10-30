@@ -18,7 +18,7 @@ from pathlib import Path
 
 from .coordinates import CoordinateMapper, associate_color, color_centroid
 from .detector import Detector
-from .guard_adapter import CandidateGuard
+from .guard_adapter import CandidateGuard, POLICIES
 from .model_manifest import ModelManifest
 from .pl_transport import VideoFrontend
 from .result_types import FrameIdentity
@@ -119,6 +119,9 @@ class Runtime:
         self.frontend = VideoFrontend(config['video'])
         self.detector = Detector(ModelManifest.read(config['model_manifest']))
         self.guard = self.guard_device = None
+        self.candidate_policy = config['candidate_policy']
+        if self.candidate_policy not in POLICIES:
+            raise ValueError('candidate_policy must be semantic_bbox or color_association')
         if config['input_source'] not in ('pl_rgb', 'raw_rgb'):
             raise ValueError('explicit input_source must be pl_rgb or raw_rgb')
         self.width, self.height = config['video']['width'], config['video']['height']
@@ -140,9 +143,17 @@ class Runtime:
             guard = config['guard']
             roi = config['video'].get('roi',[0,0,self.width-1,self.height-1])
             hsv = config['video']['hsv']
-            if (guard['roi']!=roi or guard['min_s']!=hsv[2] or guard['min_v']!=hsv[4] or
-                    type(guard['required']) is not int or guard['required']<3):
-                raise ValueError('guard ROI/thresholds must match PL snapshot; at least three stable frames required')
+            if type(guard['required']) is not int or not 3 <= guard['required'] <= 65535:
+                raise ValueError('at least three stable new frames required')
+            if self.candidate_policy == 'color_association':
+                if guard['roi']!=roi or guard['min_s']!=hsv[2] or guard['min_v']!=hsv[4]:
+                    raise ValueError('color policy ROI/thresholds must match actual PL snapshot')
+                limits = (guard['min_mask'],guard['max_mask'])
+            else:
+                limits = (guard['min_bbox_area'],guard['max_bbox_area'])
+            if (any(type(v) is not int for v in limits) or
+                    not 1 <= limits[0] <= limits[1] <= self.width*self.height):
+                raise ValueError('candidate area limits must match the selected count basis')
 
     def open(self):
         from host.libpspl.python.pspl import Device
@@ -161,7 +172,7 @@ class Runtime:
                         return self.guard_device.read(offset)
                     def write32(inner, offset, value):
                         self.guard_device.write(offset, value)
-                self.guard = CandidateGuard(RegisterTransport(), cfg)
+                self.guard = CandidateGuard(RegisterTransport(), cfg, self.candidate_policy)
                 self.guard.initialize()
             self.camera.open()
             if self.voice_source == 'usb_pcm_pl':
@@ -175,6 +186,8 @@ class Runtime:
             raise
 
     def begin(self, payload):
+        if payload.get('candidate_policy') != self.candidate_policy:
+            raise ValueError('task candidate_policy differs from configured policy')
         task_id = payload.get('task_id')
         timeout = payload.get('timeout_s', 20)
         if payload.get('voice_source','serial_id') != self.voice_source:
@@ -195,7 +208,8 @@ class Runtime:
             self.result = None
             self.worker = threading.Thread(target=self._process, args=(self.task,), daemon=True)
             self.worker.start()
-            return dict(task_id=task_id, session_id=self.session_id, state='running',voice_source=self.voice_source)
+            return dict(task_id=task_id, session_id=self.session_id, state='running',
+                        voice_source=self.voice_source, candidate_policy=self.candidate_policy)
 
     def cancel(self, task_id):
         with self.lock:
@@ -214,7 +228,6 @@ class Runtime:
 
     def _process(self, task):
         after = 0
-        previous_label = None
         try:
             import cv2
             while True:
@@ -245,14 +258,12 @@ class Runtime:
                 centroid = color_centroid(stats)
                 if centroid['valid']:
                     centroid['coordinates'] = self.mapper.map(centroid['pixel_xy'], identity)
-                label = detections[0]['label'] if len(detections)==1 else None
-                if self.guard and previous_label is not None and label != previous_label:
-                    self.guard.cancel()
-                previous_label = label
                 candidate = (self.guard.offer(task=task, identity=identity, stats=stats,
+                                            detections=detections, model_id=self.detector.manifest.model_id,
                                             association=association, captured_at=captured,
                                             width=self.width,height=self.height)
-                             if self.guard else dict(state='not_applicable', reason='guard_not_configured'))
+                             if self.guard else dict(state='not_applicable', policy=self.candidate_policy,
+                                                     reason='guard_not_configured'))
                 now = time.monotonic()
                 # No image annotations enter the model. References identify the
                 # acquisition and processed byte content without storing images.
@@ -268,7 +279,7 @@ class Runtime:
                              pl_frame_id=stats['pl_frame_id'], config_version=stats['config_version'],
                              detections=detections, color_centroid=centroid,
                              association=association, candidate=candidate,
-                             selection_policy='sole_semantic_target_and_single_contained_color_component',
+                             selection_policy=self.candidate_policy,
                              producer_age_s=now-captured)
                 ok,jpeg = cv2.imencode('.jpg', cv2.cvtColor(selected,cv2.COLOR_RGB2BGR),
                                        [cv2.IMWRITE_JPEG_QUALITY,65])
@@ -308,7 +319,44 @@ class Runtime:
             if frame:
                 frame['producer_age_s'] = time.monotonic()-self.result[1]
             return dict(schema='visiongrasp.ps-task/1', task_id=task_id, session_id=self.session_id,
-                        state=task['state'], error=task.get('error'), result=frame)
+                        state=task['state'], error=task.get('error'), result=frame,
+                        candidate_policy=self.candidate_policy)
+
+    def preview(self, after_sequence):
+        """Read-only raw-camera branch for the existing VM display, all phases.
+
+        This bypasses model/PL processing only for display, and cannot provide
+        task permission. Timestamp is camera receive completion, not exposure.
+        """
+        if type(after_sequence) is not int or not -1 <= after_sequence <= 0xffffffff:
+            raise ValueError('bounded preview after_sequence required')
+        envelope = dict(schema='visiongrasp.ps-preview/1', session_id=self.session_id,
+                        source='ps_camera_preview', pl_processed=False,
+                        camera_id=self.config['camera']['camera_id'],
+                        transform_id=self.config['transform_id'])
+        with self.camera.condition:
+            if self.stop.is_set() or self.camera.error:
+                raise RuntimeError('camera preview stopped or failed')
+            if self.camera.latest is None:
+                return dict(envelope, state='waiting')
+            sequence,captured,raw = self.camera.latest
+            if sequence <= after_sequence:
+                return dict(envelope, state='unchanged')
+            if time.monotonic()-captured > 2:
+                return dict(envelope, state='stale')
+            raw = raw.copy()
+        import cv2
+        resized = cv2.resize(raw,(self.width,self.height),interpolation=cv2.INTER_LINEAR)
+        ok,jpeg = cv2.imencode('.jpg',cv2.cvtColor(resized,cv2.COLOR_RGB2BGR),
+                               [cv2.IMWRITE_JPEG_QUALITY,65])
+        if not ok or len(jpeg)>512*1024:
+            raise RuntimeError('bounded camera preview encoding failed')
+        age = time.monotonic()-captured
+        if age>2:
+            return dict(envelope,state='stale')
+        return dict(envelope,state='live',frame_id=sequence,producer_age_s=age,
+                    image_space=dict(width=self.width,height=self.height,pixel_format='RGB888'),
+                    preview_jpeg_base64=base64.b64encode(jpeg).decode('ascii'))
 
     def publish_voice(self, event):
         """Called by local USB PCM PL adapter; never accepts arbitrary motor text."""
@@ -318,6 +366,10 @@ class Runtime:
         if type(initial_age) not in (float,int) or not math.isfinite(initial_age) or initial_age<0:
             raise ValueError('voice producer age required')
         with self.lock:
+            # Old endpointed speech must not cross an acknowledged VM task
+            # boundary, even if its callback reached us after the producer reset.
+            if self.audio_source is None or event.get('boundary_id') != self.audio_source.boundary_id:
+                return
             self.voice_sequence += 1
             self.voice = dict(event, audio_sequence=event.get('sequence'),
                               audio_session_id=event.get('session_id'),
@@ -335,11 +387,29 @@ class Runtime:
 
     def voice_snapshot(self):
         with self.lock:
+            boundary = self.audio_source.boundary_id if self.audio_source else None
             if self.voice is None:
-                return dict(session_id=self.session_id,event=None,voice_source=self.voice_source,error=self.voice_error)
+                return dict(session_id=self.session_id,event=None,voice_source=self.voice_source,
+                            error=self.voice_error,boundary_id=boundary)
             event = dict(self.voice)
             event['producer_age_s'] = time.monotonic()-event.pop('produced_at')
-            return dict(session_id=self.session_id,event=event,voice_source=self.voice_source,error=self.voice_error)
+            if event.get('boundary_id') != boundary:
+                event = None
+            return dict(session_id=self.session_id,event=event,voice_source=self.voice_source,
+                        error=self.voice_error,boundary_id=boundary)
+
+    def voice_boundary(self, session_id):
+        if session_id != self.session_id or self.voice_source != 'usb_pcm_pl' or not self.audio_source:
+            raise ValueError('matching USB PCM producer session required')
+        if self.stop.is_set() or self.voice_error:
+            raise RuntimeError('voice source is stopped or faulted')
+        # Do not hold Runtime.lock while the audio producer drains/resets; its
+        # event callback also uses that lock. Ack means old capture+PCM+ASR is gone.
+        boundary = self.audio_source.request_boundary(timeout_s=8)
+        with self.lock:
+            self.voice = None
+            return dict(session_id=self.session_id,voice_source=self.voice_source,
+                        state='cleared',boundary_id=boundary,sequence=self.voice_sequence)
 
     def close(self):
         self.stop.set()
@@ -401,6 +471,10 @@ def make_server(runtime, *, bind, port, token):
                     result = runtime.snapshot(payload['task_id'])
                 elif self.path == '/voice':
                     result = runtime.voice_snapshot()
+                elif self.path == '/voice/boundary':
+                    result = runtime.voice_boundary(payload.get('session_id'))
+                elif self.path == '/preview':
+                    result = runtime.preview(payload.get('after_sequence',-1))
                 elif self.path == '/stop':
                     runtime.stop.set()
                     result = dict(state='stop_requested')

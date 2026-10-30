@@ -26,7 +26,9 @@
     "/home/yahboom/ultralytics/ultralytics/data/yahboom_data/best.pt and its SHA-256",
     "Matching ordered model.names or training data YAML",
     "Matching ultralytics source including local changes, predictor, augment, NMS and default configuration hashes",
-    "Exact ultralytics, torch, numpy and opencv-python VM package versions and AArch64-compatible target installations"
+    "Exact VM Python/OS/architecture and ultralytics, torch, numpy, cv2 library versions",
+    "Actual model stride, predictor image_size, letterbox fill/rect behavior, NMS IoU and max_det from matching framework/model configuration",
+    "Separate AArch64 Linux target Python/libc/library version record and legally supplied compatible native libraries; source-to-target compatibility notes"
   ],
   "missing_reason": "Companion VM was not powered on during an existing read-only guest file-copy attempt. It was not started. No local audited framework/weight backup was available.",
   "backend_contract": {
@@ -37,7 +39,9 @@
     "backend_input": "BGR uint8 HWC numpy array",
     "confidence": 0.65,
     "normalization_letterbox_nms": "Owned by actual hash-pinned Ultralytics predictor; no duplicate normalization or NMS",
-    "unavailable_parameters": "model class order, actual model architecture, framework/default versions, stride, inner image size, NMS IoU and max_det require matching external artifacts"
+    "unavailable_parameters": "model class order, actual model architecture, source and target environment versions, actual stride, inner image_size, actual letterbox fill/rect, NMS IoU and max_det require matching external artifacts",
+    "deployment_contract": "contract.example.json contains null for unavailable facts and is intentionally not an enrolled or runnable manifest",
+    "source_target_distinction": "VM reference versions are provenance, not an AArch64 binary installation. Target architecture/Python/libc/library versions are recorded separately and checked at explicit load. Matching Python framework files are checked by the same audited inventory at enrollment and runtime."
   },
   "delivery_status": "Real model-calling source supplied; runtime requires enrollment and explicitly fails on absent/mismatched dependencies. No model was loaded, exported or executed."
 }
