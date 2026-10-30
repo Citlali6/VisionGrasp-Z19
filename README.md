@@ -6,6 +6,8 @@ VisionGrasp-Z19 围绕“感知目标、确认任务、完成一次分拣”组�
 
 [启动展示](docs/QUICKSTART.md) · [系统架构](docs/ARCHITECTURE.md) · [验证结果](docs/VALIDATION.md) · [参赛技术资料](docs/competition/README.md) · [开发指南](docs/DEVELOPMENT.md)
 
+2026-10-30 新增[四功能 PS/PL 源码工程](fpga/system_pspl/README.md)：PL 视频通道校正/HSV/ROI 一阶矩和音频 DC/FIR/软门，PS 完整 PIO 收发、真实模型 CPU 后端、坐标映射、Vosk 与任务服务。实现文件、环境条件和源码交付范围集中在工程入口表；以下现场结果继续对应原部署版本。
+
 ![DOFBOT 实机展示窗口](docs/assets/dashboard.png)
 
 *已部署版本的真实界面：现场画面、识别结果、语音记录与任务阶段同步显示。*

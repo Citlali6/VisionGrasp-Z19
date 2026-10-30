@@ -12,6 +12,19 @@
 | 原颜色链资源、时序、仿真报告 | 量化实现成果 | [验证目录](../../deliverables/pl_color_z19/validation/) |
 | 相机 JSON 指标 | 独立相机完成情况 | [相机证据](../fpga/evidence/2026-10-10/README.md) |
 | 新门控源码与验证 | 软件流程、RTL 逻辑和新增工程成果 | [sort_guard](../../fpga/sort_guard/README.md)，引用实际版本结果 |
+| 四功能源码连接图与模块表 | PS/PL分工、算法、寄存器、FIFO和软件入口 | [system_pspl](../../fpga/system_pspl/README.md)，作为本轮源码工程图 |
+
+## 本轮七项材料对应
+
+| 内容 | 阅读入口与写法 |
+|---|---|
+| 背景与创新 | TECHNICAL_OUTLINE的摘要/1.1/1.5：固定工位、PS/PL职责、同帧数据与单次任务 |
+| 原理框图 | 分别使用system_pspl源码图和ARCHITECTURE现用运行图 |
+| 软硬件划分与接口 | DESIGN_DETAILS四功能表；统一寄存器、C UIO/PIO、HTTP任务及来源身份 |
+| 优化与资源/性能 | 新增定点/时分复用/背压设计说明；指标仅引用EVIDENCE_MATRIX中原对应版本 |
+| 模型协作 | PS CPU模型和Vosk、PL像素/PCM算子、VM SDK；来源/权重依赖见PS模块说明 |
+| 技能提炼 | 位宽/饱和、流水流控、事务快照、跨主机年龄、配置与模型契约；心得由实际参与者补充 |
+| 复现说明 | system_pspl未来构建入口与配置条件；本轮禁跑，未执行这些步骤 |
 
 ## 现场补采
 

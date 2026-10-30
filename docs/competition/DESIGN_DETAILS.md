@@ -2,6 +2,23 @@
 
 本页对应模板第二部分，提供从模块到流程的说明。现用程序细节见[系统架构](../ARCHITECTURE.md)；新增门控字段及优先级以 [INTERFACE.md](../../fpga/sort_guard/INTERFACE.md) 为准。
 
+## 四功能 PS/PL 工程
+
+Z19采用PS处理可变模型与系统接口、PL处理固定精度数据流的分工。PS通过C UIO有序MMIO交替填入/排出FIFO，完整回读RGB、mask和帧统计后才将图像送入CPU模型。新连接图及源码/运行环境集中见[system_pspl](../../fpga/system_pspl/README.md)。
+
+| 功能 | 输入 → 关键计算 → 输出 | 工程连接 |
+|---|---|---|
+| 视频预处理加速 | RGB888 → Q8.8通道增益/有符号偏置/饱和 → 非高亮RGB；HSV范围比较 → mask | `vg_video_axi_top` / C `pspl_video_process` / `VideoFrontend` |
+| 垃圾识别分类 | 同帧RGB → 厂商640×480缩放/BGR转换 → PS CPU真实YOLO/后端NMS → 类别、置信度、恢复框 | `Detector` / `ModelManifest` / `class_mapping`；加载不符即报错 |
+| 视觉定位 | ROI掩码 → count/bbox/64位坐标矩 → PS质心、像素/平面坐标、唯一目标对应 | `vg_roi_moments_axis` / `CoordinateMapper` / 既有 `GuardClient` |
+| 音频滤波与噪声抑制 | USB 16kHz mono PCM16 → PL DC/63tap Q1.15 FIR/软门 → PCM → PS Vosk白名单事件 | `vg_audio_axi_top` / `pspl_audio_process` / `PlAudioFrontend` / `UsbPcmPlSession` |
+
+视频配置在accepted SOF形成完整active快照，输入排队、弹性RGB流水和自由运行HSV标签遵循各自握手/逐周期语义。一个帧完整消费后冻结结果，PS核对序号并ACK；末像素参与统计，坏帧不可冒充完整结果。相同颜色全局框与多个检测目标无法唯一对应时，候选状态为不确定。
+
+DC状态使用40位Q24.15，反馈乘积56位；FIR使用48位累加与对称符号舍入。软门用双阈值和按样本变化的UQ1.15增益，默认关闭。FIR系数需63项完整装载，在disabled且排空后commit；PCM块边界不清状态。PL统一100MHz目标逻辑时钟，16kHz为数据样本节拍。
+
+PS服务仅输出感知/任务消息。独立VM入口沿用一次唤醒、准备观察、识别、分类播报和固定类别动作；新路径消费既有门控一次许可，旧入口保持原稳定判断。厂商旧xy是逆解代理坐标，新像素中心不会直接传入原 `.005` 判断。平面毫米坐标不会自动用于任意位置抓取。
+
 ## 硬件/软件职责表
 
 | 层次 | 输入 | 处理 | 输出 |
@@ -12,7 +29,7 @@
 | 新门控核心 | 候选、ROI、像素数范围、稳定阈值、busy | 空间/时间约束与单次消费 | 单周期 `permit_pulse` 及可读取事件记录 |
 | 虚拟机任务 | 语音事件、现用检测结果 | 单轮状态机、分类音频完成门控 | 现用固定工位动作调用与界面事件 |
 
-新门控尚未分配板端物理地址。旧颜色统计先由 PS 读取，再计划转写到新外设；没有在现有视频流中插入已经上板的直连模块。
+原独立门控工程未绑定现用板端地址；本轮新profile规划独立门控区0xA1020000，由PS转写新视频统计。该规划不修改旧颜色ABI或现用镜像。
 
 ## 新门控的软件流程
 

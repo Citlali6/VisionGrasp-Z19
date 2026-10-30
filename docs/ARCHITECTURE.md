@@ -1,5 +1,11 @@
 # 系统架构
 
+## 四功能 PS/PL 源码工程（2026-10-30）
+
+新的 `system_pspl` profile 以 Z19 PS 采集和任务服务连接 PL 视频/音频算子。视频路径为 PS USB/V4L2 解码与帧身份 → PIO → PL RGB 增益/偏置 → HSV/mask → ROI 计数/包围框/64位一阶矩 → PS 完整 RGB/mask/统计读回 → CPU 垃圾模型 → 同帧目标对应与平面映射 → 既有 sort_guard。音频路径为独立 USB 声卡 → PS ALSA PCM16 → PL DC/63tap FIR/可选软门 → PS Vosk/受限命令。机械臂动作仍由 VM 的现有 SDK 完成。
+
+完整[源码连接图与实现/环境表](../fpga/system_pspl/README.md)集中说明新模块的部署条件和来源。新服务通过带身份、时效与任务状态的 HTTP/JSON 连接可选 VM 入口，PS 不导入机械臂 SDK。下面各节及其运行图描述现用演示和先前独立工程，其历史结果保持原归属。
+
 平台按感知、任务与执行分工。当前 DOFBOT 与 Z19 颜色链分别完成实测；新增 `sort_guard` 是候选目标门控工程，尚未上板或接入现用分拣。已实现分工总图见[首页](../README.md)，以下细化运行链与新增设计。
 
 ## DOFBOT：语音驱动的单次任务
