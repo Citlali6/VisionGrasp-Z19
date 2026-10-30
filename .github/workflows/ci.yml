@@ -1,9 +1,6 @@
-name: Offline verification
+name: Manual runtime verification
 
 on:
-  push:
-    branches: [main, 'chore/**', 'feat/**', 'feature/**', 'fix/**', 'docs/**']
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,7 +12,7 @@ concurrency:
 
 jobs:
   software:
-    name: Python 3.10 / ${{ matrix.os }}
+    name: Manual Python 3.10 / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -47,7 +44,7 @@ jobs:
           sh -n .githooks/pre-push
 
   fpga_guard:
-    name: FPGA candidate guard RTL simulation
+    name: Manual FPGA candidate guard RTL simulation
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

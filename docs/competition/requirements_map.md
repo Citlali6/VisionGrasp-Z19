@@ -23,7 +23,7 @@
 | 性能与资源优化效果 | 20 | [证据矩阵](EVIDENCE_MATRIX.md)、[报告第4节](../../report/design_report.md#section-optimization) | 旧颜色不同分辨率配置是系统取舍；原颜色完整实现与门控 OOC 资源不构成优化前后对比 |
 | 功能正确性与设计完整性 | 20 | [系统工程](../../fpga/system_pspl/README.md)、[报告第2—3节](../../report/design_report.md#section-principle)、原部署与模块记录 | 四功能源码、旧独立模块记录和现用 VM 演示分别核查；新 profile 无完整板级验证结论 |
 | 大模型协作与技能包 | 15 | [AI协作记录](../../report/ai_collaboration.md)、[Skill](../../skill/README.md)、[报告第5—6节](../../report/design_report.md#section-ai) | 使用真实提示词/审计/提交来源；提交摘要不冒充完整逐字对话；运行时 YOLO/Vosk 分工不是开发协作记录 |
-| 文档质量与可复现性 | 15 | [评委导航](judges_guide.md)、[报告第7节](../../report/design_report.md#section-reproduce)、[发布清单](../../deliverables/submission/manifest.json) | 明确选择版本、环境与入口；冻结演示安装和新源码 checkout 分离；外部条件不隐藏 |
+| 文档质量与可复现性 | 15 | [评委导航](judges_guide.md)、[报告第7节](../../report/design_report.md#section-reproduce)、[发布清单](../../deliverables/submission/manifest.json) | 当前安装器/测试共同选择独立冻结payload，新PS/PL入口使用开发源码；明确版本/环境与外部条件 |
 
 权重用于材料组织，不用于预测得分或保证奖项。测试/断言次数、提交数和文件数不作为识别性能指标。
 
@@ -34,8 +34,8 @@
 | 选题背景与创新点、前人工作 | [1.背景与创新](../../report/design_report.md#section-background) | 产品简介、Yahboom/TOMRA/AMP 一手资料、第三方边界 |
 | 设计原理与功能框图 | [2.原理与框图](../../report/design_report.md#section-principle) | 产品功能、现用演示、四功能源码连接分别画图 |
 | 软硬件划分依据与接口设计 | [3.划分与接口](../../report/design_report.md#section-partition) | PS/PL/VM 分工、像素/PCM 格式、AXI/FIFO、配置快照与任务协议 |
-| 优化过程与性能/资源前后对比 | [4.优化与证据](../../report/design_report.md#section-optimization) | 配置取舍和同范围比较条件；数值只以证据矩阵为准，未取得的对比留为缺项 |
-| 大模型协作记录、纠错轨迹、工作流 | [5.AI协作](../../report/design_report.md#section-ai) | 真实用户审计与修订提交；全文记录可用性在 AI 报告中逐项交代 |
+| 优化过程与性能/资源前后对比 | [4.优化与证据](../../report/design_report.md#section-optimization)、[数值附录](../../report/design_report.md#appendix-a) | 配置取舍和同范围比较条件；附录从固定证据矩阵转录并附SHA/blob/文件哈希，未取得的对比留为缺项 |
+| 大模型协作记录、纠错轨迹、工作流 | [5.AI协作](../../report/design_report.md#section-ai)、[原始摘录](../../report/ai_interaction_excerpt.md) | 11条实际用户/助手消息、日期/角色/原文本哈希及模型字段；不公开整套聊天库，原始与案例摘要分开 |
 | Skill 提炼、效果证据与边界 | [6.Skill提炼](../../report/design_report.md#section-skill) | 四个可复用工作流及其来源、失效条件；新 Skill 无跨题目运行收益声明 |
 | 从零复现的操作步骤 | [7.复现说明](../../report/design_report.md#section-reproduce) | 版本选择→合法依赖→构建/设备条件→配置→未来运行/记录；本轮不执行 |
 

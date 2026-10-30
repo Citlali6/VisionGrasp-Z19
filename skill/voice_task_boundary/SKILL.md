@@ -19,4 +19,12 @@ description: Preserve one-wake one-task semantics across serial command events o
 
 后续检查建议：获得授权后覆盖忙碌期半句在结束后才完成 ASR、读取或滤波在途时请求边界、重复/并发请求、超时和关闭；检查只在重建完成后确认、旧事件仍保留旧边界、失败不触发任务。本轮仅审阅这些路径，没有运行采音、ASR 或测试。
 
-来源与证据：[原 Session](../../robot/dofbot/standalone_voice.py)、[USB 生产端](../../host/app/voice/usb_pcm_pl.py)、[接口说明](../../fpga/audio_frontend/README.md)、[协作案例二](../../report/ai_collaboration.md)。旧串口任务有独立记录；USB 边界修订仅源码审阅，未运行采音/ASR、测试或跨任务实验，不宣称消除了实测误触发。
+## 经验与证据对应
+
+| 对应步骤 / 经验 | 具体记录 | 支持范围与未覆盖内容 |
+|---|---|---|
+| 1–2：按真实来源保留口令及一次任务语义 | [DOFBOT 验证](../../docs/VALIDATION.md)“DOFBOT 定稿版”的语音状态机覆盖及“单轮任务”行；[快速开始](../../docs/QUICKSTART.md)的实际唤醒/启动步骤 | 原串口任务有一次唤醒/启动、忙碌输入隔离和结束回等待的既有测试/现场反馈；支持旧编号事件路径，不证明 USB PCM、滤波或 ASR 边界有效 |
+| 2：播报完成才进入既有类别动作 | 同一验证表“动作调用顺序”及原语音状态机覆盖，源码入口为[原 Session](../../robot/dofbot/standalone_voice.py) | 旧离线替身检查保持既有 SDK 次序；软件调用完成不是物理抓取成功率，也不能据此判断新 USB 事件时效 |
+| 3–5：清理必须跨过旧 PCM、滤波历史与 ASR 未完成片段 | [2026-10-30 审阅记录](../../docs/log/2026-10-30.md)“交叉审阅还修正”段、[协作案例二](../../report/ai_collaboration.md#case-voice-boundary)、[USB 生产端](../../host/app/voice/usb_pcm_pl.py)及[接口说明](../../fpga/audio_frontend/README.md) | 忙碌半句延后完成是源码路径发现；生产端重建、锁/等待及 boundary ID 确认均仅源码/接口审阅，没有采音/ASR或跨任务实验 |
+
+本技能尚无独立运行、跨题目或跨板复用证据。USB 边界修订没有实测误触发收益，不能由旧串口记录推导其效果。

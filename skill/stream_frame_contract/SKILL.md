@@ -19,4 +19,13 @@ description: Define or review ready/valid video pipelines with SOF/EOL, frame-sc
 
 后续检查建议：获得运行授权后，以背压/有效间隙、commit 与 SOF 相邻或同拍、末像素命中、零 count、错误 EOL 和中途复位检查对应不变量；分别记录输入、消费和快照身份。这里只给出场景建议，本轮未新增测试程序或运行这些检查。
 
-来源与证据：旧[颜色流模块](../../fpga/color_locator/README.md)提供既有流控记录；四功能[视频实现](../../fpga/perception_v2/README.md)与[当日源码审阅记录](../../docs/log/2026-10-30.md)补充参数快照、末像素和复位处理。旧记录不覆盖新 profile；本技能尚无独立运行或跨板复用证据。运行类检查遵守使用者当前授权。
+## 经验与证据对应
+
+| 对应步骤 / 经验 | 具体记录 | 支持范围与未覆盖内容 |
+|---|---|---|
+| 1–2：背压、标签、复位分别按实际推进点检查 | [旧颜色仿真标记](../../deliverables/pl_color_z19/validation/simulation-markers.txt)的 `COLOR_AXIS_PASS`，及[验证记录](../../docs/VALIDATION.md)“视频流”行 | 旧颜色流已覆盖背压、SOF/EOL、复位与保持检查；这是旧 `vg_color_axis` 的 RTL 记录，不证明新 RGB/HSV/ROI 组合已通过 |
+| 3：整帧参数保持一致 | 同一标记的 `config_snapshot=PASS`，及[旧颜色流说明](../../fpga/color_locator/README.md)的 accepted SOF 配置语义 | 支持旧颜色配置按帧锁存的经验；新增增益/偏置、pending/active 与跨级首像素的一致性仍需分别核对 |
+| 4–5：统计与采集帧身份成对记录 | [2026-10-22 颜色上板记录](../../docs/log/2026-10-22-pl-color.md)中的绿色帧1941，USB/PL序号一致，并保留像素数与全局框 | 支持旧计数/框与实际帧对应的观察；不覆盖新增一阶矩、末像素入快照或冻结 ACK |
+| 3–5 的新增机制 | [2026-10-30 源码审阅](../../docs/log/2026-10-30.md)“文本审阅覆盖”，及[四功能视频实现](../../fpga/perception_v2/README.md) | 参数快照、末像素、复位与 ACK 仅有源码/接口推导，没有新仿真、完整实现或板端记录 |
+
+旧记录不覆盖新 profile；本技能尚无独立运行、跨题目或跨板复用证据。运行类检查遵守使用者当前授权。

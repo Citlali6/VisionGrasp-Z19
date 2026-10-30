@@ -7,7 +7,7 @@
 | 类别 | 保留入口/来源 | 本轮处置 |
 |---|---|---|
 | 产品与四功能主线 | [产品首页](../../README.md)、[PS/PL聚合工程](../../fpga/system_pspl/README.md)、`fpga/perception_v2/`、`fpga/audio_frontend/`、`host/libpspl/`、`host/app/perception/` | 作为当前技术入口；PS CPU承担垃圾语义/ASR，PL承担像素/PCM和候选规则；默认语义模式不要求绿色 |
-| 现用演示基线 | [DOFBOT](../../robot/dofbot/README.md)、[部署清单](../../robot/dofbot/deployment_manifest.json)、[原现场记录](../VALIDATION.md) | 原串口语音、固定拾取、播报完成后动作、UI与环境保留。原安装器使用匹配部署清单的 `8a2a6fd` 检出；新可选入口与展示不能冒充原冻结安装文件 |
+| 现用演示基线 | [DOFBOT](../../robot/dofbot/README.md)、[部署清单](../../robot/dofbot/deployment_manifest.json)、[原现场记录](../VALIDATION.md) | 原串口语音、固定拾取、播报完成后动作、UI与环境保留。当前安装器/测试默认使用独立冻结payload（15文件逐字节来自 `8a2a6fd`）；支持显式 `--source`，新可选界面不进入原安装源 |
 | 共享依赖/BSP/第三方 | `fpga/color_locator/vendor/laperex/`、`fpga/scripts/alinx/`、[第三方说明](../../THIRD_PARTY.md) | HSV源码/来源/许可和Z19 PS配置仍被当前工程引用；不因旧名称删除或改归属 |
 | 历史独立硬件profile | [颜色链](../../fpga/color_locator/README.md)、[MIPI工程](../../fpga/camera_hw/README.md)、[裸机相机](../../fpga/camera_baremetal/README.md)、`deliverables/`、原门控[验证索引](../../fpga/sort_guard/validation/README.md) | 保留原工具版本、地址、产物、哈希与结果；降为明确的独立配置入口，不能拼成新四功能镜像或新性能结论 |
 | 已退出产品路线 | 旧 `pc/`、RoArm、MuJoCo、MJC1/HIL、SCS/灵巧手相关旧分支 | 当前发布树不恢复整套旧应用。提交、PR、已有恢复引用和仓库外bundle保留；关键词命中不等于可删除 |
@@ -27,10 +27,34 @@
 | 同名分支仍绑定工作树 | 5 | 全部保留，包含PR34；清洁工作树也不自动拆除 |
 | 已为main祖先、无工作树 | 16 | 内容冗余已确认；远端分支命中现有CI的push过滤，暂缓删除 |
 | 补丁等价、无工作树、命中CI过滤 | 4 | 保留原历史；不以API/UI删除绕过触发风险 |
-| 非祖先且仍有不同补丁、无工作树 | 13 | 已备份，保留待来源/用途审阅，不批量合并旧路线 |
+| 非祖先且仍有不同补丁、无工作树 | 13 | 已逐条完成内容审阅；独有历史适合恢复标签归档，具体价值与当前实现关系见下表；远端head删除继续受CI约束 |
 | `plan`：一个补丁等价提交、无工作树 | 1 | 建立恢复标签后仍保留远端head，不试验分支删除事件 |
 
-当前唯一工作流 `ci.yml` 对PR及指定分支push执行软件检查和FPGA仿真。GitHub文档说明分支删除的push事件涉及默认分支SHA回退；因此远端清理不能仅靠“分支已合并”判断是否符合本轮禁跑约束。[push事件说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push)、[分支/标签过滤说明](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)。本轮不修改CI/保护，也不发PR触发运行。
+当前唯一工作流 `ci.yml` 对指定分支push，以及默认 `pull_request` 活动 `opened/synchronize/reopened` 执行软件检查和FPGA仿真；单独 `edited/closed` 不属于该默认PR触发范围。GitHub文档说明分支删除会涉及push事件及默认分支SHA回退，但SHA回退本身不足以断言所有分支删除都会命中branch过滤；也不能因为没有 `on: delete` 就认定删除安全。13条分支都属于现有push分支匹配范围，远端删除继续暂缓，不能以API/UI绕开本轮禁跑约束。[PR默认活动说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)、[push事件说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#push)、[分支/标签过滤说明](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushbranchestagsbranches-ignoretags-ignore)。本轮不修改CI/保护，也不创建或更新PR触发运行。
+
+### 13条独有历史的内容审阅与归档建议
+
+以下判断以 `19a09b90b5100dc99c5a5b3ecf07853063c3a011` 为当前内容基线，逐条读取原提交、差异、源码和记录；不是仅按分支名称或 `git cherry` 分类。13个源SHA均与本地远端跟踪引用一致，均已包含在既有 `refs_pre_cleanup.bundle`，且均未绑定已登记的15个工作树；所有活跃或脏工作树及其分支继续保留。旧结果仅按原文件说明其范围，本轮未执行工程程序或重跑结果。
+
+这13条均有可保存的独有历史，但没有需要恢复为当前产品入口的整套旧工程。下表区分已保留的具体依赖、历史设计参考、失败/负例记录和早期修订；完整恢复标签保留提交身份，不把内容相似称为已经移植。CSV新增 `review_class/content_review/recovery_tag/tag_trigger_review/archive_state` 记录逐条结论。
+
+| 分支 | 源SHA | 内容判断与当前实现关系 | 建议恢复标签 |
+|---|---|---|---|
+| `chore/dev-workflow-setup` | `f6b51abe7d0adb92d2e8dc6ab588e9a57d826f92` | [旧治理规则](https://github.com/Citlali6/VisionGrasp-Z19/blob/f6b51abe7d0adb92d2e8dc6ab588e9a57d826f92/AGENTS.md)面向原团队/上游审批；现行治理已替代它。`pre-push` 与当前基线同blob，有效直推main保护已保留。归档旧规则来源，不回写旧审批要求。 | `archive/20261030/chore/dev-workflow-setup` |
+| `docs/fpga-implementation-roadmap` | `0e2cf0bb7808321bc40825a11080025d06941a98` | [v0.3接口草案](https://github.com/Citlali6/VisionGrasp-Z19/blob/0e2cf0bb7808321bc40825a11080025d06941a98/docs/fpga/interface_proposal.md)保留8路SCS/灵巧手需求、负角度、shadow/active及实机待定项。可作设计问题来源；不是现用DOFBOT/PSPL接口或已实现性能，不恢复旧路线图。 | `archive/20261030/docs/fpga-implementation-roadmap` |
+| `feat/board-bringup` | `a39ed7f3d92fa7b3b4138478f1e5ed283b21d58a` | [ALINX PS配置](https://github.com/Citlali6/VisionGrasp-Z19/blob/a39ed7f3d92fa7b3b4138478f1e5ed283b21d58a/fpga/scripts/alinx/ps_config.tcl)与当前基线同blob，当前PSPL仍使用。旧 `ah_hand/servo_bus` 构建、`0x80000000` 地址、BOM及 `blink_servo` 留作早期上电来源，不替代现用地址/启动。 | `archive/20261030/feat/board-bringup` |
+| `feat/host-skeleton` | `b6495680b395736da65152693dca0693512bc3e0` | [三后端接口](https://github.com/Citlali6/VisionGrasp-Z19/blob/b6495680b395736da65152693dca0693512bc3e0/docs/pr/002-host-skeleton.md)的 `GraspPlan/FsmSnapshot`、sim/serial/fpga 面向8路SCS和mock视觉；包含golden-model历史。保留分层设计来源，不替代当前DOFBOT SDK/PSPL客户端或现场入口。 | `archive/20261030/feat/host-skeleton` |
+| `feat/scs-protocol-golden-model` | `53369e11af436777f822b3b7f12539195e1c97a2` | [协议参考模型](https://github.com/Citlali6/VisionGrasp-Z19/blob/53369e11af436777f822b3b7f12539195e1c97a2/docs/pr/001-scs-protocol-golden-model.md)保存包长、校验、端序、解析器和虚拟总线；寄存器映射含实机待定项，不是DOFBOT协议验收。该tip已被旧host及sim分支包含，独立标签保留阶段身份。 | `archive/20261030/feat/scs-protocol-golden-model` |
+| `feature/citlali6-camera-hil-unified-20261018` | `db7e0f5a9859d11d556e2d7dc9d85d299ccf94ef` | [统一相机/HIL实验](https://github.com/Citlali6/VisionGrasp-Z19/blob/db7e0f5a9859d11d556e2d7dc9d85d299ccf94ef/fpga/camera_hil/README.md)明确 `UNSAFE / NOT DEPLOYABLE`。保留CDC/时序诊断及外部IO、RTSTAT-10、复位、同镜像HIL未决边界；不导入旧镜像或旧 `A1000000` 语义。 | `archive/20261030/feature/citlali6-camera-hil-unified-20261018` |
+| `feature/citlali6-z19-live-vision-20261018` | `b5706959111d96b8e93d7b65177ca212abb5bde5` | [CPU视觉诊断](https://github.com/Citlali6/VisionGrasp-Z19/blob/b5706959111d96b8e93d7b65177ca212abb5bde5/host/camera_linux/DIAGNOSTICS.md)保存同帧JPEG/IPC、过期抑制和输入shape对齐方法，含真实苹果/水杯漏检、手部误检。保留负例和来源，不作为垃圾模型精度或PL神经网络结果，不替换当前模型链。 | `archive/20261030/feature/citlali6-z19-live-vision-20261018` |
+| `feature/sim-model-rtl` | `903b46235009e6a7f4a37428ae491dab7f2431e1` | 旧MuJoCo手模型、8路SCS RTL、早期Vosk/NCNN及 [STM32转发固件](https://github.com/Citlali6/VisionGrasp-Z19/blob/903b46235009e6a7f4a37428ae491dab7f2431e1/firmware/stm32/README.md)组成历史集成链，包含旧host/golden历史。保留源代码、HAL许可与原失败记录；不恢复旧pc/MCU/手模型，不给当前PSPL继承旧仿真结论。 | `archive/20261030/feature/sim-model-rtl` |
+| `feature/z19-camera-baremetal` | `eaed60b9539ac460c93c27b7533c1238b85b8b33` | [早期裸机相机](https://github.com/Citlali6/VisionGrasp-Z19/blob/eaed60b9539ac460c93c27b7533c1238b85b8b33/fpga/camera_baremetal/README.md)保存FL0214/JTAG/三缓冲和黑帧排查。当前树另保留较晚 `camera_baremetal` 与原 `validated-live-v2`；与此tip并非相同补丁。归档早期修订，不回退当前独立profile或改写产物归属。 | `archive/20261030/feature/z19-camera-baremetal` |
+| `feature/z19-mujoco-hil-20261017` | `caa84a5ddb541cd60ebd2e07869b83671ca8a1e2` | [原AHIL配置](https://github.com/Citlali6/VisionGrasp-Z19/blob/caa84a5ddb541cd60ebd2e07869b83671ca8a1e2/fpga/hand_control/README.md)保存RAM-only部署、看门狗和回环记录及FPD/独立LPD时钟条件。终端是MuJoCo虚拟手，旧HIL镜像会替换相机PL；不是DOFBOT物理抓取或相机联合镜像，不整合到当前profile。 | `archive/20261030/feature/z19-mujoco-hil-20261017` |
+| `feature/z19-usb-voice-echo-20261022` | `6fa744e739801c43cbbe1e1f96f7d9fcfb442a9e` | [A53回声记录](https://github.com/Citlali6/VisionGrasp-Z19/blob/6fa744e739801c43cbbe1e1f96f7d9fcfb442a9e/docs/voice/Z19_USB_ECHO.md)保留ALSA/Vosk/Piper半双工停采重开、eSpeak可调用但听感失败及Piper数据许可边界。现树已保留依赖/来源/许可事实；回声入口不自动启用，不作为新PL FIR/任务验证。 | `archive/20261030/feature/z19-usb-voice-echo-20261022` |
+| `fix/fpga-xsim-bringup` | `97657ff9361699865269dafba6f506a9610af6cf` | [旧SCS RTL修正](https://github.com/Citlali6/VisionGrasp-Z19/blob/97657ff9361699865269dafba6f506a9610af6cf/fpga/README.md)涉及READ长度、ID 1至8、RX计数、帧尾超时和FSM复位。保留原3模块XSim记录与具体修正；不外推为AXI/UART位级/电气或新sort_guard/PSPL验收，不移回旧RTL。 | `archive/20261030/fix/fpga-xsim-bringup` |
+| `fix/host-failsafe-20261017` | `372500a0a4f2069cead464901c3ff713bb43215e` | [旧主机故障清理](https://github.com/Citlali6/VisionGrasp-Z19/blob/372500a0a4f2069cead464901c3ff713bb43215e/docs/fpga/host_failsafe.md)保留首错、`emergency_stop/close`、mmap/fd和信号退出方法；原文明确SIGKILL/断电/驱动阻塞不保证实机停机。可作故障设计参考，不恢复旧入口或宣称现链已移植/验证。 | `archive/20261030/fix/host-failsafe-20261017` |
+
+上述13个标签已逐条核对远端源SHA、已有bundle覆盖和无同名引用后建立，并正常原子推送；其远端解引用与原SHA一致。对应远端head尚待主线CI分层落地后清理。13个标签目标树的 `.github/workflows/` 文件数均为0；当前唯一CI仅声明分支push、默认PR活动和手动触发，没有标签push或 `create` 触发，因此本次标签交付不匹配该工作流。该判断只用于这13个固定源SHA的标签，不用于证明分支删除安全。完成标签及远端解引用核对后，独有历史可从活跃开发分支归档退出；远端head仍须等待CI策略与禁跑要求同时满足，不能先删再观察。CSV中这13条已记为 `tag_pushed_head_retained_pending_ci`。另为4条补丁等价分支建立各自恢复标签，并以 `archive/20261030/baseline-main@8a2a6fd` 保留16条祖先分支的共同恢复基线；连同此前plan，共19个恢复标签。远端删除将在实际执行后另行记数。
 
 以下4条本地引用已逐条核对SHA、main祖先关系及没有工作树使用后，以 `git branch -d` 删除；再次读取本地引用确认均已不存在。其远端heads继续保留：
 
@@ -110,9 +134,9 @@ robot/dofbot/PSPL.md
 
 收尾分支继承原四功能的2个返修提交及全部有效源码，新增产品导航、七项报告、四项Skill、真实AI开发案例和发布清单。旧PR34的独立检查点/坐标预览经验以固定提交引用及私有静态副本保留，不移植旧整套pc应用。其余独有分支不未经判断全量合并。
 
-只读查询得到main保护 `enforce_admins=true`、所需批准数0、`required_status_checks=null`，仓库rulesets为空；这不是“没有保护”，也不虚构必需检查。有效 `.githooks/pre-push` 和默认hooks中的同内容钩子只阻止直推main，不运行工程检查。本轮没有改钩子、CI或保护。唯一active工作流为 `.github/workflows/ci.yml`，全部PR触发软件测试与FPGA仿真，main push同样触发；这与本轮禁跑约束冲突。因此不创建收尾PR、不更新PR34、不合入main。main仍为起始完整SHA。最终收尾提交以Git交付分支和提交manifest记录的内容快照为准。
+只读查询得到main保护 `enforce_admins=true`、所需批准数0、`required_status_checks=null`，仓库rulesets为空；这不是“没有保护”，也不虚构必需检查。有效 `.githooks/pre-push` 和默认hooks中的同内容钩子只阻止直推main，不运行工程检查。本轮没有改钩子、CI或保护。唯一active工作流为 `.github/workflows/ci.yml`，全部PR触发软件测试与FPGA仿真，main push同样触发；这与本轮禁跑约束冲突。这是19a候选未发布的原因。审计返修后所有者已单独批准具体CI分层和正常PR/main发布：保留所有运行类命令为仅手动，自动检查仅用Git文本/路径/冻结blob，保护不变。主线实际合并及最终提交在完成后更新本页和manifest；不将来源检查称为运行验证。
 
-### 待条件满足后使用的 PR 正文草稿
+### 19a候选阶段保存的 PR 正文草稿（历史）
 
 标题：`小亚智分：3.3初级组参赛材料与四功能源码收尾`
 
@@ -124,4 +148,4 @@ robot/dofbot/PSPL.md
 >
 > 本正文未在GitHub创建PR，合并前须解决自动执行检查与禁跑约束的冲突，并遵守实际保护规则。
 
-后续可讨论将文档/文本检查与运行类验证分层、工程仿真显式触发，并使required checks对应真实内容；这是需单独决定的建议，本轮未激活、未制造成功状态。
+所有者在本会话已明确批准仓库外具体补丁：`ci.yml`仅 `workflow_dispatch` 且保留原software/fpga_guard命令，新增 `source_review.yml`仅自动做标准Git文本、20个入口和15个冻结blob核对。未修改保护/contexts，未dispatch运行类工作流；PR与main结果只记录真实来源检查状态。

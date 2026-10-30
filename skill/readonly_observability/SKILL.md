@@ -19,4 +19,13 @@ description: Add a read-only UI and traceable logs to a hardware-owning control 
 
 后续检查建议：获得授权后覆盖编码期间来源/代际变化、画面停滞、旧目录残留、源会话重启及 PID 重用；对照实际 JPEG、已发布元数据和 UI 所读状态，确认错配或过期时不显示 LIVE。本轮没有运行窗口、设备或这些检查。
 
-来源与证据：[现有发布器](../../robot/dofbot/preview_publisher.py)、[可选观测适配](../../robot/dofbot/pspl_display.py)、[协作案例三](../../report/ai_collaboration.md)。原展示链有[历史证据](../../docs/competition/EVIDENCE_MATRIX.md)；新 PS/PL 适配和本技能只有源码/接口审阅，没有新窗口运行或跨场景复用效果。
+## 经验与证据对应
+
+| 对应步骤 / 经验 | 具体记录 | 支持范围与未覆盖内容 |
+|---|---|---|
+| 1–2：控制唯一拥有设备，观测应接回实际任务过程 | [DOFBOT 验证](../../docs/VALIDATION.md)“摄像头及界面”行及[原真实截图](../../docs/assets/dashboard.png) | 旧记录显示相机由运行进程持有、帧号推进、识别/播报/阶段正常显示；支撑旧本地旁路结构，不证明新 HTTP 原始预览的连续性 |
+| 4：单实例及陈旧画面必须可区分 | 同一验证页“初次/重复启动”行和原预览旁路/展示模型检查范围；实现见[现有发布器](../../robot/dofbot/preview_publisher.py) | 旧版本已有单控制实例/单窗口与陈旧画面拒绝记录；新远端 session、PID/start ticks/boot ID 与状态代际的组合仍需单独确认 |
+| 5：SDK 指令阶段与实际成功分开 | 同一验证表“动作调用顺序”“实物效果”两行 | 替身检查确认既有 SDK 次序，现场回调只说明软件执行过程；未安装抓取成功传感器，不由界面阶段推导物理成功率 |
+| 2–4：新入口回调和 JPEG/身份同快照 | [2026-10-30 审阅记录](../../docs/log/2026-10-30.md)“新入口缺展示与日志”行及 JPEG/来源段；[可选观测适配](../../robot/dofbot/pspl_display.py)、[协作案例三](../../report/ai_collaboration.md#case-readonly-observability) | 漏接 save/recognized 和旧 JPEG 配新来源是源码审阅发现；新适配未启动窗口、访问设备或验证远端重启/编码竞争场景 |
+
+本技能尚无独立运行、跨题目或跨板复用效果记录。新 PS/PL 适配仅源码/接口审阅，旧展示运行结果保持原归属。

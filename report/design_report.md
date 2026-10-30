@@ -4,7 +4,7 @@
 
 参赛定位：3.3 自主选题赛道、初级组，实际资格由报名审核确认。硬件平台为 ALINX Z19，器件 `xczu19eg-ffvc1760-2-i`。本收尾稿继承四功能源码基线 `7cf7513a42d5b5f3b3c66eec1e950786b6478b83`；最终发布提交与主线整合状态以[发布清单](../deliverables/submission/manifest.json)为准。
 
-本报告按用户提供的 2026 AMD 指南 3.3.5.3 的七项内容组织，规则页码、附件哈希与五项评分材料见[要求映射](../docs/competition/requirements_map.md)。配置/版本/环境集中于[系统工程表](../fpga/system_pspl/README.md)，指标只引用[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)，不为同一数字建立第二份维护表。
+本报告按用户提供的 2026 AMD 指南 3.3.5.3 的七项内容组织，规则页码、附件哈希与五项评分材料见[要求映射](../docs/competition/requirements_map.md)。配置/版本/环境集中于[系统工程表](../fpga/system_pspl/README.md)，指标仅在[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)维护；[附录 A](#appendix-a)提供固定版本的数值快照，随报告一起独立导出。
 
 <a id="section-background"></a>
 ## 1. 选题背景与创新点
@@ -137,12 +137,12 @@ DC 使用 40 位 Q24.15 状态与充分扩展的反馈乘积；FIR 系数为 Q1.
 
 寄存器偏移与位字段由[单一清单](../fpga/system_pspl/registers.json)定义；AXI-Lite 独立接收 AW/W，保持 B/R 响应，非法访问显式报错。C 客户端通过显式 UIO 节点执行有序 32 位 MMIO，核对设备 ID、协议、容量、读写数量和帧标签。超时/断流终止会话，不把部分结果当完整帧或静默切为软件处理。
 
-PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址、限长报文与超时。只传生产端年龄，接收端叠加自身请求耗时，不直接相减跨机单调时钟。新 VM 入口接入原状态与识别图回调，使用独立输出目录；预览图、来源身份与 generation 同快照对应。旧部署安装器及冻结清单继续对应其原版本。
+PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址、限长报文与超时。只传生产端年龄，接收端叠加自身请求耗时，不直接相减跨机单调时钟。新 VM 入口接入原状态与识别图回调，使用独立输出目录；预览图、来源身份与 generation 同快照对应。原部署应用文件和清单保持冻结版本，当前安装器默认从独立保存的 payload 读取它们。
 
 <a id="section-optimization"></a>
 ## 4. 优化过程及性能/资源对比
 
-优化材料按相同统计范围组织。所有可引用数值及其原始报告入口以[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)为唯一维护位置；下表说明比较对象和设计判断，不复制一份独立数字表。
+优化材料按相同统计范围组织。所有可引用数值及其原始报告入口以[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)为唯一维护位置；下表说明比较对象和设计判断，[附录 A](#appendix-a)保留供独立导出使用的同源性能与资源数值。
 
 | 对象 | 原路径/基线 | 改进或取舍 | 对应结果与比较条件 |
 |---|---|---|---|
@@ -157,7 +157,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 <a id="section-ai"></a>
 ## 5. 大模型协作记录
 
-大模型协作用于开发与审阅，不是把运行时 YOLO、Vosk 与 PL 分工改名。真实案例、任务出处、用户审计、修正提交与材料完整性见 [AI 协作记录](ai_collaboration.md)。本报告使用可追溯的案例摘要，不补写未保存的逐字回答或推测模型版本。
+大模型协作用于开发与审阅，不是把运行时 YOLO、Vosk 与 PL 分工改名。真实案例、任务出处、用户审计与修正提交见 [AI 协作记录](ai_collaboration.md)；[原始交互摘录](ai_interaction_excerpt.md)保留11条实际消息、日期/角色/原文本哈希和审计建议节。原会话模型字段记录为 `gpt-6.1-sol`。摘要与原始摘录分开，不补写缺失回答。
 
 | 开发中的发现 | 人工判断与修订 | 可追溯记录 |
 |---|---|---|
@@ -187,20 +187,26 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
 以下是供后续使用者执行的步骤，**本轮未执行其中的安装、构建、程序、设备或验证流程**。必须先选择复现对象；旧演示、旧 Z19 独立 profile 与新四功能 profile 不共用验收结论。
 
-1. **取得并固定版本。** 从唯一仓库获取源码，按[发布清单](../deliverables/submission/manifest.json)记录当前交付 SHA。复现原 VM 演示安装时，另建工作树固定到 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，该版本与冻结安装文件清单匹配。当前源码中的展示控件已为新入口扩展，不能直接当作冻结安装器的原输入。
+1. **取得并固定版本。** 从唯一仓库获取源码，按[发布清单](../deliverables/submission/manifest.json)记录当前交付 SHA。原 VM 演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)已随当前源码保存，字节来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希。当前安装器默认读取这份 payload；开发目录中新展示接口不进入原演示安装，不需要先切换到旧提交。
 
    ```bash
    git clone https://github.com/Citlali6/VisionGrasp-Z19.git
    cd VisionGrasp-Z19
    git switch --detach origin/source/track33-closeout-20261030
    git rev-parse HEAD
-   # 将实际解析的 SHA 与发布清单/交付说明核对，再单独取原演示安装源：
-   git worktree add ../visiongrasp-demo-20261029 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
+   # 将实际解析的 SHA 与发布清单/交付说明核对。
    ```
 
 2. **准备合法依赖和目标环境。** 按系统工程表取得原 VM SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认 VM 来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。缺少权重、类序或契约时停止相应路径，保留明确错误；不以样例 manifest、固定类别或随机框代替。
 
-3. **选择原部署复现时，使用冻结工作树。** 在配套 Ubuntu/ROS 环境从 `visiongrasp-demo-20261029` 按其 `docs/QUICKSTART.md` 和 `robot/dofbot/README.md` 执行依赖检查与安装。现用程序仍运行时不覆盖它；这条路径使用原串口语音和 VM 检测，不需要新 profile。旧 Z19 颜色/MIPI 则分别按各自模块说明、产物哈希及工具版本操作。
+3. **选择原部署复现时，使用当前安装器与冻结 payload。** 在配套 Ubuntu/ROS 环境从当前源码根目录，按[快速开始](../docs/QUICKSTART.md)和[VM 组件说明](../robot/dofbot/README.md)执行以下入口。安装器继续按原清单核对 payload，并记录实际来源；缺失或校验失败即停止，不回退到开发目录。现用程序仍运行时不覆盖它；这条路径使用原串口语音和 VM 检测，不需要新 profile。
+
+   ```bash
+   bash robot/dofbot/install.sh --check
+   bash robot/dofbot/install.sh
+   ```
+
+   独立旧检出仍是可选历史复现方式：可用 `git worktree add ../visiongrasp-demo-20261029 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` 保存旧源，再为当前安装命令显式传入 `--source ../visiongrasp-demo-20261029/robot/dofbot`，沿用相同文件与环境校验。旧 Z19 颜色/MIPI 则分别按各自模块说明、产物哈希及工具版本操作。
 
 4. **选择四功能 profile 时，准备匹配的工程工具。** 指南推荐 Vivado/Vitis 2026.1 或 2025.2；当前颜色/新 profile 脚本固定 2020.1，以保留既有 ALINX PS/IP 配置，独立 MIPI 要求另列于工程表。本稿提供原版本构建入口，没有在推荐版本重建的记录，也不隐式升级 IP。
 
@@ -230,3 +236,42 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 9. **在未来允许运行的阶段启动所选新路径。** PS 从当前交付源码根目录使用 `python3 -m host.app.perception.service --config /private/pspl-service.json`。VM 使用 `/usr/bin/python3 -B /absolute/path/robot/dofbot/pspl_entry.py --config /private/vm-pspl.json`，按 [PSPL说明](../robot/dofbot/PSPL.md)选择是否显式执行机械臂及打开只读窗口。旧部署保持独立，不能同时争用设备。任务图像、来源 JSON、事件、实际指令记录和软件错误进入该新入口的独立输出目录。
 
 10. **保存可复核输出。** 在另行允许的验证阶段，按对应输入与版本核对 RGB/掩码/一阶矩/PCM、模型结果与参考数据，保存配置、输入、原始输出、工具报告及失败记录；分别判断软件、RTL、完整实现和板级结果。本轮不运行旧检查给新 profile 背书。提交时以新增真实记录更新证据矩阵；未取得新完整实现/板级与参考比对前，不宣布四功能 profile 已满足指南全部实测条件。
+
+<a id="appendix-a"></a>
+## 附录 A. 性能与资源数值快照
+
+本附录从同一证据矩阵手工转录，用于报告脱离仓库单独导出时保留数值、条件和证据范围。它不是第二个指标维护源，也不是本轮新增测量。
+
+| 快照标识 | 固定值 |
+|---|---|
+| 来源文件 | `docs/competition/EVIDENCE_MATRIX.md` |
+| 来源提交 | [`19a09b90b5100dc99c5a5b3ecf07853063c3a011`](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/docs/competition/EVIDENCE_MATRIX.md) |
+| 来源文件 Git blob | `14b729aed8e6caf84ef828567e28cc71f1df09eb` |
+| 来源文件 SHA-256 | `7da43b840a55431102a6cfa0792cb8bab16007b62dfb83af5d6e76b1858d4801`（UTF-8、LF 原文件字节） |
+| 维护与导出规则 | 数值只在证据矩阵维护。矩阵更新后或再次导出时，从选定固定提交重新转录并核对本附录，连同提交、blob、SHA-256 一起更新；正文与本附录一起导出，不在附录中单独修改指标。 |
+
+### A.1 旧颜色系统的配置取舍
+
+以下是 2026-10-23 独立颜色/网格配置的系统记录；采集至发布包含采集、PS 解码/传输/编码和发布路径，不是 PL 算术延迟。
+
+| 配置 | 原图尺寸 | PL 处理尺寸 | 板端平均发布率 | 采集至发布 | 原始证据 |
+|---|---|---|---|---|---|
+| 原 hd | 1280×720 | 1280×720 | 1.924 fps | 567.99 ms | [网格与预览记录](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/docs/log/2026-10-23-grid-preview.md)，证据矩阵“原 hd 发布” |
+| balanced | 1280×720 | 640×360 | 7.26 fps | 约 187 ms | 同一记录，证据矩阵“balanced 发布率”“balanced 采集至发布” |
+
+balanced 保留原始视野，减少进入 PL 的像素，并牺牲处理图的小目标细节。两行处理分辨率不同，不能据此计算同画质算法加速比，也不能将其发布率赋予新四功能 profile。
+
+### A.2 已有资源与时序报告
+
+下表并列报告两种已有工程范围，**不构成资源优化前后对照**：原颜色为完整镜像的实现结果，门控为独立 OOC 综合。没有同范围资源前后数据，不计算资源节省比例，不把两组资源相加冒充新完整系统。
+
+| 工程及日期 | 器件 / 工具 | 报告阶段 | LUT | FF | BRAM | DSP | WNS / WHS | 原始证据 |
+|---|---|---|---:|---:|---:|---:|---|---|
+| 原颜色链，2026-10-22 | XCZU19EG-FFVC1760-2 / Vivado 2020.1 | 完整实现、布局布线 | 1,885 | 1,936 | 0 | 6 | 4.580 ns / 0.017 ns | [资源](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/deliverables/pl_color_z19/validation/utilization.rpt)、[时序](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/deliverables/pl_color_z19/validation/timing.rpt) |
+| 独立候选门控，2026-10-29 | XCZU19EG-FFVC1760-2-I / Vivado 2020.1 | OOC 综合、综合网表时序；未布局布线 | 866 | 949 | 0 | 0 | 7.112 ns / 0.061 ns | [资源](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/reports/utilization.rpt)、[时序](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/reports/timing_synth_only.rpt)、[结果及哈希](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/result.json) |
+
+门控在综合后施加 10 ns 报告约束；67 个输入、40 个输出未设置 I/O delay，`HD.CLK_SRC` 未设置。其裕量属于综合估计，不是完整实现收敛、实测板上频率或吞吐。原颜色报告与门控报告各自的约束和工具阶段继续随原文件保留。
+
+### A.3 新 profile 的数值边界
+
+`z19-pspl-four-functions-v1` 目前只有源码/接口审阅，没有本轮完整实现资源/时序、功耗、板级输入输出与参考比对、识别率、降噪 dB、外部定位精度或同等画质加速比。目标 100 MHz、16 kHz 和 63 tap 是设计参数，不填入上述已有结果表作为新系统测量。后续取得新证据后先更新矩阵，再依维护规则更新本附录快照。

@@ -1,0 +1,91 @@
+name: Source review (Git text only)
+
+on:
+  push:
+    branches: [main, 'chore/**', 'feat/**', 'feature/**', 'fix/**', 'docs/**']
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-review-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source_review:
+    name: Git text, required paths and frozen source (no runtime validation)
+    if: ${{ github.event_name != 'push' || !github.event.deleted }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Inspect tracked text and source references only
+        shell: bash
+        env:
+          REVIEW_EVENT: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          head="$(git rev-parse HEAD)"
+          if [ "$REVIEW_EVENT" = pull_request ]; then
+            base="$PR_BASE_SHA"
+          elif [ "$PUSH_BEFORE_SHA" = 0000000000000000000000000000000000000000 ]; then
+            base="$(git merge-base HEAD "refs/remotes/origin/$DEFAULT_BRANCH")"
+          else
+            base="$PUSH_BEFORE_SHA"
+          fi
+          git cat-file -e "${base}^{commit}"
+          git --no-pager diff --no-ext-diff --no-textconv --check "$base" "$head" --
+          required=(
+            README.md
+            docs/README.md
+            docs/competition/judges_guide.md
+            docs/competition/requirements_map.md
+            docs/competition/EVIDENCE_MATRIX.md
+            report/design_report.md
+            report/ai_collaboration.md
+            skill/README.md
+            fpga/system_pspl/README.md
+            fpga/system_pspl/profile.json
+            fpga/system_pspl/create_project.tcl
+            fpga/system_pspl/build_bd.tcl
+            host/libpspl/src/pspl.c
+            host/app/perception/service.py
+            host/app/voice/usb_pcm_pl.py
+            robot/dofbot/install.py
+            robot/dofbot/pspl_entry.py
+            deliverables/dofbot_demo_20261029/provenance.json
+            deliverables/dofbot_demo_20261029/payload/deployment_manifest.json
+            deliverables/submission/manifest.json
+          )
+          for path in "${required[@]}"; do
+            kind="$(git cat-file -t "$head:$path")"
+            if [ "$kind" != blob ]; then
+              printf 'Required tracked file is absent or not a blob: %s\n' "$path" >&2
+              exit 1
+            fi
+          done
+          frozen_commit=8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d
+          frozen_files=(
+            standalone_runtime.py standalone_voice.py preview_publisher.py
+            dashboard.py dashboard_model.py dashboard_launcher.py
+            launch_controller.py ensure_kinematics.py voice_bridge.py
+            start.sh run_runtime.sh dashboard-icon.svg
+            deployment_manifest.json external_dependencies.json README.md
+          )
+          for name in "${frozen_files[@]}"; do
+            expected="$(git rev-parse --verify "$frozen_commit:robot/dofbot/$name")"
+            actual="$(git rev-parse --verify "$head:deliverables/dofbot_demo_20261029/payload/$name")"
+            if [ "$expected" != "$actual" ]; then
+              printf 'Frozen source differs from recorded Git baseline: %s\n' "$name" >&2
+              exit 1
+            fi
+          done
+          printf 'Source text and references reviewed for %s. Runtime tests, imports, builds, simulation, models and hardware were not executed by this job.\n' "$head"

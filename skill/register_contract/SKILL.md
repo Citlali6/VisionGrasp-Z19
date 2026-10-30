@@ -19,4 +19,13 @@ description: Reconcile a register-map authority with RTL, C/Python clients and a
 
 后续检查建议：获得授权后覆盖 AW/W 先后与分离、响应停顿、不同 WSTRB、空读/满写、大于 FIFO 的数据块、计数回绕和传输超时；判断副作用次数、完整收发及会话失效规则。这里没有生成或运行测试，也没有执行投影生成器。
 
-来源与证据：[统一寄存器定义](../../fpga/system_pspl/registers.json)、[通用 AXI 桥](../../fpga/system_pspl/rtl/vg_axil_regs.sv)、[C/ctypes 客户端](../../host/libpspl/README.md)及[源码审阅记录](../../docs/log/2026-10-30.md)。`generate_contract.py` 是已有未来入口，本轮没有运行；新定义一致性只记为文本审阅，不能据此声称总线功能或时序通过。
+## 经验与证据对应
+
+| 对应步骤 / 经验 | 具体记录 | 支持范围与未覆盖内容 |
+|---|---|---|
+| 1–2：独立通道、响应保持及错误访问不能遗漏 | [旧颜色标记](../../deliverables/pl_color_z19/validation/simulation-markers.txt)的 `COLOR_AXI_PASS`；[旧门控结果](../../fpga/sort_guard/validation/result.json)的 `simulation.coverage` 中 AW/W 先后、B/R 停顿、非法地址/只读写入/full WSTRB、复位清理条目 | 支持旧端点对这些事务情形的 RTL 检查经验；两者不是新通用 AXI 桥/FIFO 的运行结果 |
+| 3：配置提交与后续读取必须有原子边界 | 同一门控结果的 `configuration validation and ARM snapshot` 条目 | 支持旧候选按 ARM 锁存配置的经验，不证明新视频 SOF、生效 commit 或统计 ACK 实现正确 |
+| 4–5：MMIO 宽度、屏障和批次必须匹配实际端点 | [旧颜色板端说明](../../fpga/color_locator/BOARD.md)“诊断寄存器”及低延迟优化记录：native32、访问屏障、与原 FIFO 容量匹配的专用空到空批次，并校验计数/序号 | 旧固件有真实自检/基准记录；经验是先确认 IP、容量和收发契约，不能把旧专用批次照搬到未知 IP 或新动态收排路径 |
+| 新单一定义、动态 PIO 与失败会话 | [统一清单](../../fpga/system_pspl/registers.json)、[通用 AXI 桥](../../fpga/system_pspl/rtl/vg_axil_regs.sv)、[C/ctypes 客户端](../../host/libpspl/README.md)及[当日审阅](../../docs/log/2026-10-30.md) | 新投影一致性与错误/超时路径仅文本审阅；`generate_contract.py` 未运行，没有新总线功能、时序或实际 UIO 传输结论 |
+
+本技能尚无独立运行、跨题目或跨板复用效果记录。旧端点的检查不能代替新端点或新目标平台的验证。
