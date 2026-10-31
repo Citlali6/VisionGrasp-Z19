@@ -1,7 +1,7 @@
 # Z19 USB 摄像头 → 真实 PL 颜色识别 → 电脑显示
 
-已验证的bit、BIN、XSA、原生程序和报告见
-[交付包](../../deliverables/pl_color_z19/README.md)。恢复本轮版本无需先重新综合。
+已验证的 bit、BIN、XSA、原生程序和报告见
+[交付验证目录](../../deliverables/pl_color_z19/validation/)。恢复本轮版本无需先重新综合。
 
 ## 本轮已验证
 

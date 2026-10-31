@@ -18,9 +18,7 @@
     "guide_sha256": "c6ad82acd4f7bdcd13bd412e232ed85d05f2a87dd5e2cdd04f9d219f88b569fc"
   },
   "git": {
-    "default_branch": "main",
-    "materials_tag": "xinyu-submission-materials-20261030",
-    "release_tag": "track33-source-20261030"
+    "default_branch": "main"
   },
   "source_profile": {
     "id": "z19_pspl_four_functions",
@@ -176,7 +174,6 @@
     "configurations": "docs/CONFIGURATIONS.md",
     "design_report": "report/design_report.md",
     "ai_collaboration": "report/ai_collaboration.md",
-    "ai_interaction_excerpt": "report/ai_interaction_excerpt.md",
     "poster_copy": "report/poster_copy_en.md",
     "skills": [
       "skill/README.md",

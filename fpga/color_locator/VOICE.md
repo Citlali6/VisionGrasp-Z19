@@ -14,9 +14,7 @@ USB UVC → PS格式转换 → 现有PL HSV/颜色掩码/像素统计/全局框
 
 **ASR和关键词推断位于板端ARM，不是PL语音识别。** 颜色识别、计数和包围框在
 现有CLR1硬件中完成，未换bit、未改AXI寄存器，不由电脑计算目标位置。
-本页保留2026-10-22语音/颜色联动说明。2026-10-23新增实体网格标定、板面中心坐标和
-USB喇叭中文播报，当前启动入口见[GRID.md](GRID.md)及[新版交付](../../deliverables/grid_voice_coordinates/README.md)。
-同色目标分离、机械臂控制仍未实现。
+本页说明语音与颜色联动。2026-10-23 新增实体网格标定、板面中心坐标和 USB 喇叭中文播报，当前启动入口见 [GRID.md](GRID.md)。
 
 ## 关键词约定
 
@@ -67,11 +65,11 @@ RAM数据目录（本次沿用 `/dev/shm/visiongrasp-pl-color-20261022`）：
 `host/app/voice/audio.py`和 `host/models/vosk-model-small-cn-0.22`。
 不能把Windows虚拟环境复制到板端，也不应向PC安装这些AArch64运行库。
 
-离线依赖组合与本轮原生程序见[语音/相机联动交付](../../deliverables/voice_pl_color/README.md)。
+离线依赖组合与本轮原生程序按当前颜色链准备。
 必须同时复制本目录 host 下的 color_control.py、voice_color.py、voice_color.sh、
 preview.py、coordinate_speech.py、grid_overlay.js 和新版相机程序，不能只替换旧版 preview.py。
 新版默认balanced，需要可选JPEG_DIVISOR参数；本页旧交付二进制不支持此参数。
-应使用[新版交付](../../deliverables/grid_voice_coordinates/README.md)的二进制或重新编译当前C源码。
+应使用当前颜色链的二进制或重新编译当前 C 源码。
 预览 RAM 目录需事先创建；以下为旧smooth画质示例，当前推荐启动命令见GRID.md。
 
 ```sh

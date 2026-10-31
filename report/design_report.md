@@ -157,7 +157,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 <a id="section-ai"></a>
 ## 5. 大模型协作记录
 
-大模型协作用于开发与审阅，不是把运行时 YOLO、Vosk 与 PL 分工改名。真实案例、任务出处、用户审计与修正提交见 [AI 协作记录](ai_collaboration.md)；[原始交互摘录](ai_interaction_excerpt.md)保留11条实际消息、日期/角色/原文本哈希和审计建议节。原会话模型字段记录为 `gpt-6.1-sol`。摘要与原始摘录分开，不补写缺失回答。
+大模型协作用于开发与审阅，不是把运行时 YOLO、Vosk 与 PL 分工改名。真实案例、任务出处、用户审计与修正提交见 [AI 协作记录](ai_collaboration.md)。原会话模型字段记录为 `gpt-6.1-sol`。
 
 | 开发中的发现 | 人工判断与修订 | 可追溯记录 |
 |---|---|---|
@@ -187,21 +187,18 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
 先在[配置与兼容性](../docs/CONFIGURATIONS.md)选择复现对象，再准备对应依赖与工具。以下分别给出冻结应用、独立模块和集成源码的入口。
 
-1. **取得并固定版本。** 本次源码与正式材料以 `xinyu-submission-materials-20261030` 标签固定，按标签解析并记录交付 SHA。`track33-source-20261030` 保留为更名前的历史源码发布，不能代替当前完整文档版本。原分拣演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)仍来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希；当前安装器默认读取它，开发目录中的可选接口独立维护。
+1. **取得并固定版本。** 从 `main` 克隆仓库并记录当前 `HEAD`。原分拣演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，安装器默认读取它。
 
    ```bash
    git clone https://github.com/Citlali6/VisionGrasp-Z19.git
    cd VisionGrasp-Z19
-   git fetch origin tag xinyu-submission-materials-20261030
-   git switch --detach xinyu-submission-materials-20261030
    git rev-parse HEAD
-   git rev-parse 'refs/tags/xinyu-submission-materials-20261030^{commit}'
-   # 两个 SHA 应一致；另行保存该 SHA、配置和依赖版本。
+   # 保存该 SHA、配置和依赖版本。
    ```
 
-2. **准备合法依赖和目标环境。** 按配置页取得 VM SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认 VM 来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。缺少权重、类序或契约时停止相应路径，保留明确错误；不以样例 manifest、固定类别或随机框代替。
+2. **准备合法依赖和目标环境。** 按配置页取得上位机 SDK/动作/媒体，以及匹配的模型权重、真实有序类名、框架修改和来源契约。分别确认来源环境与板端 AArch64 Linux/Python/库，不能复制 x86 二进制充当 AArch64 依赖。
 
-3. **选择原部署复现时，使用当前安装器与冻结 payload。** 在配套 Ubuntu/ROS 环境从当前源码根目录，按[快速开始](../docs/QUICKSTART.md)和[VM 组件说明](../robot/dofbot/README.md)执行以下入口。安装器继续按原清单核对 payload，并记录实际来源；缺失或校验失败即停止，不回退到开发目录。现用程序仍运行时不覆盖它；这条路径使用原串口语音和 VM 检测，不需要新 profile。
+3. **选择原部署复现时，使用当前安装器与冻结 payload。** 在配套 Ubuntu/ROS 环境从当前源码根目录，按[快速开始](../docs/QUICKSTART.md)和[上位机组件说明](../robot/dofbot/README.md)执行以下入口。安装器按原清单核对 payload，并记录实际来源；缺失或校验失败即停止。现用程序仍运行时不覆盖它；这条路径使用原串口语音和上位机检测，不需要新 profile。
 
    ```bash
    bash robot/dofbot/install.sh --check

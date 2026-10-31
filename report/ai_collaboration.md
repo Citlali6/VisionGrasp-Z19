@@ -4,7 +4,7 @@
 
 ## 记录范围与可复核来源
 
-以下四例是**依据提交整理的案例摘要**。另附[真实交互摘录](ai_interaction_excerpt.md)，从本项目会话原始JSONL保留11条实际用户/助手消息、日期/角色/原消息哈希及审计附件的原始建议节；只移除私人路径和附件引用。会话 `turn_context.model` 记录为 `gpt-6.1-sol`，不以提交作者字段认定代码完全由 AI 独立完成。摘录包括初次交付、集中返修和本轮安装契约遗漏，保留真实错误与修正。
+以下四例是**依据提交整理的案例摘要**。会话 `turn_context.model` 记录为 `gpt-6.1-sol`，不以提交作者字段认定代码完全由 AI 独立完成。摘要保留初次交付、集中返修和安装契约遗漏中的真实错误与修正。
 
 | 来源 | 可确认的信息 | 保留方式 |
 |---|---|---|
@@ -51,9 +51,9 @@
 
 - **原任务/提示词出处**：四功能总提示词第4.1—4.3节要求取得真实调用链、保留前后处理与类别顺序来源，不把 VM x86 二进制或环境假设移植成 AArch64 事实。
 - **AI 输出及问题**：[9dc4df9 的 model_manifest.py](https://github.com/Citlali6/VisionGrasp-Z19/blob/9dc4df9cce400b9fe9c8400fe991a690e465d663/host/app/perception/model_manifest.py)存在未由实际后端取得的内层尺寸、stride、IoU、max_det 和 letterbox 假设，也未充分分开来源与目标环境。
-- **人工审阅依据**：用户审计指出：“这些信息本轮没有取得。” 工程审阅据此保留依赖缺项，并要求入册与运行读取共用同一清单规则，不能让一个模板看起来已可直接部署。
+- **人工审阅依据**：用户审计指出：“这些信息本轮没有取得。” 工程审阅据此保留未登记参数，并要求入册与运行读取共用同一清单规则，不能让一个模板看起来已可直接部署。
 - **修正提交**：8a76e84 分开 VM 来源环境与 AArch64 Linux 目标 Python/libc/库版本；未知参数在[契约示例](../host/app/perception/contract.example.json)保留为 `null`，要求真实权重、类序和框架文件哈希。入册/加载统一检查，未来显式加载再次核对类别及实际 stride，依赖错误与成功空检测保持区别。见[模型清单](../host/app/perception/model_manifest.py)、[入册工具](../host/app/perception/enroll_model.py)、[调用后端](../host/app/perception/detector.py)。
-- **形成的经验**：来源、接口支持范围和目标运行条件分别登记；不知道的参数必须成为可定位缺项。它补充[寄存器契约技能](../skill/register_contract/SKILL.md)的单一事实来源方法；像素/坐标输入关系另见[帧契约技能](../skill/stream_frame_contract/SKILL.md)。
+- **形成的经验**：来源、接口支持范围和目标运行条件分别登记；不知道的参数必须成为可定位条目。它补充[寄存器契约技能](../skill/register_contract/SKILL.md)的单一事实来源方法；像素/坐标输入关系另见[帧契约技能](../skill/stream_frame_contract/SKILL.md)。
 - **证据层级**：确认的是契约与错误路径的源码修订；模型与目标环境按清单登记。
 
 ## 从纠错到技能交付
