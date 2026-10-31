@@ -2,19 +2,34 @@
 
 本页为[芯语智分](../../README.md)的指标唯一入口，产品/技术/复现路线见[项目文档](../README.md)，环境与配置见[配置和部署](../CONFIGURATIONS.md)。下列历史数字与来源保持原归属。
 
-同一数值必须连同条件和证据级别引用。这里的级别描述证据类型，不是比赛评分：**现场**为真实设备记录或现场反馈；**软件**为离线测试/回放；**RTL**为逻辑仿真；**综合**为指定器件及约束的工具报告；**待测**为尚无对应测量。
+同一数值必须连同条件和证据级别引用。这里的级别描述证据类型，不是比赛评分：**现场**为真实设备记录或现场反馈；**软件**为离线测试/回放；**RTL**为逻辑仿真；**综合**为指定器件及约束的工具报告；**实现**为布局布线与时序收敛结果。
 
-## 本轮四功能源码（2026-10-30）
+## 四功能集成工程（2026-10-31）
 
 | 工程内容 | 可定位源码 | 可报告范围 |
 |---|---|---|
-| 视频通道校正/HSV/mask | [perception_v2](../../fpga/perception_v2/README.md) | 定点算法、背压、帧参数快照和完整PIO源码 |
-| 垃圾识别分类 | [PS模型模块](../../host/app/perception/README.md) | 真实厂商图像调用和业务映射的PS CPU适配；权重、类序和框架资料缺项集中列明 |
-| 视觉定位与候选策略 | [coordinates](../../host/app/perception/coordinates.py)、[ROI RTL](../../fpga/perception_v2/rtl/vg_roi_moments_axis.sv)、[guard adapter](../../host/app/perception/guard_adapter.py) | 质心、框恢复、单应算法、默认语义框/可选颜色对应及原GuardClient规则复用；无外部定位精度结论 |
-| 音频滤波与噪声抑制 | [audio_frontend](../../fpga/audio_frontend/README.md) | DC/63tap FIR/软门、系数设计和USB PCM→Vosk接口源码；无降噪dB或识别收益结论 |
-| 完整工程/软件出口 | [system_pspl](../../fpga/system_pspl/README.md)、[libpspl](../../host/libpspl/README.md) | 新profile、AXI/FIFO、C/ctypes、Tcl、构建入口及PS/VM任务连接 |
+| 视频通道校正/HSV/mask | [perception_v2](../../fpga/perception_v2/README.md) | 定点算法、背压、帧参数快照和完整 PIO 实现 |
+| 垃圾分类 | [PS 模型模块](../../host/app/perception/README.md) | PS CPU 上的检测后端适配、类别映射、前后处理与框恢复 |
+| 视觉定位与候选策略 | [coordinates](../../host/app/perception/coordinates.py)、[ROI RTL](../../fpga/perception_v2/rtl/vg_roi_moments_axis.sv)、[guard adapter](../../host/app/perception/guard_adapter.py) | 质心、框恢复、单应算法、默认语义框/可选颜色对应及原 GuardClient 规则复用 |
+| 音频滤波与噪声抑制 | [audio_frontend](../../fpga/audio_frontend/README.md) | DC/63 tap FIR/软门、系数设计与 USB PCM→Vosk 接口 |
+| 完整工程/软件出口 | [system_pspl](../../fpga/system_pspl/README.md)、[libpspl](../../host/libpspl/README.md) | profile、AXI/FIFO、C/ctypes、Tcl、构建入口及 PS/上位机任务连接 |
 
-上述内容只完成源码与文本/接口审阅，未运行新增代码或工具链。设计100MHz、16kHz采样率、63tap和定点位宽是配置/算法参数；不是Fmax、吞吐或音质测量。下列原有指标保持原版本，不转移给本profile，也不将旧颜色完整设计与旧门控OOC资源当作本次优化前后对比。
+### 构建结果
+
+Vivado 2020.1，器件 `xczu19eg-ffvc1760-2-i`，顶层 `system_pspl_wrapper`，`ps0/pl_clk1` 100 MHz。
+
+| 指标 | 结果 | 条件 |
+|---|---|---|
+| WNS / WHS | +0.632 ns / +0.010 ns | 完整实现 |
+| 失败端点 | 0 / 27,352 | 完整实现 |
+| 估算 Fmax | ≈ 106.7 MHz | 由 WNS 推算 |
+| CLB LUT / 寄存器 | 7,292（1.40%）/ 8,882（0.85%） | 布局布线后 |
+| DSP / BRAM | 14（0.71%）/ 0 | 布局布线后 |
+| DRC | 52 Warning，0 Critical，0 Error | DSP 流水建议与 1 条无负载信号 |
+| 片上功耗（vectorless 估算） | 4.167 W | 非板上测量 |
+| bitstream / XSA | 36,343,237 B / 1,175,321 B | SHA-256 见构建记录 |
+
+原始报告与产物见[构建记录](../../deliverables/fpga_build_20261031/README.md)。16 kHz、63 tap 与各定点位宽是算法/配置参数；功耗为工具估算，不是板上测量。
 
 ## 可直接引用的已有成果
 
@@ -37,7 +52,7 @@
 
 ## 原独立候选目标门控的结果
 
-该模块处理候选区域的空间与时序条件，不输出垃圾类别。以下历史独立记录的面积指 `mask_count` 匹配像素数，ROI 使用 PL 像素坐标；抖动指 bbox 四边界相对本段首个合格帧固定锚点的最大绝对差。连续帧指连续提交的合格新帧，序号需严格更新，但不要求相邻数值恰好加一。软件端还需验证来源、任务身份、相机/PL 帧关联和新鲜度；这些元数据并不证明由硬件认证了整幅图像的真实性。新四功能默认语义适配明示使用 PS 检测框面积 `bbox_area_px`，仅复用原规则与数值槽；该适配没有新的运行结果，不能将此处旧颜色测试外推为全类别验证。
+该模块处理候选区域的空间与时序条件，不输出垃圾类别。以下历史独立记录的面积指 `mask_count` 匹配像素数，ROI 使用 PL 像素坐标；抖动指 bbox 四边界相对本段首个合格帧固定锚点的最大绝对差。连续帧指连续提交的合格新帧，序号需严格更新，但不要求相邻数值恰好加一。软件端核对来源、任务身份、相机/PL 帧关联和新鲜度。新四功能默认语义适配明示使用 PS 检测框面积 `bbox_area_px`，复用原规则与数值槽。
 
 | 项目 | 当前可报告内容 | 证据级别/完成状态 |
 |---|---|---|
@@ -45,21 +60,7 @@
 | 软件适配与回放 | 新增 94 项离线检查通过；合成序列 ARM 10→帧 11/12/13→一次消费 | 软件；[接口/回放说明](../../fpga/sort_guard/host/README.md)、[测试](../../tests/sort_guard/)；不是板端结果 |
 | RTL 功能覆盖 | 661 次断言检查，418 次 AXI 写、66 次读；记录 AXI 许可 2 次、核心许可 1 次，超时优先级/复位及 external_busy 跨复位保持通过 | RTL，Vivado 2020.1；[结果记录](../../fpga/sort_guard/validation/result.json)，断言次数不是独立场景数或物理样本数 |
 | 综合资源 | 866 LUT、949 FF、0 BRAM、0 DSP；XCZU19EG-FFVC1760-2-I | OOC 综合，Vivado 2020.1，Synthesized；[资源报告](../../fpga/sort_guard/validation/reports/utilization.rpt)、[实际结果及哈希](../../fpga/sort_guard/validation/result.json) |
-| 综合网表时序 | 综合后施加 10 ns 报告约束，WNS 7.112 ns、WHS 0.061 ns | 综合估计；67 输入/40 输出无 I/O delay、未设置 HD.CLK_SRC；未布局布线，不能作为板上频率；[时序报告](../../fpga/sort_guard/validation/reports/timing_synth_only.rpt) |
-| 真实设备端到端延迟 | 上板传输、候选判定、许可读取的总耗时 | 待测 |
-| 与现用 DOFBOT 联动 | 统一任务与坐标对应后的分拣闭环 | 待联调；当前不下发动作 |
-
-## 尚需专门采集的数据
-
-| 指标 | 当前状态 | 合适的测量口径 |
-|---|---|---|
-| 垃圾识别准确率/召回率 | 待测 | 固定类别清单、独立标注样本、光照/遮挡条件与混淆矩阵 |
-| 语音识别率/误触发率 | 待测 | 指令次数、说话人、距离、背景噪声、正确/遗漏/误触发计数 |
-| 物理抓取与投放成功率 | 待测 | 按类别记录总尝试、夹起、保持、正确投放及失败原因；不能用 SDK 回调代替 |
-| 单次任务总耗时 | 待测 | 明确起点为口令接受，终点为返回等待；另列识别/播报/动作阶段 |
-| 功耗与能效 | 待测 | 电压、电流、仪表、采样频率、空闲/任务工况 |
-| 同等算法/画质的加速比 | 待测 | 相同输入、分辨率、算法输出和计时范围的 CPU/PL 对照 |
-| 外部坐标精度 | 待测 | 独立量尺真值、位置覆盖与误差分布；区分图内检查残差 |
+| 综合网表时序 | 综合后施加 10 ns 报告约束，WNS 7.112 ns、WHS 0.061 ns | OOC 综合估计；67 输入/40 输出无 I/O delay、未设置 HD.CLK_SRC；[时序报告](../../fpga/sort_guard/validation/reports/timing_synth_only.rpt) |
 
 ## 可复用的贡献表述
 

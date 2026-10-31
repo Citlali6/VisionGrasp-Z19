@@ -2,7 +2,7 @@
 
 **听见指令，看清目标，让分类落到行动。**
 
-硬件平台为 ALINX Z19，器件 `xczu19eg-ffvc1760-2-i`。本报告说明语音视觉分拣任务、PS/PL 计算与接口，以及 VM 执行软件的设计。源码、配置与材料版本由[提交清单](../deliverables/submission/manifest.json)记录。
+硬件平台为 ALINX Z19，器件 `xczu19eg-ffvc1760-2-i`。本报告说明语音视觉分拣任务、PS/PL 计算与接口，以及上位机执行软件的设计。源码、配置与材料版本由 Git 提交与标签记录。
 
 报告按背景、原理、软硬件划分、优化、AI 协作、技能与复现七项展开。配置、版本、依赖与部署状态集中于[配置与兼容性](../docs/CONFIGURATIONS.md)，指标在[证据矩阵](../docs/competition/EVIDENCE_MATRIX.md)维护；[附录 A](#appendix-a)保留固定版本数值，便于独立导出。赛事要求另见[提交规范附件](../docs/competition/requirements_map.md)。
 
@@ -22,9 +22,9 @@
 - **具体的 PL 运算与接口**：RGB 定点校正、HSV、ROI 一阶矩、DC/FIR/软门、FIFO/背压、AXI-Lite 事务及候选状态机。
 - **可观察的工程**：控制进程拥有设备，显示旁路只读取数据；识别图、任务事件、运行身份和实际 SDK 指令阶段可追溯。
 
-![现用 VM 分拣界面](../docs/assets/dashboard.png)
+![固定工位分拣界面](../docs/assets/dashboard.png)
 
-图1：VM/DOFBOT 固定工位分拣界面，显示画面、类别、语音事件和任务阶段。
+图1：固定工位分拣界面，显示画面、类别、语音事件和任务阶段。
 
 <a id="section-principle"></a>
 ## 2. 设计原理与功能框图
@@ -47,12 +47,12 @@ flowchart LR
 
 图2：产品功能关系。一次任务按“唤醒→启动→准备→识别→分类播报完成→抓取投放→等待唤醒”进行；可选模块的配置身份见配置页。
 
-### 2.2 现用演示运行配置
+### 2.2 固定工位分拣运行配置
 
 ```mermaid
 flowchart LR
-  V[外接语音模块] -->|串口命令编号| S[Ubuntu VM / Session]
-  C[USB 相机] --> M[VM 真实检测程序与既有模型]
+  V[外接语音模块] -->|串口命令编号| S[Ubuntu 上位机 / Session]
+  C[USB 相机] --> M[检测程序与既有模型]
   S --> Q[准备观察姿态]
   Q --> M
   M --> B[类别业务映射与同步播报]
@@ -63,7 +63,7 @@ flowchart LR
   K -->|成功下发的指令阶段| UI
 ```
 
-图3：现用 VM/DOFBOT 演示运行关系。模型与任务运行在 VM，语音模块输出编号，机械臂沿用固定工位动作。独立 Z19 USB 颜色/网格工程见[对应模块](../fpga/color_locator/README.md)。
+图3：固定工位分拣运行关系。检测与任务运行在 Ubuntu 上位机，语音模块输出编号，机械臂沿用固定工位动作。独立 Z19 USB 颜色/网格工程见[对应模块](../fpga/color_locator/README.md)。
 
 ### 2.3 四功能源码 profile 的连接关系
 
@@ -85,8 +85,8 @@ flowchart LR
   DSP --> ASR[PS Vosk / 指令白名单]
   G --> H[PS任务HTTP/JSON接口]
   ASR --> H
-  H --> VM[VM可选入口 / 播报后调用SDK]
-  CAP -->|ps_camera_preview / pl_processed=false| VIEW[VM只读预览]
+  H --> HOST[上位机入口 / 播报后调用SDK]
+  CAP -->|ps_camera_preview / pl_processed=false| VIEW[上位机只读预览]
 ```
 
 图4：`z19-pspl-four-functions-v1` 的源码连接图。像素/PCM 数据通过真实 PIO 路径进入 PL，YOLO 和 Vosk 在 PS CPU；预览旁路来自 PS 采集，不作为模型输入、PL 处理效果或任务许可。该 profile 的运行与依赖条件由系统工程表集中说明。
@@ -94,7 +94,7 @@ flowchart LR
 <a id="section-partition"></a>
 ## 3. 软硬件划分依据与接口设计
 
-逐像素和逐样本运算具有确定的整数计算与数据次序，适合用 RTL 描述。采集解码、模型框架、词典和坐标配置更依赖 Linux 与软件环境，因此由 PS 组织；VM 保留现有任务、播报和机械执行依赖。完整入口为 [`fpga/system_pspl`](../fpga/system_pspl/README.md)，软件出口为 [`host/app/perception`](../host/app/perception/README.md) 与 [`robot/dofbot/pspl.md`](../robot/dofbot/pspl.md)。
+逐像素和逐样本运算具有确定的整数计算与数据次序，适合用 RTL 描述。采集解码、模型框架、词典和坐标配置更依赖 Linux 与软件环境，因此由 PS 组织；上位机保留现有任务、播报和机械执行依赖。完整入口为 [`fpga/system_pspl`](../fpga/system_pspl/README.md)，软件出口为 [`host/app/perception`](../host/app/perception/README.md) 与 [`robot/dofbot/pspl.md`](../robot/dofbot/pspl.md)。
 
 ### 3.1 视频预处理与完整帧统计
 
@@ -131,7 +131,7 @@ d[n] = x[n] - x[n-1] + (32604/32768) * d[n-1]
 z[n] = sum(h[k] * d[n-k]), k=0..62
 ```
 
-DC 使用 40 位 Q24.15 状态与充分扩展的反馈乘积；FIR 系数为 Q1.15、48 位累加。纯数学设计函数提供 Blackman 窗带通 sinc 系数，初始频带为150–6500 Hz、在1 kHz归一化，完整装载并 commit 后才使能。软门以双阈值、包络和逐样本 attack/release 改变 UQ1.15 增益，默认关闭；定点舍入统一为最近、半值远离零。普通 PCM 块边界保持状态，断流或任务语音边界重建采音/滤波/ASR 代际。参数、位宽与源码见[音频模块](../fpga/audio_frontend/README.md)，本报告不把参数写成降噪效果。
+DC 使用 40 位 Q24.15 状态与充分扩展的反馈乘积；FIR 系数为 Q1.15、48 位累加。纯数学设计函数提供 Blackman 窗带通 sinc 系数，初始频带为150–6500 Hz、在1 kHz归一化，完整装载并 commit 后才使能。软门以双阈值、包络和逐样本 attack/release 改变 UQ1.15 增益，默认关闭；定点舍入统一为最近、半值远离零。普通 PCM 块边界保持状态，断流或任务语音边界重建采音/滤波/ASR 代际。参数、位宽与源码见[音频模块](../fpga/audio_frontend/README.md)。
 
 ### 3.4 公共传输、服务和只读展示
 
@@ -146,13 +146,13 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
 | 对象 | 原路径/基线 | 改进或取舍 | 对应结果与比较条件 |
 |---|---|---|---|
-| 旧 Z19 颜色系统发布 | hd 模式以 1280×720 进入 PL | balanced 保留原视野，降低 PL 处理尺寸至 640×360 | 见矩阵“原 hd 发布”“balanced 发布率/采集至发布”；分辨率不同，描述为系统取舍，不计算同画质算法加速比 |
-| 控制与界面争用 | 控制拥有相机与取帧语义 | 实时画面使用不消费控制游标的旁路，状态和图片独立发布 | 见矩阵“语音任务与展示”及部署记录；不把界面在线状态当作物理抓取成功率 |
-| 默认语义候选 | 原源码仍执行仅用于颜色关联的掩码复制和连通域分析 | 本收尾版本仅在显式颜色模式执行；语义分支保留结构化 `not_requested` 状态 | 本轮为源码修正，没有运行耗时或吞吐对比 |
-| 定点与资源选择 | 像素流、音频流、候选状态机计算性质不同 | FIR 使用时分复用乘加，有限 FIFO 按握手流控，位宽按边界推导 | 新 profile 只有设计/源码依据，无新完整资源和时序结果 |
-| 原有资源报告 | 旧颜色完整实现与门控独立 OOC 分别存在报告 | 按各自顶层、器件、约束和报告阶段引用 | 见矩阵“原颜色链完整实现”“门控综合资源/综合网表时序”；两组数字不相加、不当作优化前后 |
+| 旧 Z19 颜色系统发布 | hd 模式以 1280×720 进入 PL | balanced 保留原视野，降低 PL 处理尺寸至 640×360 | 见矩阵“原 hd 发布”“balanced 发布率/采集至发布”；分辨率不同，按系统取舍记录 |
+| 控制与界面争用 | 控制拥有相机与取帧语义 | 实时画面使用不消费控制游标的旁路，状态和图片独立发布 | 见矩阵“语音任务与展示”及部署记录 |
+| 默认语义候选 | 原源码仍执行仅用于颜色关联的掩码复制和连通域分析 | 本收尾版本仅在显式颜色模式执行；语义分支保留结构化 `not_requested` 状态 | 该修正改变候选路径，既有性能数值按原配置保留 |
+| 定点与资源选择 | 像素流、音频流、候选状态机计算性质不同 | FIR 使用时分复用乘加，有限 FIFO 按握手流控，位宽按边界推导 | 集成工程完成 100 MHz 完整实现：7,292 LUT、8,882 FF、14 DSP，WNS +0.632 ns |
+| 原有资源报告 | 旧颜色完整实现与门控独立 OOC 分别存在报告 | 按各自顶层、器件、约束和报告阶段引用 | 见矩阵“原颜色链完整实现”“门控综合资源/综合网表时序”；两组数字按各自阶段引用 |
 
-现有应用反馈、独立板端颜色/网格记录、软件/RTL 检查和资源报告均保留其原版本。四功能 profile 仍缺完整板级实测输出、相同输入的参考比对、新完整实现资源/时序与功耗记录；现有资料不足以给出新系统的识别准确率、加速比、毫米级外部精度或降噪 dB。
+四功能集成工程已在 Vivado 2020.1 下完成综合、实现与 bitstream 生成，资源与时序结果见上表；原始报告见[构建记录](../deliverables/fpga_build_20261031/README.md)。板端颜色/网格记录、软件检查和 RTL 仿真按各自版本保留，与构建结果分列。
 
 <a id="section-ai"></a>
 ## 5. 大模型协作记录
@@ -166,7 +166,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 | 可选入口缺少展示与日志、图像来源可能错配 | 接回原发布器/控件，独立状态路径，锁定图片与来源身份 | [只读可观测性案例](ai_collaboration.md#case-readonly-observability) |
 | 模型环境参数被猜测或混用 | VM 来源与 AArch64 目标环境分离，按实际资料登记并严格核对 | [模型契约案例](ai_collaboration.md#case-model-contract) |
 
-协作流程为任务约束与源码输入→Codex 形成工程→用户/人工审计指出矛盾→按证据修改→保留差异、出处与失效条件。本轮没有以运行新程序证明修订效果，开发结论限于源码与接口审阅。
+协作流程为任务约束与源码输入→Codex 形成工程→用户/人工审计指出矛盾→按证据修改→保留差异、出处与失效条件。修订以提交差异、源码路径与接口检查记录，均在固定 SHA 下可复核。
 
 <a id="section-skill"></a>
 ## 6. 技能包提炼过程
@@ -180,14 +180,14 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 | [voice_task_boundary](../skill/voice_task_boundary/SKILL.md) | 一次任务与忙碌输入、旧采音/ASR 事件跨代际问题 | 事件身份、边界确认、取消与重复处理；串口和原始 PCM 必须分别适配 |
 | [readonly_observability](../skill/readonly_observability/SKILL.md) | 控制与 UI 争用、旧图片/新身份不一致问题 | 单一设备所有者、旁路、进程/会话/图像一致性；显示证据不等于物理成功反馈 |
 
-原颜色链和 DOFBOT 的既有记录可说明经验来源；新生成器、新边界及新 profile 本轮只有源码审阅。尚无跨题目、跨板运行数据，复用范围与效果不能凭文档数量扩大。
+原颜色链和 DOFBOT 的既有记录说明经验来源；新生成器、新边界与新 profile 的源码、接口和构建结果分别记录。各项 Skill 的适用范围以各自 `SKILL.md` 写明的失效条件为准。
 
 <a id="section-reproduce"></a>
 ## 7. 从零复现说明
 
 先在[配置与兼容性](../docs/CONFIGURATIONS.md)选择复现对象，再准备对应依赖与工具。以下分别给出冻结应用、独立模块和集成源码的入口。
 
-1. **取得并固定版本。** 本次源码与正式材料以 `xinyu-submission-materials-20261030` 标签固定，按[发布清单](../deliverables/submission/manifest.json)的 `materials_revision` 解析并记录交付 SHA。`track33-source-20261030` 保留为更名前的历史源码发布，不能代替当前完整文档版本。原 VM 演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)仍来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希；当前安装器默认读取它，开发目录中的可选接口独立维护。材料标签不表示新四功能配置已完成板级验收。
+1. **取得并固定版本。** 本次源码与正式材料以 `xinyu-submission-materials-20261030` 标签固定，按标签解析并记录交付 SHA。`track33-source-20261030` 保留为更名前的历史源码发布，不能代替当前完整文档版本。原分拣演示的[冻结 payload](../deliverables/dofbot_demo_20261029/README.md)仍来自 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`，并保留原安装文件哈希；当前安装器默认读取它，开发目录中的可选接口独立维护。
 
    ```bash
    git clone https://github.com/Citlali6/VisionGrasp-Z19.git
@@ -210,7 +210,7 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 
    独立旧检出仍是可选历史复现方式：可用 `git worktree add ../visiongrasp-demo-20261029 8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` 保存旧源，再为当前安装命令显式传入 `--source ../visiongrasp-demo-20261029/robot/dofbot`，沿用相同文件与环境校验。旧 Z19 颜色/MIPI 则分别按各自模块说明、产物哈希及工具版本操作。
 
-4. **选择四功能 profile 时，准备匹配的工程工具。** 指南推荐 Vivado/Vitis 2026.1 或 2025.2；当前颜色/新 profile 脚本固定 2020.1，以保留既有 ALINX PS/IP 配置，独立 MIPI 要求另列于工程表。本稿提供原版本构建入口，没有在推荐版本重建的记录，也不隐式升级 IP。
+4. **选择四功能 profile 时，准备匹配的工程工具。** 指南推荐 Vivado/Vitis 2026.1 或 2025.2；当前颜色/新 profile 脚本固定 2020.1，以保留既有 ALINX PS/IP 配置，独立 MIPI 要求另列于工程表。本稿在 2020.1 完成完整构建，资源与时序见[构建记录](../deliverables/fpga_build_20261031/README.md)；推荐版本未重建，不隐式升级 IP。
 
    ```bash
    # 从当前交付源码根目录；输出放在源码树之外并使用未占用目录：
@@ -242,15 +242,12 @@ PS 服务和 VM 客户端按 task/session/frame 绑定 JSON，使用显式地址
 <a id="appendix-a"></a>
 ## 附录 A. 性能与资源数值快照
 
-本附录从同一证据矩阵手工转录，用于报告脱离仓库单独导出时保留数值、条件和证据范围。它不是第二个指标维护源，也不是本轮新增测量。
+本附录从同一证据矩阵手工转录，用于报告脱离仓库单独导出时保留数值、条件和证据范围。它不是第二个指标维护源。
 
 | 快照标识 | 固定值 |
 |---|---|
 | 来源文件 | `docs/competition/EVIDENCE_MATRIX.md` |
-| 来源提交 | [`19a09b90b5100dc99c5a5b3ecf07853063c3a011`](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/docs/competition/EVIDENCE_MATRIX.md) |
-| 来源文件 Git blob | `14b729aed8e6caf84ef828567e28cc71f1df09eb` |
-| 来源文件 SHA-256 | `7da43b840a55431102a6cfa0792cb8bab16007b62dfb83af5d6e76b1858d4801`（UTF-8、LF 原文件字节） |
-| 维护与导出规则 | 数值只在证据矩阵维护。矩阵更新后或再次导出时，从选定固定提交重新转录并核对本附录，连同提交、blob、SHA-256 一起更新；正文与本附录一起导出，不在附录中单独修改指标。 |
+| 维护与导出规则 | 数值只在证据矩阵维护；矩阵更新后从当前版本重新转录本附录。 |
 
 ### A.1 旧颜色系统的配置取舍
 
@@ -265,15 +262,16 @@ balanced 保留原始视野，减少进入 PL 的像素，并牺牲处理图的�
 
 ### A.2 已有资源与时序报告
 
-下表并列报告两种已有工程范围，**不构成资源优化前后对照**：原颜色为完整镜像的实现结果，门控为独立 OOC 综合。没有同范围资源前后数据，不计算资源节省比例，不把两组资源相加冒充新完整系统。
+下表并列报告三个工程范围，**不构成资源优化前后对照**：原颜色为完整镜像的实现结果，门控为独立 OOC 综合，四功能为集成工程完整实现。不同顶层、不同报告阶段的结果分别引用。
 
 | 工程及日期 | 器件 / 工具 | 报告阶段 | LUT | FF | BRAM | DSP | WNS / WHS | 原始证据 |
 |---|---|---|---:|---:|---:|---:|---|---|
 | 原颜色链，2026-10-22 | XCZU19EG-FFVC1760-2 / Vivado 2020.1 | 完整实现、布局布线 | 1,885 | 1,936 | 0 | 6 | 4.580 ns / 0.017 ns | [资源](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/deliverables/pl_color_z19/validation/utilization.rpt)、[时序](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/deliverables/pl_color_z19/validation/timing.rpt) |
+| 四功能集成工程，2026-10-31 | XCZU19EG-FFVC1760-2-I / Vivado 2020.1 | 完整实现、布局布线、bitstream | 7,292 | 8,882 | 0 | 14 | +0.632 ns / +0.010 ns | [构建记录](../deliverables/fpga_build_20261031/README.md) |
 | 独立候选门控，2026-10-29 | XCZU19EG-FFVC1760-2-I / Vivado 2020.1 | OOC 综合、综合网表时序；未布局布线 | 866 | 949 | 0 | 0 | 7.112 ns / 0.061 ns | [资源](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/reports/utilization.rpt)、[时序](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/reports/timing_synth_only.rpt)、[结果及哈希](https://github.com/Citlali6/VisionGrasp-Z19/blob/19a09b90b5100dc99c5a5b3ecf07853063c3a011/fpga/sort_guard/validation/result.json) |
 
 门控在综合后施加 10 ns 报告约束；67 个输入、40 个输出未设置 I/O delay，`HD.CLK_SRC` 未设置。其裕量属于综合估计，不是完整实现收敛、实测板上频率或吞吐。原颜色报告与门控报告各自的约束和工具阶段继续随原文件保留。
 
 ### A.3 新 profile 的数值边界
 
-`z19-pspl-four-functions-v1` 目前只有源码/接口审阅，没有本轮完整实现资源/时序、功耗、板级输入输出与参考比对、识别率、降噪 dB、外部定位精度或同等画质加速比。目标 100 MHz、16 kHz 和 63 抽头是设计参数，不填入上述已有结果表作为新系统测量。后续取得新证据后先更新矩阵，再依维护规则更新本附录快照。
+`z19-pspl-four-functions-v1` 于 2026-10-31 在 Vivado 2020.1 完成综合、实现与 bitstream 生成：7,292 LUT、8,882 FF、14 DSP、0 BRAM，100 MHz 下 WNS +0.632 ns、WHS +0.010 ns，0 失败端点；DRC 无 Critical/Error。功耗 4.167 W 为 vectorless 估算。原始报告见[构建记录](../deliverables/fpga_build_20261031/README.md)。

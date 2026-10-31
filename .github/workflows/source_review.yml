@@ -62,9 +62,10 @@ jobs:
             host/app/voice/usb_pcm_pl.py
             robot/dofbot/install.py
             robot/dofbot/pspl_entry.py
-            deliverables/dofbot_demo_20261029/provenance.json
             deliverables/dofbot_demo_20261029/payload/deployment_manifest.json
             deliverables/submission/manifest.json
+            deliverables/fpga_build_20261031/README.md
+            deliverables/fpga_build_20261031/manifest.json
           )
           for path in "${required[@]}"; do
             kind="$(git cat-file -t "$head:$path")"

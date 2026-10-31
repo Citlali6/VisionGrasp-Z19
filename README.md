@@ -1,106 +1,82 @@
 # 芯语智分 · VisionGrasp-Z19
 
-**基于 Zynq 软硬件协同的语音视觉垃圾分拣系统**
+**基于 Zynq 软硬件协同的语音视觉分拣工作站**
 
-芯语智分（**Xinyu SmartSort**）面向绿色生活实践与嵌入式开发。
-
-一件物品被放入正确的分类容器之前，需要完成识别、判断与投放。芯语智分把这三个环节组织成一套可参与、可观察的桌面交互：使用者发出指令，系统识别目标、播报类别，机械臂完成固定工位投放，界面同步呈现任务过程。
-
-项目提供单次分拣任务软件与 Z19 PS/PL 感知工程，让公众参与一次完整分类操作，也让开发者沿着同一个任务理解图像处理、数字滤波、模型调用、接口通信和状态机。
+一句“开始垃圾分拣”，工作站完成一次完整任务：Z19 采集画面，PL 完成像素级预处理，PS 运行检测与语音识别，Linux 上位机按分类结果驱动机械臂完成固定工位投放，界面同步呈现识别、播报与执行阶段。
 
 **听见指令，看清目标，让分类落到行动。**
 
-[项目概览](docs/overview.md) · [快速开始](docs/QUICKSTART.md) · [配置与部署](docs/CONFIGURATIONS.md) · [系统架构](docs/architecture.md) · [项目文档](docs/README.md)
+![固定工位分拣界面](docs/assets/dashboard.png)
 
-![VM/DOFBOT 固定工位分拣界面](docs/assets/dashboard.png)
+*固定工位分拣界面：实时画面、识别结果、语音事件与动作阶段。*
 
-*VM/DOFBOT 固定工位分拣界面。*
+## 一次任务怎样完成
 
-## 在哪里使用
+| 阶段 | 位置 | 动作 |
+|---|---|---|
+| 唤醒 | 语音模块 → PS | 说“你好小亚”，听到回应后说“开始垃圾分拣” |
+| 采集 | PS | USB 相机取流，绑定帧序号与采集时间 |
+| 像素级处理 | **PL** | RGB 定点增益/偏置 → HSV 掩码 → ROI 计数/包围框/一阶矩 |
+| 语义与候选 | PS + **PL** | CPU 检测模型给出类别与框；门控检查面积、连续帧、抖动，给出单次许可 |
+| 执行 | Linux 上位机 | 厂商 SDK 完成固定工位抓取、转运、释放 |
+| 回显 | 上位机界面 | 识别结果、播报、动作阶段，回到等待 |
 
-| 场景 | 使用者与一次体验 |
+一次唤醒对应一次任务，忙碌期间的命令不排队触发下一轮；识别超时或播报失败时，本轮不进入抓取。
+
+## FPGA 在系统里做什么
+
+| 层 | 模块 | 实现 |
+|---|---|---|
+| 视频预处理 | [`perception_v2`](fpga/perception_v2/README.md) | RGB Q8.8 增益/偏置与饱和、HSV/掩码、ROI 计数/包围框/64 位一阶矩、FIFO 背压、整帧参数快照 |
+| 语音前端 | [`audio_frontend`](fpga/audio_frontend/README.md) | DC（Q24.15）、63 抽头 Q1.15 FIR、可选软噪声门、参数提交与样本握手 |
+| 候选门控 | [`sort_guard`](fpga/sort_guard/README.md) | ROI/面积、连续合格帧、固定锚点抖动、超时、单次许可 |
+| 集成工程 | [`system_pspl`](fpga/system_pspl/README.md) | PS + 三个 PL 端点、统一 100 MHz 时钟、AXI-Lite FIFO/PIO、Linux UIO 设备树片段 |
+
+检测模型与语音识别在 PS 的 CPU 上运行，PL 负责逐像素、逐样本的定点流水。这是本项目的软硬件划分：PS 处理可变模型、词典与系统接口，PL 处理确定精度、确定次序的数据流。
+
+## 已经跑出来的数字
+
+| 指标 | 结果 | 条件 |
+|---|---|---|
+| 板端发布率 | **7.26 fps** | 1280×720 输入、640×360 PL 处理，2026-10-23 |
+| 采集至发布 | **约 187 ms** | 同上，系统耗时，非 PL 算术延迟 |
+| MIPI 1080p 采集 | **25.16 fps** | 独立相机 profile，757 帧 / 30.047 s |
+| 颜色链完整实现 | 1,885 LUT / 1,936 FF / 6 DSP，WNS 4.580 ns | Vivado 2020.1，XCZU19EG，2026-10-22 |
+| 四功能集成工程 | 7,292 LUT / 8,882 FF / 14 DSP，WNS **+0.632 ns** | 100 MHz 完整实现，2026-10-31 |
+| 候选门控 | 866 LUT / 949 FF，661 次断言检查通过 | OOC 综合 + RTL 仿真，2026-10-29 |
+
+四功能集成工程的原始资源、时序、DRC 与 bit/XSA 见[构建记录](deliverables/fpga_build_20261031/README.md)；各项数值的条件与来源统一在[证据矩阵](docs/competition/EVIDENCE_MATRIX.md)维护。
+
+## 三套配置
+
+| 配置 | 组成 | 用途 |
+|---|---|---|
+| 固定工位分拣 | Linux 上位机（Ubuntu 22.04 / ROS 2）+ USB 相机 + 语音模块 + DOFBOT | 现场演示与单次任务闭环 |
+| Z19 感知 | Z19 PS/PL + USB 相机/麦克风 | PL 预处理、颜色/网格坐标、语音关键词 |
+| 四功能集成 | Z19 PS/PL + 可选上位机客户端 | 集成工程源码、综合实现与 bit/XSA |
+
+三套配置按同一任务模型组织，接口与寄存器定义见对应工程；环境、镜像与依赖的对应关系见[配置与部署](docs/CONFIGURATIONS.md)。
+
+## 快速开始
+
+- [配置与部署](docs/CONFIGURATIONS.md)：环境、版本、依赖与入口
+- [快速开始](docs/QUICKSTART.md)：安装并运行固定工位分拣
+- [系统架构](docs/architecture.md)：PS、PL 与上位机的分工和数据流
+- [验证记录](docs/VALIDATION.md)：板端、软件、RTL、综合四类结果
+- [设计报告](report/design_report.md)：背景、原理、划分、优化、复现
+- [Skill 技能包](skill/README.md) · [AI 开发协作记录](report/ai_collaboration.md)
+
+## 仓库结构
+
+| 角色 | 位置 |
 |---|---|
-| 校园绿色生活实践课 | 教师或志愿者准备支持的样本与固定工位。学生先判断类别，再放置样本、移开手并发出口令，观察分类播报与投放，围绕结果讨论分类依据。 |
-| 社区低碳体验与公共展示 | 工作人员维护体验台，公众通过唤醒和启动口令发起一次任务，从窗口观察识别、播报和动作阶段；本轮结束后再接待下一位参与者。 |
-| 高校嵌入式与机器人实践 | 学生开发者围绕同一分拣任务，逐层阅读视频算子、音频滤波、AXI/FIFO、PS 模型调用与 VM 执行接口，把算法和控制逻辑连接起来。 |
-
-活动面向固定拾取位置、项目支持的样本或教具。组织方式与单件交互工位的扩展方向见[应用场景](docs/overview.md#应用场景)。
-
-## 从一句话到一次投放
-
-语音助手昵称为“小亚”。以下是现用 VM/DOFBOT 配置的一次任务：
-
-1. 将样本放到固定拾取位置，移开手。
-2. 说 **“你好小亚”**，听到 **“在的”** 后说 **“开始垃圾分拣”**。
-3. 系统准备观察姿态，识别稳定目标，播报物品与类别。
-4. 分类播报完成后，机械臂执行对应类别的抓取投放动作。
-5. 任务结束，回到等待唤醒；下一位参与者重新发起任务。
-
-```mermaid
-flowchart LR
-    WAKE[唤醒与启动口令] --> PREP[准备观察姿态]
-    PREP --> DETECT[稳定识别]
-    DETECT --> SPEAK[分类播报完成]
-    SPEAK --> ACT[固定工位抓取投放]
-    ACT --> WAIT[等待新唤醒]
-    DETECT --> VIEW[只读画面与任务阶段]
-    SPEAK --> VIEW
-    ACT --> VIEW
-```
-
-*现用 VM/DOFBOT 固定工位任务流程。*
-
-一次唤醒对应一次任务，忙碌期间的命令不会排队触发下一轮。识别超时或播报失败时，本轮不进入抓取。窗口共享控制进程的相机画面，显示识别结果、语音事件与已下发的动作阶段。
-
-## 围绕任务组织软硬件
-
-Z19 PS/PL 源码将采集、语义理解与任务通信放在 PS，把视频、音频的定点计算和候选规则放在 PL；可选 VM 客户端沿用机械臂 SDK 和固定工位任务。
-
-| 功能 | PL 计算 | PS 软件与入口 |
-|---|---|---|
-| 视频预处理 | RGB 增益/偏置、HSV、掩码与流控 | USB/V4L2 解码、PIO 收发；[视频模块](fpga/perception_v2/README.md) |
-| 垃圾识别分类 | 提供处理图像与候选规则 | CPU YOLO、前后处理和类别映射；[感知服务](host/app/perception/README.md) |
-| 视觉定位与候选复核 | ROI 计数、包围框、一阶矩与连续帧规则 | 检测框中心、颜色质心、可选平面映射及候选适配；[系统工程](fpga/system_pspl/README.md) |
-| 语音输入预处理 | DC、63 tap FIR、可选软门 | USB PCM、参数配置与 Vosk 受限命令；[音频模块](fpga/audio_frontend/README.md) |
-
-默认 `semantic_bbox` 策略按同帧语义检测框的区域、面积与稳定性接受候选；`color_association` 用于明确要求颜色条件的工位。定位输出包含像素坐标，工作平面坐标使用相机绑定标定；机械臂执行使用固定拾取动作。完整数据路径与分配置连接图见[系统架构](docs/architecture.md)。
-
-## 选择配置，开始使用
-
-| 配置 | 适合做什么 | 当前交付 |
-|---|---|---|
-| VM/DOFBOT 固定工位分拣 | 体验语音发起、分类播报、机械执行与实时展示 | 已有现场记录；安装器默认使用[冻结安装源](deliverables/dofbot_demo_20261029/README.md) |
-| 独立 Z19 颜色、语音与网格 | 阅读和复现 PS 采集、PL HSV/统计、浏览器网格及坐标播报 | 已有板端记录；使用该配置自己的镜像、地址与环境 |
-| Z19 PS/PL 四功能源码 | 开发视频、分类、定位、音频及可选 VM 接口 | 源码交付，尚未联合部署；入口为 [system_pspl](fpga/system_pspl/README.md) |
-| 独立 MIPI 相机与候选门控 | 阅读相机硬件工程、门控 RTL 及各自验证方法 | 原相机产物、独立门控仿真/OOC 报告；见 [FPGA 索引](fpga/README.md) |
-
-从[配置与部署](docs/CONFIGURATIONS.md)确认环境、版本和依赖，再按[快速开始](docs/QUICKSTART.md)安装或启动。现用演示依赖配套 Ubuntu/ROS/SDK、模型与音频环境；四功能源码使用独立的板端工程和目标环境。测量数据与原配置的对应关系见[验证记录](docs/VALIDATION.md)和[证据矩阵](docs/competition/EVIDENCE_MATRIX.md)。
-
-## 阅读设计与参与开发
-
-| 想做的事 | 阅读入口 |
-|---|---|
-| 理解应用背景与使用流程 | [项目概览](docs/overview.md) |
-| 了解系统分工和模块接口 | [系统架构](docs/architecture.md)、[FPGA](fpga/README.md)、[PS 软件](host/README.md)、[机械臂应用](robot/dofbot/README.md) |
-| 阅读完整设计 | [设计报告](report/design_report.md) |
-| 修改模块、准备检查和提交变更 | [开发指南](docs/DEVELOPMENT.md)、[Git 工作流](docs/git_workflow.md) |
-| 复用开发方法 | [Skill 技能包](skill/README.md)、[AI 开发协作记录](report/ai_collaboration.md) |
-
-所有文档从[项目文档](docs/README.md)进入。历史版本通过 Git 标签与 [Release](https://github.com/Citlali6/VisionGrasp-Z19/releases)保存。
-
-## 工程目录
-
-| 目录角色 | 本仓库位置 | 内容 |
-|---|---|---|
-| src | `fpga/`、`host/`、`robot/` | RTL、PS 软件、上位机任务与接口 |
-| sim | 各 FPGA 模块的 `sim/`、`tests/`、`host/tests/` | 仿真源文件、软件检查与输入样例 |
-| build | `fpga/system_pspl/`、`host/libpspl/` | Tcl、CMake 与工具链入口；生成物按构建说明输出到源码树外，已有报告见模块验证目录 |
-| board | `deliverables/`、各独立模块的板端说明 | 按配置保存的板端产物、运行脚本与说明 |
-| data | `docs/fpga/evidence/`、`docs/log/`、各模块验证目录及测试 fixtures | 原始记录、参考数据与显式标记的合成输入 |
-| skill | `skill/` | 可复用工作流、使用说明和经验来源 |
-| report | `report/` | 设计报告、AI 协作记录与海报内容稿 |
-
-各配置的状态与环境见[配置与部署](docs/CONFIGURATIONS.md)，各项结果的所属版本见[验证记录](docs/VALIDATION.md)和[指标与来源](docs/competition/EVIDENCE_MATRIX.md)。
+| src | `fpga/`、`host/`、`robot/` |
+| sim | 各模块 `sim/`、`tests/` |
+| build | `fpga/system_pspl/` 的 Tcl 入口；生成物在源码树外 |
+| board | `deliverables/`、各模块板端说明 |
+| data | `docs/fpga/evidence/`、`docs/log/`、各模块验证目录 |
+| skill | `skill/` |
+| report | `report/` |
 
 ## 来源与许可
 

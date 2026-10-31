@@ -6,13 +6,13 @@
 
 | 配置 | 版本与状态 | 环境与入口 |
 |---|---|---|
-| VM / DOFBOT 固定工位分拣 | 有现场任务与界面记录；安装源固定为 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` 的 15 文件 payload | DOFBOT SE 配套 Ubuntu 22.04、ROS 2 Humble、Python 3.10、SDK、模型和音频；[快速开始](QUICKSTART.md) |
+| 固定工位分拣（Linux 上位机 + DOFBOT） | 有现场任务与界面记录；安装源固定为 `8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d` 的 15 文件 payload | Ubuntu 22.04、ROS 2 Humble、Python 3.10、SDK、模型和音频；[快速开始](QUICKSTART.md) |
 | 独立 Z19 USB 颜色 / 语音 / 网格 | 保留原板端结果和各自发布清单 | Vivado / Vitis 2020.1、对应 Linux 镜像与地址；[颜色模块](../fpga/color_locator/README.md)、[网格](../fpga/color_locator/GRID.md) |
 | 独立 MIPI / 裸机相机 | 保留原 bit / XSA 与采集记录 | 硬件源工程使用 Vivado 2020.2_AR75986；历史裸机 ELF 使用 Vitis 2020.1 GCC 与匹配 BSP；[MIPI](../fpga/camera_hw/README.md)、[裸机](../fpga/camera_baremetal/README.md) |
 | 独立候选门控 | 有软件、RTL 仿真和 OOC 综合记录 | [sort_guard](../fpga/sort_guard/README.md)；这些结果对应独立模块 |
-| Z19 PS/PL 四功能集成源码 | 已发布源码与接口；尚无该配置的完整构建、联合上板及性能结果 | Vivado 2020.1 配置目标、AArch64 Linux / UIO / libpspl、模型契约与 ALSA / Vosk；[工程入口](../fpga/system_pspl/README.md) |
+| Z19 PS/PL 四功能集成工程 | 源码与接口已发布；2026-10-31 完成 Vivado 综合、实现与 bitstream 生成，100 MHz 时序收敛 | Vivado 2020.1、AArch64 Linux / UIO / libpspl、模型契约与 ALSA / Vosk；[工程入口](../fpga/system_pspl/README.md)、[构建记录](../deliverables/fpga_build_20261031/README.md) |
 
-集成源码中的 100 MHz、16 kHz 和 63 tap 分别是时钟配置目标、采样格式和滤波器长度。既有帧率、资源与时序数值按原配置查阅[验证记录](VALIDATION.md)和[证据矩阵](competition/EVIDENCE_MATRIX.md)。
+集成工程在 100 MHz 下完成实现，WNS +0.632 ns、WHS +0.010 ns；16 kHz 和 63 tap 分别是采样格式和滤波器长度。帧率、资源与时序数值按配置查阅[验证记录](VALIDATION.md)和[证据矩阵](competition/EVIDENCE_MATRIX.md)。
 
 ## 固定工位应用
 
@@ -40,8 +40,8 @@
 
 ## 发布与兼容性
 
-`main` 是唯一长期远端分支。开发使用短期分支和 PR，合并后删除远端 head；阶段源码和历史路线通过 tags、Release 与提交历史保存。本次源码与中英文材料以 [`xinyu-submission-materials-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/tree/xinyu-submission-materials-20261030) 标签固定，实际提交 SHA 按[提交清单](../deliverables/submission/manifest.json)的 `materials_revision` 解析。该标签记录材料版本，不表示四功能配置已经完成联合上板或全部提交条件。
+`main` 是唯一长期远端分支。开发使用短期分支和 PR，合并后删除远端 head；阶段源码和历史路线通过 tags、Release 与提交历史保存。本次源码与中英文材料以 [`xinyu-submission-materials-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/tree/xinyu-submission-materials-20261030) 标签固定，实际提交 SHA 按该标签解析。该标签记录材料版本。
 
 历史源码发布 [`track33-source-20261030`](https://github.com/Citlali6/VisionGrasp-Z19/releases/tag/track33-source-20261030) 的预发布身份和指向保持不变；VM 安装源仍是原冻结 payload。本次只新增材料标签，不创建 Release，后续开发文档以当前 `main` 为准。
 
-`ah_camera0`、`/dev/ah_camera0`、`/opt/amazinghand`、`/var/lib/amazinghand` 及原安装目录是已有接口或兼容路径。HSV / BSP、原位流、原报告与许可证按依赖保留。第三方来源见 [THIRD_PARTY](../THIRD_PARTY.md)，Git 维护和恢复资料见[维护记录](maintenance/README.md)。
+`ah_camera0`、`/dev/ah_camera0`、`/opt/amazinghand`、`/var/lib/amazinghand` 及原安装目录是已有接口或兼容路径。HSV / BSP、原位流、原报告与许可证按依赖保留。第三方来源见 [THIRD_PARTY](../THIRD_PARTY.md)。

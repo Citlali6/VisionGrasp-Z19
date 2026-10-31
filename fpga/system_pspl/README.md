@@ -18,7 +18,7 @@
 
 ### 配置选择
 
-本 profile 发布的是集成源码与接口，完整构建和联合上板状态见[配置与兼容性](../../docs/CONFIGURATIONS.md)。该页集中列出 AArch64 Linux、UIO、模型契约、相机标定、ALSA/Vosk 的准备条件，并与冻结 VM 演示、独立颜色和 MIPI 工程对应。产物及依赖来源见[提交清单](../../deliverables/submission/manifest.json)。
+本 profile 的源码、接口与构建结果见[配置与兼容性](../../docs/CONFIGURATIONS.md)与[构建记录](../../deliverables/fpga_build_20261031/README.md)。配置页集中列出 AArch64 Linux、UIO、模型契约、相机标定、ALSA/Vosk 的准备条件，并与固定工位分拣、独立颜色和 MIPI 工程对应。
 
 ## PS/PL 连接
 
@@ -45,9 +45,25 @@ flowchart LR
   AUDIO --> SDK[VM 既有 ROS/SDK 固定工位动作]
 ```
 
-图：`z19-pspl-four-functions-v1` 集成源码连接关系。现用 VM/DOFBOT 演示的运行图见[系统架构](../../docs/architecture.md)。
+图：`z19-pspl-four-functions-v1` 集成源码连接关系。固定工位分拣演示的运行图见[系统架构](../../docs/architecture.md)。
 
-PL 各运算、PIO FIFO、门控统一使用 `ps0/pl_clk1`，目标 100MHz；该值是配置目标，不是时序或板上测量。复位由同域 `proc_sys_reset` 输出。音频16kHz以样本握手表示，无派生采样时钟。门控 `external_busy` 在顶层固定为0，应用通过既有软件 busy/任务协议管理许可；没有机械臂输出引脚。
+PL 各运算、PIO FIFO、门控统一使用 `ps0/pl_clk1`，100 MHz；完整实现 WNS +0.632 ns、WHS +0.010 ns，0 失败端点。复位由同域 `proc_sys_reset` 输出。音频16kHz以样本握手表示，无派生采样时钟。门控 `external_busy` 在顶层固定为0，应用通过既有软件 busy/任务协议管理许可；没有机械臂输出引脚。
+
+## 构建结果
+
+2026-10-31 在 Vivado 2020.1 下完成综合、实现与 bitstream 生成（器件 `xczu19eg-ffvc1760-2-i`，顶层 `system_pspl_wrapper`）：
+
+| 指标 | 结果 |
+|---|---|
+| WNS / WHS | +0.632 ns / +0.010 ns |
+| 失败端点 | 0 / 27,352 |
+| CLB LUT / 寄存器 | 7,292 / 8,882 |
+| DSP / BRAM | 14 / 0 |
+| DRC | 52 Warning，0 Critical，0 Error |
+| 片上功耗（vectorless 估算） | 4.167 W |
+| XSA | 1,175,321 B |
+
+原始报告与逐文件哈希见[构建记录](../../deliverables/fpga_build_20261031/README.md)。
 
 ## 算法与事务
 

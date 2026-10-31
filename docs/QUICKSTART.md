@@ -24,7 +24,7 @@ bash robot/dofbot/install.sh --check
 bash robot/dofbot/install.sh
 ```
 
-先将实际检出 SHA 与[提交清单](../deliverables/submission/manifest.json)的 `materials_revision` 标签解析结果核对。该标签固定当前源码和中文、英文材料；`track33-source-20261030` 继续保存历史源码发布。上述默认安装仍读取原冻结 payload。已有独立冻结检出时，也可使用当前安装器的 `--source /path/to/frozen-checkout/robot/dofbot`；该目录必须提供完整原安装文件并通过同一哈希/环境检查。缺少冻结 payload 会明确失败，不自动回退开发源码。
+先将实际检出 SHA 与 `xinyu-submission-materials-20261030` 标签的解析结果核对。该标签固定当前源码和中文、英文材料；`track33-source-20261030` 继续保存历史源码发布。上述默认安装仍读取原冻结 payload。已有独立冻结检出时，也可使用当前安装器的 `--source /path/to/frozen-checkout/robot/dofbot`；该目录必须提供完整原安装文件并通过同一哈希/环境检查。缺少冻结 payload 会明确失败，不自动回退开发源码。
 
 预检核对项目文件、依赖和运行状态。安装生成启动/停止脚本及桌面入口，不启动程序、不连接串口、不加载 FPGA，也不调整音量；运行中的应用会阻止覆盖。更新前先等任务完成，再使用停止入口退出。
 
