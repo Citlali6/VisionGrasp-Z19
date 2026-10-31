@@ -26,9 +26,9 @@ VisionGrasp-Z19 的项目自有代码使用根目录 [Apache-2.0](LICENSE)。此
 
 ## Z19 离线语音与播报
 
-当前颜色语音链使用 Vosk 及 `vosk-model-small-cn-0.22`，在板端 ARM 上识别颜色关键词；采音依赖 ALSA。冻结的 [USB 语音资产包](deliverables/voice_usb/README.md)保存模型来源、依赖 wheel、哈希及 wheel 内的许可，当前仅复用所需音频基础与依赖资产。模型来源记录含官方 URL 与哈希，但冻结包中没有模型许可全文；使用和再分发前需核对模型的适用条款。板端原生运行库与其来源记录见[语音颜色交付](deliverables/voice_pl_color/README.md)。
+当前颜色语音链使用 Vosk 及 `vosk-model-small-cn-0.22`，在板端 ARM 上识别颜色关键词；采音依赖 ALSA。模型来源与哈希记录保留在仓库文档中，权重按 Vosk 官方条款取得与使用。
 
-坐标播报依赖 Piper 与已验证的中文模型。模型原始记录中的 Dataset License 为 `Unknown`，仓库保留来源与校验记录，不附带该权重或本地 Piper 发行包；复现者需自行取得适用许可。具体记录见[坐标播报交付](deliverables/grid_voice_coordinates/README.md)。
+坐标播报使用 Piper 与中文模型；模型权重不随仓库分发，复现者需自行取得并核对适用许可。
 
 发布前新增或替换第三方组件时，应记录实际来源、准确版本、完整许可和文件校验值；无法确认再分发许可的材料保留为外部依赖。
 

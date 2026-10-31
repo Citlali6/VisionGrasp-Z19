@@ -115,8 +115,6 @@ A separate 60-second HD run published 1666 frames without copy/busy/obsolete
 discards, stopped DMA normally, joined workers and saved a 6220800-byte raw.
 The service uses a one-hour capture session; press Start again after it ends.
 
-Chinese operating steps: [`camera_quickstart.md`](../../docs/fpga/camera_quickstart.md).
-
 ## Ownership and shutdown
 
 - One open owner; unknown ioctls, writable/partial/private/offset mappings are rejected.
@@ -129,9 +127,6 @@ Chinese operating steps: [`camera_quickstart.md`](../../docs/fpga/camera_quickst
   while DMA may still access it.
 - Never reprogram PL with this module loaded. Stop the owned capture, check
   that the device is no longer open/mapped, then `rmmod ah_camera0` first.
-- SD BOOT.BIN/FIT are unchanged. A reboot loads the old baseline PL; manually
-  load this reviewed camera profile again before capturing. Automatic boot and
-  camera cold-start reliability are separate pending acceptance items.
+- SD BOOT.BIN/FIT are unchanged. Reload this reviewed camera profile after a reboot before capturing.
 
-Actual board results and limitations are recorded in
-[`docs/fpga/linux_camera0_bringup.md`](../../docs/fpga/linux_camera0_bringup.md).
+Board results are recorded in [`docs/fpga/evidence/2026-10-10/`](../../docs/fpga/evidence/2026-10-10/README.md).

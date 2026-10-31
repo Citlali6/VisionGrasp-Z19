@@ -37,8 +37,7 @@ balanced保留完整720p原图用于标定，libjpeg以半尺寸解码供PL处�
 状态`width/height/bbox/mask_count`使用PL像素；`capture_width/capture_height`是原图尺寸。
 网页已分别标明原图、PL尺寸和实际显示fps，不把USB请求30fps或板端发布fps当屏幕帧率。
 
-旧的固件/语音交付包是冻结快照，不包含新网格脚本和balanced模式。
-本版程序、源码校验清单及完整依赖说明见[新版交付](../../deliverables/grid_voice_coordinates/README.md)。
+网格脚本与 balanced 模式属于当前颜色链；固件与寄存器说明见 [BOARD.md](BOARD.md)。
 
 ## 语音指令后播报坐标
 

@@ -18,11 +18,9 @@ the 720p source field of view while sending a half-size 640x360 image through PL
 Measured board publication rose from 1.92 fps to 7.26 fps; actual browser display was
 about 7.2 fps. This is a lower PL processing resolution, not full-resolution 720p acceleration.
 Voice-selected targets can be announced in board coordinates using the USB speaker,
-with explicit Chinese decimal pronunciation. See the [current delivery](../../deliverables/grid_voice_coordinates/README.md).
+with explicit Chinese decimal pronunciation. See [GRID.md](GRID.md) and [VOICE.md](VOICE.md).
 
-See [Chinese integration/audit report](../../docs/fpga/usb_color_module.md).
-The [validated firmware and native executable bundle](../../deliverables/pl_color_z19/README.md)
-also includes the original reports, measured performance samples and file hashes.
+Validated firmware, reports and file hashes are under `deliverables/pl_color_z19/`.
 
 ## Data flow and interfaces
 

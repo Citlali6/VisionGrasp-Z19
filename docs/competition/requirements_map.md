@@ -31,7 +31,7 @@
 | 设计原理与功能框图 | [2. 原理与框图](../../report/design_report.md#section-principle) | 产品功能、分拣配置、四功能工程连接 |
 | 软硬件划分依据与接口设计 | [3. 划分与接口](../../report/design_report.md#section-partition) | PS/PL/上位机分工、像素/PCM 格式、AXI/FIFO、配置快照与任务协议 |
 | 优化过程与性能/资源前后对比 | [4. 优化与证据](../../report/design_report.md#section-optimization)、[数值附录](../../report/design_report.md#appendix-a) | 配置取舍与同范围比较条件 |
-| 大模型协作记录、纠错轨迹、工作流 | [5. AI 协作](../../report/design_report.md#section-ai)、[原始摘录](../../report/ai_interaction_excerpt.md) | 实际用户/助手消息、日期/角色/原文本哈希 |
+| 大模型协作记录、纠错轨迹、工作流 | [5. AI 协作](../../report/design_report.md#section-ai)、[协作记录](../../report/ai_collaboration.md) | 实际任务出处、AI 输出、人工审阅与修正提交 |
 | Skill 提炼、效果证据与边界 | [6. Skill 提炼](../../report/design_report.md#section-skill) | 四个可复用工作流及其来源、失效条件 |
 | 从零复现的操作步骤 | [7. 复现说明](../../report/design_report.md#section-reproduce) | 版本选择、依赖、构建、配置与运行入口 |
 

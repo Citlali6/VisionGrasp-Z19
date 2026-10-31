@@ -23,7 +23,6 @@
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 python -B -m unittest discover -s host/tests -p test_audio.py -v
-python -B tools/test_z19_sd.py
 ```
 
 上述检查使用伪设备和固定输入。历史检查结果及其源码版本见[验证记录](VALIDATION.md)；新增用例应记录自己的执行结果。
@@ -34,13 +33,7 @@ python -B tools/test_z19_sd.py
 python robot/dofbot/install.py --staging-root /tmp/dofbot-install-review
 ```
 
-该模式不操作真实桌面或设备。配套 VM 的正式安装步骤见[快速开始](QUICKSTART.md)。Windows 的 `tools/test_prepare_z19_sd.ps1` 使用模拟磁盘，`-Package` 必须指向已通过清单校验的离线测试包；先阅读脚本参数并准备 fixture。
-
-仓库结构、Markdown 链接、来源和证据哈希检查入口为：
-
-```bash
-python .github/scripts/check_repository.py
-```
+该模式不操作真实桌面或设备。配套环境的正式安装步骤见[快速开始](QUICKSTART.md)。
 
 ## 候选规则回放
 

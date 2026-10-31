@@ -14,13 +14,7 @@ git worktree add -b feature/your-change ../visiongrasp-your-change origin/main
 
 核对远程指向正确仓库后，在新工作树进行修改。原工作树的未提交内容、旧分支和归档保持不动。避免复用一个含他人修改的目录来完成无关任务。
 
-启用当前克隆的本地保护钩子：
-
-```bash
-git config --local core.hooksPath .githooks
-```
-
-钩子拒绝直接更新远程 `main`；它是本地误操作保护，不能替代 GitHub 分支规则。
+主分支由 GitHub 分支规则与 PR 保护；仓库不依赖本地钩子。
 
 ## 提交与 PR
 

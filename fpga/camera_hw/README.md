@@ -58,5 +58,4 @@ all:
 
 运行已有 Bootgen：`bootgen -image camera.bif -arch zynqmp -process_bitstream bin`。
 raw bin 预期 SHA256：`e25e9bc7fd4c2008c7a198a91bc4937716b333259d08da7ed777d8ffe9b3384b`。
-只在驱动无占用、配套检查通过后使用仓库 loader 加载；操作见
-[相机快速操作](../../docs/fpga/camera_quickstart.md)。
+只在驱动无占用、配套检查通过后使用仓库 loader 加载。
