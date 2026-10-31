@@ -1,6 +1,6 @@
 # DOFBOT 2026-10-29 冻结安装源
 
-`payload/` 保存提交 [`8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`](https://github.com/Citlali6/VisionGrasp-Z19/tree/8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d/robot/dofbot) 中的15个原始文件：12个应用文件、原部署清单、外部依赖清单及历史README。逐文件原路径、Git blob、大小和SHA256见 [provenance.json](provenance.json)。局部 `.gitattributes` 禁止Git对payload转换换行，保持冻结字节。
+`payload/` 保存提交 [`8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d`](https://github.com/Citlali6/VisionGrasp-Z19/tree/8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d/robot/dofbot) 中的15个原始文件：12个应用文件、原部署清单、外部依赖清单及历史README。文件来源与原字节由该 Git 提交固定。局部 `.gitattributes` 禁止Git对payload转换换行，保持冻结字节。
 
 当前 [安装器](../../robot/dofbot/install.py) 默认从该payload读取文件，按原 `deployment_manifest.json` 的 `files` 校验12个应用文件；当前开发目录中的新展示接口不进入原演示安装。安装器本身在当前源码目录维护，没有复制进payload。安装报告中的 `source` 记录实际选用的目录。缺失或校验失败会终止，不回退到开发目录。
 

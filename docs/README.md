@@ -11,11 +11,11 @@
 | 开发 Z19 视频、音频与候选规则 | [PS/PL 集成工程](../fpga/system_pspl/README.md)、[FPGA 模块](../fpga/README.md)、[PS 软件](../host/README.md) |
 | 配置 PS 服务与可选 VM 客户端 | [PS 服务](../host/app/perception/README.md)、[VM 接口](../robot/dofbot/pspl.md) |
 | 使用独立 Z19 颜色、语音与网格工程 | [感知链文档](fpga/README.md)、[颜色模块](../fpga/color_locator/README.md)、[网格与坐标](../fpga/color_locator/GRID.md) |
-| 查看指定版本的验证结果 | [验证记录](VALIDATION.md)、[指标与来源](competition/EVIDENCE_MATRIX.md) |
+| 查看指定版本的验证结果 | [验证记录](VALIDATION.md)、[指标与来源](competition/EVIDENCE_MATRIX.md)、[构建记录](../deliverables/fpga_build_20261031/README.md) |
 | 开展二次开发并提交修改 | [开发指南](DEVELOPMENT.md)、[贡献指南](../CONTRIBUTING.md)、[Git 工作流](git_workflow.md) |
 | 复用接口与任务设计经验 | [工程技能](../skill/README.md)、[AI 开发协作记录](../report/ai_collaboration.md) |
 | 核对第三方来源与许可 | [第三方说明](../THIRD_PARTY.md) |
 
-## 提交附件与维护记录
+## 提交附件
 
-[提交规范附件](competition/README.md)保留赛事规则、材料映射与英文海报内容；[提交清单](../deliverables/submission/manifest.json)记录源码、配置、依赖和材料路径。分支归档与恢复资料见[维护记录](maintenance/main-only-20261030.md)，此前的源码发布过程见[历史发布记录](maintenance/release-20261030.md)。
+[提交规范附件](competition/README.md)保留赛事规则、材料映射与英文海报内容；[四功能构建记录](../deliverables/fpga_build_20261031/README.md)保存资源、时序、DRC 与 bit/XSA。

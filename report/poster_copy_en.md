@@ -56,6 +56,6 @@ Reusable Skills cover stream/frame contracts, register contracts, voice task bou
 | Technical architecture | [Design report, Figure 4](design_report.md#section-principle) | Source-profile connections; CPU inference and PIO explicitly labelled |
 | Prior board evidence | [Evidence matrix](../docs/competition/EVIDENCE_MATRIX.md) and linked original colour records | Retain original profile, resolution and measurement scope; copy no unqualified headline figure |
 | Physical workstation photo | Only an existing, source-identified photo of this project | No stock industrial-sorting image, synthetic device photo or invented operating scene; suitable full-device material still requires selection |
-| Reproduction/Skill access | [System source entry](../fpga/system_pspl/README.md), [Skill index](../skill/README.md), [submission manifest](../deliverables/submission/manifest.json) | Use the actual submitted revision; any printed URL/QR must also pass the poster anonymity check, with no team/account identifiers |
+| Reproduction/Skill access | [System source entry](../fpga/system_pspl/README.md), [Skill index](../skill/README.md), [build record](../deliverables/fpga_build_20261031/README.md) | Use the actual submitted revision; any printed URL/QR must also pass the poster anonymity check, with no team/account identifiers |
 
 The body is intentionally a copy bank rather than an official layout. The final template may require further shortening; all version and evidence qualifiers must remain attached to their claims.

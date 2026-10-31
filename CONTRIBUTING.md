@@ -9,9 +9,9 @@
 3. 按[开发指南](docs/DEVELOPMENT.md)运行不接触硬件的检查，说明验证环境与限制。
 4. 推送工作分支并创建 PR，写明问题、改变后的行为和验证结果。
 
-主分支通过 PR 更新，不直接推送，不重写历史。完整约定见 [Git 工作流](docs/git_workflow.md)与 [AGENTS.md](AGENTS.md)。
+主分支通过 PR 更新，不直接推送，不重写历史。完整约定见 [Git 工作流](docs/git_workflow.md)。
 
-参赛文档按[模板映射](docs/competition/README.md)组织，引用[事实与指标表](docs/competition/EVIDENCE_MATRIX.md)。新测试结果需注明软件、RTL、综合或现场证据等级；未测项目保留待测状态。
+参赛文档按[模板映射](docs/competition/README.md)组织，引用[事实与指标表](docs/competition/EVIDENCE_MATRIX.md)。新测试结果需注明软件、RTL、综合、实现或现场证据等级。
 
 ## 代码与文档约定
 

@@ -1,6 +1,6 @@
 {
   "schema": "visiongrasp.track33-submission/1",
-  "date": "2026-10-30",
+  "date": "2026-10-31",
   "project": {
     "repository": "https://github.com/Citlali6/VisionGrasp-Z19",
     "technical_id": "VisionGrasp-Z19",
@@ -13,49 +13,38 @@
   },
   "competition": {
     "track": "AMD FPGA 创新设计赛道 3.3 自主选题",
-    "group": "初级组（报名资格需按实际队员信息核对）",
+    "group": "初级组",
     "rule_reference": "docs/competition/requirements_map.md",
-    "guide_sha256": "c6ad82acd4f7bdcd13bd412e232ed85d05f2a87dd5e2cdd04f9d219f88b569fc",
-    "full_submission_ready": false
+    "guide_sha256": "c6ad82acd4f7bdcd13bd412e232ed85d05f2a87dd5e2cdd04f9d219f88b569fc"
   },
   "git": {
-    "release_metadata_scope": "historical source release track33-source-20261030; current documentation maintenance is recorded separately",
     "default_branch": "main",
-    "branch_policy": "main is the only long-lived remote branch; delete short-lived heads after merging; preserve historical versions with tags",
-    "historical_delivery_branch": "source/track33-closeout-20261030",
-    "inherited_source_commit": "7cf7513a42d5b5f3b3c66eec1e950786b6478b83",
-    "initial_four_function_commit": "9dc4df9cce400b9fe9c8400fe991a690e465d663",
-    "semantic_association_fix_commit": "0aa5adc6917d58b4a50d9e93d375d28d5b2f9a1e",
-    "content_snapshot_commit": "562ba8e5b5a63780a715fe0b214a8ad4a7d7f901",
-    "content_snapshot_scope": "工程源码、冻结安装契约、产品/报告/真实交互/Skill及已批准CI分层。后续提交仅补发布状态、固定tag引用及分支清理记录；最终完整版本以release_tag为准。",
-    "main_integration": "merged",
-    "pull_request": "https://github.com/Citlali6/VisionGrasp-Z19/pull/43",
-    "archive_tag": "archive/20261030/plan",
-    "archive_tag_object": "86743168741c8b35eb7084227b3dff15fe95e3d8",
-    "archive_target_commit": "e625341676c83495b3fb225b31064b3fcf1fbb18",
-    "audit_baseline_commit": "19a09b90b5100dc99c5a5b3ecf07853063c3a011",
-    "frozen_install_contract_fix_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
-    "recovery_inventory": "docs/maintenance/branch_inventory.csv",
-    "starting_main_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-    "main_integration_commit": "e259204f9ebcddb743b952d6408fbf15d033dd17",
-    "release_tag": "track33-source-20261030",
-    "release_commit_resolution": "本段历史源码发布提交由refs/tags/track33-source-20261030解引用；当前文档维护另见documentation_maintenance及其record。"
+    "materials_tag": "xinyu-submission-materials-20261030",
+    "release_tag": "track33-source-20261030"
   },
   "source_profile": {
     "id": "z19_pspl_four_functions",
     "entry": "fpga/system_pspl/README.md",
     "part": "xczu19eg-ffvc1760-2-i",
-    "tool_configuration": "Vivado 2020.1",
+    "tool": "Vivado 2020.1",
     "target_clock_mhz": 100,
     "transport": "AXI-Lite FIFO / Linux UIO / ordered 32-bit PIO",
     "default_candidate_policy": "semantic_bbox",
-    "optional_candidate_policy": "color_association",
-    "semantic_default_association": {
-      "state": "not_requested",
-      "reason": "semantic_bbox_policy"
-    },
-    "new_generated_artifacts": [],
-    "status": "source_and_interface_review_only"
+    "build_record": "deliverables/fpga_build_20261031/README.md",
+    "build": {
+      "date": "2026-10-31",
+      "status": "write_bitstream Complete!",
+      "wns_ns": 0.632,
+      "whs_ns": 0.01,
+      "failing_endpoints": 0,
+      "clb_lut": 7292,
+      "clb_register": 8882,
+      "dsp": 14,
+      "bram": 0,
+      "drc_critical": 0,
+      "drc_error": 0,
+      "xsa_sha256": "3FFC97DA6FB31666E447C4FD8F540261DD73DD31CCC081C13F367AFF6DE23BD7"
+    }
   },
   "modules": [
     {
@@ -65,11 +54,10 @@
       "contract": "fpga/system_pspl/registers.json"
     },
     {
-      "function": "垃圾识别分类",
+      "function": "垃圾分类",
       "pl": "fpga/perception_v2/",
       "ps": "host/app/perception/detector.py",
-      "model_contract": "host/app/perception/README.md",
-      "placement": "Z19 PS CPU; no PL neural network"
+      "placement": "Z19 PS CPU; PL preprocessing"
     },
     {
       "function": "视觉定位与候选复核",
@@ -80,8 +68,7 @@
       "ps": [
         "host/app/perception/coordinates.py",
         "host/app/perception/guard_adapter.py"
-      ],
-      "coordinate_scope": "pixel / optional calibrated work plane; fixed VM pickup unchanged"
+      ]
     },
     {
       "function": "语音预处理",
@@ -92,7 +79,7 @@
     {
       "function": "传输与机械臂上位机",
       "ps": "host/libpspl/",
-      "vm": [
+      "host": [
         "robot/dofbot/pspl_entry.py",
         "robot/dofbot/pspl_client.py",
         "robot/dofbot/pspl_display.py"
@@ -114,245 +101,73 @@
     "install_source_commit": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
     "selection": "docs/QUICKSTART.md",
     "deployment_manifest": "robot/dofbot/deployment_manifest.json",
-    "rule": "当前安装器和默认测试共同选择独立冻结payload；15文件保持8a2原始字节，12项应用符合原manifest。--source可明确指定完整独立冻结目录，报告保留source；新Dashboard源码不进入原安装包，现场部署未更新。",
-    "deployment_changed": false,
     "payload_path": "deliverables/dofbot_demo_20261029/payload",
-    "payload_provenance": "deliverables/dofbot_demo_20261029/provenance.json",
-    "installer_path": "robot/dofbot/install.py",
-    "installer_commit": "2176fbca057a42a530e0ca981bdaf63f4c628b77",
     "payload_file_count": 15,
     "application_hash_count": 12
   },
-  "existing_artifacts": [
+  "artifacts": [
+    {
+      "path": "deliverables/fpga_build_20261031/system_pspl.xsa",
+      "bytes": 1175321,
+      "sha256": "3FFC97DA6FB31666E447C4FD8F540261DD73DD31CCC081C13F367AFF6DE23BD7",
+      "profile": "z19_pspl_four_functions"
+    },
+    {
+      "path": "deliverables/fpga_build_20261031/validation/utilization_placed.rpt",
+      "bytes": 11359,
+      "sha256": "618ECB63C776CFDA4566C1C7F4F4EB374AF8683A2B71BE5FCC6C443140ADA654",
+      "profile": "z19_pspl_four_functions"
+    },
+    {
+      "path": "deliverables/fpga_build_20261031/validation/timing_summary_routed.rpt",
+      "bytes": 366330,
+      "sha256": "016EE93CCFB34C3B40709D81D98FEDD0828B3D76A64072BA48EC3B5BA2E27957",
+      "profile": "z19_pspl_four_functions"
+    },
+    {
+      "path": "deliverables/fpga_build_20261031/validation/drc_routed.rpt",
+      "bytes": 29860,
+      "sha256": "041CFCEA635786EAD2DB6724A26F79C5957E77B5A7B465E8694C3BC79C875FB6",
+      "profile": "z19_pspl_four_functions"
+    },
+    {
+      "path": "deliverables/fpga_build_20261031/validation/power_routed.rpt",
+      "bytes": 12284,
+      "sha256": "B1506D0ECC4D23F26BD0EBEC2F454BB0896BB15659D490FEC3B4407C5B0818D4",
+      "profile": "z19_pspl_four_functions"
+    },
     {
       "path": "deliverables/pl_color_z19/pl_color_z19_20261022_r3.zip",
       "sha256": "c9d9153ce9fc872f4cd06fd74dc7d4c36de51121713a99f3ec577d712bc09fb3",
       "bytes": 1212424,
-      "profile": "legacy_usb_color_20261022_r3",
-      "source_version": "7b1163ed8ad734f5bf0ba31aaf4ac18291935273",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/pl_color_z19/manifest.json",
-      "sha256": "04620650fbbdea2296a97b5c053524903b967988256562b849292c80ad5771f2",
-      "bytes": 7184,
-      "profile": "legacy_usb_color_manifest",
-      "source_version": "7b1163ed8ad734f5bf0ba31aaf4ac18291935273",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/voice_usb/voice_usb_package_20261018_v2.zip",
-      "sha256": "52563065abd783a212d3ebfd91bb0d8cf1f44a24d7e70cf33ba088e4508a4ae6",
-      "bytes": 50869473,
-      "profile": "legacy_usb_voice_assets",
-      "source_version": "2026-10-18_v2",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/voice_pl_color/native-payload.tar.gz",
-      "sha256": "35d2086aaf9220a5edb2b286592949dcfebb6c6a59e38931bae2ef0d78446af5",
-      "bytes": 14863578,
-      "profile": "legacy_arm64_audio_libraries",
-      "source_version": "2026-10-22",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/voice_pl_color/native-manifest.json",
-      "sha256": "70a0efda22000270b2e4eabaa87d7c735e3091b4c6abfa701fdc40cd93299a49",
-      "bytes": 12648,
-      "profile": "legacy_arm64_audio_provenance",
-      "source_version": "2026-10-22",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/voice_pl_color/color_camera",
-      "sha256": "35ab4aebe2e07335109347282ffae31183501e1287ff99e58d351b784c09d3c6",
-      "bytes": 33168,
-      "profile": "legacy_voice_color_program",
-      "source_version": "2026-10-22",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/grid_voice_coordinates/color_camera",
-      "sha256": "dacf27e4057379c1998e8e5f46f783cb01e8ec17327d9a32672d2255e541b120",
-      "bytes": 33168,
-      "profile": "legacy_grid_balanced_program",
-      "source_version": "2026-10-23",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/grid_voice_coordinates/tts-assets-manifest.json",
-      "sha256": "f80c612a73994bed8d9f6f65503313cb4641ab8aeaf36054ff07587e8b5a7fda",
-      "bytes": 1374,
-      "profile": "external_piper_assets_provenance_only",
-      "source_version": "2026-10-23",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "fpga/camera_hw/validated/camera.xsa",
-      "sha256": "1f85a8611799568ee331fd9d5c86634e6af3ec3c22eb20624be0a98cba6d658c",
-      "bytes": 2331512,
-      "profile": "independent_mipi_platform",
-      "source_version": "Vivado_2020.2_AR75986",
-      "new_profile_artifact": false
+      "profile": "legacy_usb_color_20261022_r3"
     },
     {
       "path": "fpga/camera_hw/validated/design_1_wrapper.bit",
       "sha256": "28e1e3e7963ff12f57848998cf2695dcca139c3f519c5f020daf90dec4dc35ae",
       "bytes": 12378816,
-      "profile": "independent_mipi_bitstream",
-      "source_version": "Vivado_2020.2_AR75986",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "fpga/camera_hw/manifest.json",
-      "sha256": "75c5d930db07922f936f21616f185a987dd4f5104bb4dd340335c030c57d023e",
-      "bytes": 20476,
-      "profile": "independent_mipi_manifest",
-      "source_version": "Vivado_2020.2_AR75986",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "host/camera_linux/validated/ah_camera0.ko",
-      "sha256": "56bc43d3153ed861a598293ea7d38920806107c1ec8eaac4b70eeb87f62fe368",
-      "bytes": 317088,
-      "profile": "independent_mipi_linux_driver",
-      "source_version": "Linux_5.4.0-xilinx-v2020.2",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "host/camera_linux/validated/capture_camera0",
-      "sha256": "fdb6ed7b6c3fd7961a2e089fff9cd392baae74453d01085a0f292c95874b4ce2",
-      "bytes": 33432,
-      "profile": "independent_mipi_linux_capture",
-      "source_version": "AArch64_legacy",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "fpga/camera_baremetal/build/validated-live-v2/capture.elf",
-      "sha256": "7d41ee6e72f7f7f1c7b8a501ad2b9c24c4e28670a50aba6732e2addcb7e9f232",
-      "bytes": 402560,
-      "profile": "independent_mipi_baremetal_live_v2",
-      "source_version": "legacy_JTAG",
-      "new_profile_artifact": false
+      "profile": "independent_mipi_bitstream"
     },
     {
       "path": "fpga/sort_guard/validation/result.json",
       "sha256": "d947e0d3b817eb94e1b939225618384159d19045937a02f54c98797851b24b26",
       "bytes": 5249,
-      "profile": "standalone_guard_simulation_and_ooc",
-      "source_version": "2026-10-29",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "robot/dofbot/deployment_manifest.json",
-      "sha256": "23de093ded945fcaef432a84935468e4bcf286f837bf7b539d1aeb1fef22b895",
-      "bytes": 3310,
-      "profile": "frozen_vm_deployment_manifest",
-      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "robot/dofbot/external_dependencies.json",
-      "sha256": "1da60a94ba860106182c4aff300af61a382b1d4b1041e943b8d51a415d77a5a0",
-      "bytes": 5100,
-      "profile": "frozen_vm_external_dependencies",
-      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-      "new_profile_artifact": false
+      "profile": "standalone_guard_simulation_and_ooc"
     },
     {
       "path": "docs/assets/dashboard.png",
       "sha256": "a291f42aa5f146776270b52ff1f66cf40f477f98fc06f955cca2e204390291d5",
       "bytes": 357246,
-      "profile": "actual_vm_demonstration_screenshot",
-      "source_version": "2026-10-29",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/dofbot_demo_20261029/provenance.json",
-      "sha256": "1654108c07e00bcef84c1931c3056dc25ce674e3b9b0d07b11820b95d6c71b30",
-      "bytes": 5057,
-      "profile": "frozen_vm_payload_snapshot",
-      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-      "new_profile_artifact": false
-    },
-    {
-      "path": "deliverables/dofbot_demo_20261029/payload/deployment_manifest.json",
-      "sha256": "23de093ded945fcaef432a84935468e4bcf286f837bf7b539d1aeb1fef22b895",
-      "bytes": 3310,
-      "profile": "frozen_vm_payload_snapshot",
-      "source_version": "8a2a6fd544cb6b79e868b8a710dc34b6027c6c8d",
-      "new_profile_artifact": false
+      "profile": "demonstration_screenshot"
     }
-  ],
-  "existing_archive_entries": [
-    {
-      "archive_path": "deliverables/pl_color_z19/pl_color_z19_20261022_r3.zip",
-      "archive_entry": "firmware/color.bit",
-      "sha256": "18db078887d039ff62e58502b940e5f26bbf7b00455587f4aa661b09c1cfc7e0",
-      "profile": "legacy_usb_color_20261022_r3"
-    },
-    {
-      "archive_path": "deliverables/pl_color_z19/pl_color_z19_20261022_r3.zip",
-      "archive_entry": "firmware/color.xsa",
-      "sha256": "fa3a47c09f616e92500f5b56f5f2e44f71692deac55acd5c8076100347a5d947",
-      "profile": "legacy_usb_color_20261022_r3"
-    },
-    {
-      "archive_path": "deliverables/pl_color_z19/pl_color_z19_20261022_r3.zip",
-      "archive_entry": "firmware/visiongrasp-color-20261022-901f2f1fc6a8.bin",
-      "sha256": "901f2f1fc6a812c25ed92e64f05bc5f15fc87c0ea417b9c3d26ce18454ebeb29",
-      "profile": "legacy_usb_color_20261022_r3"
-    }
-  ],
-  "artifact_notes": [
-    "全部列举产物为旧profile；颜色bit/XSA/bin只以ZIP内部entry存在。",
-    "MIPI manifest中的rawbin为历史哈希记录，当前树未提供对应独立bin文件。",
-    "Piper权重/发行包为外部条件；tts-assets-manifest仅提供出处，不代表仓库包含它们。",
-    "新四功能profile没有bit/XSA/ELF、综合实现报告或联合板级参考比对；禁止重命名旧镜像冒充新产物。"
   ],
   "evidence": {
     "metrics_authority": "docs/competition/EVIDENCE_MATRIX.md",
-    "original_vm_record": "docs/VALIDATION.md",
+    "validation_record": "docs/VALIDATION.md",
+    "fpga_build_record": "deliverables/fpga_build_20261031/README.md",
     "legacy_color_record": "fpga/color_locator/BOARD.md",
     "legacy_grid_record": "fpga/color_locator/GRID.md",
-    "standalone_guard_record": "fpga/sort_guard/validation/result.json",
-    "scope": "历史现场/软件/RTL/OOC结果分别属于原版本；本轮仅源码/接口/文本/路径/哈希/Git审阅，没有新运行或性能结果。"
-  },
-  "dependencies": [
-    {
-      "source": "robot/dofbot/external_dependencies.json",
-      "role": "合法配套VM模型、SDK、ROS及播报媒体；不分发完整VM，不替换原环境"
-    },
-    {
-      "source": "host/app/perception/model_sources.json",
-      "role": "从实际厂商调用提取的源哈希；尚缺合法权重/类序/YAML、匹配框架与来源/目标环境资料"
-    },
-    {
-      "source": "host/app/perception/contract.example.json",
-      "role": "模型契约结构，未知null/REQUIRED必须由真实资料补齐；不是有效部署manifest"
-    },
-    {
-      "source": "fpga/system_pspl/README.md",
-      "role": "AArch64 sysroot/原生库、实际UIO/设备树、新镜像、相机/工作平面标定、ALSA/Vosk词典覆盖"
-    },
-    {
-      "source": "fpga/color_locator/vendor/laperex/UPSTREAM.json",
-      "role": "未修改HSV算术来源与MIT许可"
-    },
-    {
-      "source": "fpga/scripts/alinx/ps_config.tcl",
-      "role": "沿用ALINX PS配置与厂商条款，不升级IP"
-    },
-    {
-      "source": "deliverables/voice_pl_color/native-manifest.json",
-      "role": "旧ARM64原生音频包版本/许可；不推断适合新目标环境"
-    }
-  ],
-  "licenses": {
-    "project": "LICENSE",
-    "third_party": "THIRD_PARTY.md",
-    "restriction": "根Apache-2.0只覆盖项目自有内容；模型/SDK/厂商IP/媒体沿用各自权利，不因清单收录获得再分发授权。"
+    "standalone_guard_record": "fpga/sort_guard/validation/result.json"
   },
   "materials": {
     "documentation": "docs/README.md",
@@ -361,6 +176,7 @@
     "configurations": "docs/CONFIGURATIONS.md",
     "design_report": "report/design_report.md",
     "ai_collaboration": "report/ai_collaboration.md",
+    "ai_interaction_excerpt": "report/ai_interaction_excerpt.md",
     "poster_copy": "report/poster_copy_en.md",
     "skills": [
       "skill/README.md",
@@ -368,98 +184,10 @@
       "skill/register_contract/SKILL.md",
       "skill/voice_task_boundary/SKILL.md",
       "skill/readonly_observability/SKILL.md"
-    ],
-    "release_inventory": "docs/maintenance/release-20261030.md",
-    "branch_inventory": "docs/maintenance/branch_inventory.csv",
-    "maintenance_record": "docs/maintenance/main-only-20261030.md",
-    "ai_interaction_excerpt": "report/ai_interaction_excerpt.md",
-    "report_numeric_appendix": "report/design_report.md#appendix-a"
-  },
-  "remaining_conditions": [
-    "队伍初级组报名信息确认",
-    "合法模型/类序/YAML/框架及完整源/目标环境契约",
-    "新profile镜像/UIO/匹配Linux与原生依赖",
-    "匹配标定与任务词典覆盖",
-    "另行允许阶段取得新完整实现/板级输出/同输入参考比对",
-    "同一优化对象、同一统计范围和报告阶段的性能/资源前后对照",
-    "按最终提交规范处理保留的大写文件名，或取得赛方明确解释；当前无豁免确认",
-    "官方英文PPT模板、排版与匿名检查"
-  ],
-  "previous_closeout_operations": {
-    "scope": "track33-source-20261030_snapshot",
-    "allowed_performed": [
-      "source_and_interface_review",
-      "text_and_link_review",
-      "file_hashes_and_archive_listing",
-      "git_metadata_and_recovery_backups",
-      "normal_local_commits_and_safe_ref_delivery",
-      "approved_standard_git_only_ci"
-    ],
-    "engineering_checks_run": [],
-    "local_branches_deleted": 4,
-    "remote_heads_deleted": 34,
-    "archive_tags_pushed": 19,
-    "pr34": "kept_open_draft_due_to_unique_and_uncommitted_work",
-    "hardware_or_vm_access_performed": false,
-    "ci_configuration_changed": true,
-    "branch_protection_changed": false,
-    "remote_head_count_before": 42,
-    "remote_head_count_after": 8,
-    "pull_requests_merged": [
-      "https://github.com/Citlali6/VisionGrasp-Z19/pull/43"
     ]
   },
-  "documentation_maintenance": {
-    "baseline_commit": "24d0be3efa29b4dd4783874eed9556e579338ef9",
-    "scope": "product documentation, navigation, required paths and recoverable remote-head consolidation",
-    "record": "docs/maintenance/main-only-20261030.md",
-    "engineering_checks_run": [],
-    "frozen_installation_source_changed": false
-  },
-  "materials_revision": {
-    "tag": "xinyu-submission-materials-20261030",
-    "baseline_commit": "bddf691c4e97c9a481e4bf74dabd75849d45479c",
-    "scope": "source and current Chinese/English submission materials; not a completed board-validation release",
-    "commit_resolution": "git rev-parse refs/tags/xinyu-submission-materials-20261030^{commit}",
-    "historical_source_release_tag": "track33-source-20261030",
-    "full_submission_ready": false
-  },
-  "ai_record": {
-    "format": "selected_real_user_assistant_messages_and_original_audit_section",
-    "message_count": 11,
-    "model_field": "gpt-6.1-sol",
-    "timestamp_format": "UTC ISO 8601",
-    "provenance": "real current-project JSONL; raw message SHA-256 and line numbers; private source records retained outside Git",
-    "private_content_removed": [
-      "local absolute paths",
-      "private attachment links and identifiers"
-    ],
-    "internal_reasoning_exported": false
-  },
-  "ci": {
-    "owner_separately_approved": true,
-    "automatic_workflow": ".github/workflows/source_review.yml",
-    "automatic_scope": "standard Git text/path/frozen blob checks only",
-    "manual_workflow": ".github/workflows/ci.yml",
-    "original_runtime_job_commands_preserved": true,
-    "runtime_dispatches_performed": 0,
-    "branch_protection_changed": false,
-    "required_status_contexts_changed": false,
-    "source_check_is_runtime_validation": false,
-    "source_review_evidence": {
-      "pull_request": 43,
-      "head_sha": "75de5548e63fa3780661103ed24c08af4678560c",
-      "run_id": 41039253270,
-      "url": "https://github.com/Citlali6/VisionGrasp-Z19/actions/runs/41039253270",
-      "conclusion": "success",
-      "scope": "Git text / paths / frozen blobs only; no runtime validation"
-    }
-  },
-  "release": {
-    "kind": "source_and_competition_materials",
-    "tag": "track33-source-20261030",
-    "prerelease": true,
-    "full_competition_submission_ready": false,
-    "status": "main contains the audited source and materials; fixed tag resolves final publication metadata"
+  "licenses": {
+    "project": "LICENSE",
+    "third_party": "THIRD_PARTY.md"
   }
 }

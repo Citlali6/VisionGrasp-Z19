@@ -1,0 +1,105 @@
+{
+  "schema": "visiongrasp.fpga-build/1",
+  "date": "2026-10-31",
+  "profile": "z19-pspl-four-functions-v1",
+  "source_commit": "4e51e5b",
+  "tool": {
+    "name": "Vivado",
+    "version": "2020.1",
+    "sw_build": "2902540"
+  },
+  "part": "xczu19eg-ffvc1760-2-i",
+  "top": "system_pspl_wrapper",
+  "clock": {
+    "name": "ps0/pl_clk1",
+    "target_mhz": 100
+  },
+  "status": {
+    "synthesis": "complete",
+    "implementation": "complete",
+    "write_bitstream": "complete",
+    "wns_ns": 0.632,
+    "whs_ns": 0.01,
+    "failing_endpoints": 0,
+    "total_endpoints": 27352,
+    "fmax_estimate_mhz": 106.7
+  },
+  "utilization": {
+    "clb_lut": 7292,
+    "clb_lut_percent": 1.4,
+    "clb_register": 8882,
+    "clb_register_percent": 0.85,
+    "carry8": 326,
+    "dsp": 14,
+    "dsp_percent": 0.71,
+    "bram": 0,
+    "bonded_iob": 0
+  },
+  "drc": {
+    "critical": 0,
+    "error": 0,
+    "warning": 52,
+    "rules": {
+      "DPIP-2": 24,
+      "DPOP-3": 13,
+      "DPOP-4": 14,
+      "RTSTAT-10": 1
+    }
+  },
+  "power": {
+    "method": "vectorless estimate",
+    "total_w": 4.167,
+    "dynamic_w": 2.955,
+    "static_w": 1.212
+  },
+  "address_map": {
+    "video": "0xA1000000",
+    "audio": "0xA1010000",
+    "guard": "0xA1020000",
+    "range_bytes": 4096
+  },
+  "artifacts": [
+    {
+      "path": "system_pspl.xsa",
+      "bytes": 1175321,
+      "sha256": "3FFC97DA6FB31666E447C4FD8F540261DD73DD31CCC081C13F367AFF6DE23BD7",
+      "note": "fixed XSA including bitstream"
+    },
+    {
+      "path": "system_pspl_wrapper.bit",
+      "bytes": 36343237,
+      "sha256": "E2DC755C01C67E6E9506CB71A0B9B010C5F7D6A158FFCAC0FA7660935AE71A29",
+      "note": "contained in system_pspl.xsa; not duplicated in the repository"
+    },
+    {
+      "path": "validation/utilization_placed.rpt",
+      "bytes": 11359,
+      "sha256": "618ECB63C776CFDA4566C1C7F4F4EB374AF8683A2B71BE5FCC6C443140ADA654"
+    },
+    {
+      "path": "validation/timing_summary_routed.rpt",
+      "bytes": 366330,
+      "sha256": "016EE93CCFB34C3B40709D81D98FEDD0828B3D76A64072BA48EC3B5BA2E27957"
+    },
+    {
+      "path": "validation/drc_routed.rpt",
+      "bytes": 29860,
+      "sha256": "041CFCEA635786EAD2DB6724A26F79C5957E77B5A7B465E8694C3BC79C875FB6"
+    },
+    {
+      "path": "validation/power_routed.rpt",
+      "bytes": 12284,
+      "sha256": "B1506D0ECC4D23F26BD0EBEC2F454BB0896BB15659D490FEC3B4407C5B0818D4"
+    }
+  ],
+  "commands": [
+    "vivado -mode batch -source fpga/system_pspl/create_project.tcl -tclargs <output>",
+    "vivado -mode batch -source fpga/system_pspl/build_bitstream.tcl -tclargs <project.xpr> <output.xsa>"
+  ],
+  "notes": [
+    "Output directory must not exist; build artifacts stay outside the source tree.",
+    "Use an ASCII-only build path on Windows: Vivado 2020.1 fails to read mhs/hwdef under a non-ASCII path.",
+    "The design exports no PL pins; PS reaches all three endpoints through AXI.",
+    "Power is a vectorless estimate, not a board measurement."
+  ]
+}
