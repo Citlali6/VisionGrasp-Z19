@@ -36,7 +36,7 @@ def main():
     print('PREVIEW_PID', proc.pid)
     print('PREVIEW_PID_FILE', pid_file)
     print('PREVIEW_SERVER_LOG', log_file)
-    print('PREVIEW_URL http://192.28.14.153:9000/')
+    print('PREVIEW_URL http://127.0.0.1:9000/')
 
 
 if __name__ == '__main__':

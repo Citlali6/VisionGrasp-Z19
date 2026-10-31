@@ -11,8 +11,8 @@ python robot/dofbot/install.py --staging-root /tmp/dofbot-install-review
 python robot/dofbot/install.py --source /path/to/frozen-checkout/robot/dofbot --staging-root /tmp/dofbot-install-review
 ```
 
-正式VM环境、外部依赖和启动流程见 [当前说明](../../robot/dofbot/README.md)。本目录不包含模型、厂商SDK、分类音频、完整VM或新PS/PL服务；这些依赖的来源与许可仍见 [THIRD_PARTY.md](../../THIRD_PARTY.md)。现有部署不因保存payload或修改安装源选择而更新。
+正式VM环境、外部依赖和启动流程见 [当前说明](../../robot/dofbot/README.md)。本目录不包含模型、厂商SDK、分类音频、完整VM或新PS/PL服务；这些依赖的来源与许可仍见 [THIRD_PARTY.md](../../THIRD_PARTY.md)。现有部署保持原版本。
 
 `payload/README.md` 是保留原字节的历史快照，其相对链接按原 `robot/dofbot/` 位置解释，原安装脚本也不在payload内。阅读历史内容请使用上面的固定提交链接；不要把该快照当作当前仓库的新安装入口。
 
-2026-10-30仅复制Git原始字节并核对路径、清单、Git blob和SHA256，修改安装器与测试源码；没有执行安装器、导入工程、测试或设备流程。历史运行与验证结论仍属于原版本。
+本目录按 Git 原始字节保存，路径、清单与 SHA-256 已核对。运行与验证结论按原版本保留。

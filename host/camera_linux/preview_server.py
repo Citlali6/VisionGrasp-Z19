@@ -166,7 +166,7 @@ class Camera:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--capture', type=Path, default=Path(__file__).with_name('capture_camera0'))
-    parser.add_argument('--bind', default='192.28.14.153')
+    parser.add_argument('--bind', default='127.0.0.1')
     parser.add_argument('--port', type=int, default=9000)
     parser.add_argument('--log-dir', type=Path, default=Path('/var/lib/amazinghand/log'))
     parser.add_argument('--ram-dir', type=Path, default=Path('/run/amazinghand-preview'))

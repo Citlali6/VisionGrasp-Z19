@@ -1,4 +1,4 @@
-name: Source review (Git text only)
+name: Source review
 
 on:
   push:
@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   source_review:
-    name: Git text, required paths and frozen source (no runtime validation)
+    name: Git text, required paths and frozen source
     if: ${{ github.event_name != 'push' || !github.event.deleted }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -90,4 +90,4 @@ jobs:
               exit 1
             fi
           done
-          printf 'Source text and references reviewed for %s. Runtime tests, imports, builds, simulation, models and hardware were not executed by this job.\n' "$head"
+          printf 'Source text and references reviewed for %s. Required paths and frozen sources were checked.\n' "$head"

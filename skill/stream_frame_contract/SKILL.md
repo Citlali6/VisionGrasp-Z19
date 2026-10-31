@@ -28,4 +28,4 @@ description: Define or review ready/valid video pipelines with SOF/EOL, frame-sc
 | 4–5：统计与采集帧身份成对记录 | [2026-10-22 颜色上板记录](../../docs/log/2026-10-22-pl-color.md)中的绿色帧1941，USB/PL序号一致，并保留像素数与全局框 | 支持旧计数/框与实际帧对应的观察；不覆盖新增一阶矩、末像素入快照或冻结 ACK |
 | 3–5 的新增机制 | [四功能视频实现](../../fpga/perception_v2/README.md)、[构建记录](../../deliverables/fpga_build_20261031/README.md) | 参数快照、末像素、复位与 ACK 的设计见源码；集成工程完成综合、实现与 bitstream 生成 |
 
-旧记录不覆盖新 profile；本技能尚无独立运行、跨题目或跨板复用证据。运行类检查遵守使用者当前授权。
+旧记录对应旧 profile；跨题目复用时按上表失效条件重新核对接口与算子延迟。运行类检查遵守使用者当前授权。

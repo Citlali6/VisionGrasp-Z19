@@ -16,7 +16,7 @@ import time
 import urllib.error
 import urllib.request
 
-URL = 'http://192.28.14.153:9000'
+URL = 'http://127.0.0.1:9000'
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 

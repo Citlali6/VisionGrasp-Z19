@@ -51,6 +51,6 @@ python -m fpga.sort_guard.host.replay tests/sort_guard/fixtures/synthetic_stable
 
 ## CI 与提交
 
-`source_review.yml` 在 PR 与主线更新时自动核对 Git 文本、必需路径和冻结文件来源。`ci.yml` 保留软件检查和 RTL 仿真，通过 `workflow_dispatch` 手动执行；维护者按变更范围选择运行检查。两类流程分别报告结果。
+`source_review.yml` 在 PR 与主线更新时自动核对 Git 文本、必需路径和冻结文件来源。软件检查与 RTL 仿真入口见本节命令。
 
 按[Git 工作流](git_workflow.md)从最新 `main` 创建短期分支，经差异审阅、适用检查和 PR 合并后删除远端功能分支。真实设备、FPGA 镜像及现场应用的更新需有明确的目标配置与操作授权；仓库合并与现场部署分别管理。
