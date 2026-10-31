@@ -1,9 +1,9 @@
 # Z19 USB 摄像头 → 真实 PL 颜色识别 → 电脑显示
 
 已验证的 bit、BIN、XSA、原生程序和报告见
-[交付验证目录](../../deliverables/pl_color_z19/validation/)。恢复本轮版本无需先重新综合。
+[交付验证目录](../../deliverables/pl_color_z19/validation/)。恢复该版本无需先重新综合。
 
-## 本轮已验证
+## 板端验证
 
 2026-10-22，用户明确授权上板验证。硬件：ALINX Z19 XCZU19EG，Linux
 5.4.0-xilinx-v2020.2，USB Camera0bda:9143 `/dev/video0`。实际720p MJPEG帧经过
@@ -90,8 +90,8 @@ python3 -u preview.py --directory /dev/shm/visiongrasp-pl-color-20261022 --port 
 ```
 
 HTTP只监听板子127.0.0.1。电脑通过SSH本地转发8774→板端127.0.0.1:18774，
-打开 `http://127.0.0.1:8774/`。本轮由受主机密钥校验的SSH连接转发，无防火墙修改。
-不在代码中保存SSH密码。会话/隧道停止、断网、重启后页面不再实时刷新，
+打开 `http://127.0.0.1:8774/`。该记录由受主机密钥校验的 SSH 连接转发。
+不在代码中保存凭据。会话/隧道停止、断网、重启后页面不再实时刷新，
 需重新建立连接；不是开机自启服务。
 
 ## 诊断寄存器

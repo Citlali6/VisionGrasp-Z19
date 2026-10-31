@@ -40,7 +40,7 @@ def main():
                     self.send_error(403)
                     return
                 body = self.rfile.read(size)
-            request = urllib.request.Request('http://192.28.14.153:9000' + self.path,
+            request = urllib.request.Request('http://127.0.0.1:9000' + self.path,
                                              data=body, method='POST' if post else 'GET',
                                              headers={'Content-Type': 'application/json'})
             try:

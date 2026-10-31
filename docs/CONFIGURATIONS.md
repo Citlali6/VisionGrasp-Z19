@@ -18,7 +18,7 @@
 
 安装器默认使用 [deliverables/dofbot_demo_20261029/payload](../deliverables/dofbot_demo_20261029/README.md)。该目录保留原始 15 文件及其来源，其中 12 个应用文件按原部署清单校验。开发目录的新 PS/PL 客户端与展示扩展使用独立入口。安装器缺少 payload 或哈希不符时终止；`--source` 可明确选择一份完整的冻结检出。
 
-准备配套虚拟机、普通桌面用户与厂商依赖后，按[快速开始](QUICKSTART.md)安装。外部文件路径、版本与哈希见[外部依赖清单](../robot/dofbot/external_dependencies.json)，应用基线见[部署清单](../robot/dofbot/deployment_manifest.json)。仓库分发应用源码和安装入口；模型、SDK、音频和完整虚拟机按各自来源取得。
+准备配套 Ubuntu 上位机、普通桌面用户与厂商依赖后，按[快速开始](QUICKSTART.md)安装。外部文件路径、版本与哈希见[外部依赖清单](../robot/dofbot/external_dependencies.json)，应用基线见[部署清单](../robot/dofbot/deployment_manifest.json)。仓库分发应用源码和安装入口；模型、SDK、音频和完整虚拟机按各自来源取得。
 
 运行使用 USB 相机、串口语音模块、USB 声卡和 DOFBOT。保持原相机位置、固定拾取位置与动作参数。唤醒口令为“你好小亚”，回应后说“开始垃圾分拣”；每轮重新唤醒。语音模块提供命令编号，分类播报采用配套音频资源。界面显示任务及已下发动作阶段，物理夹持和投放效果由现场观察确认。
 

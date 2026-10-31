@@ -17,7 +17,7 @@ description: Reconcile a register-map authority with RTL, C/Python clients and a
 
 失效条件：定义不一致、响应或副作用重复、旧输出残留、地址归属不明、跨字快照不一致。具体列出冲突值与引用文件；不得通过修改另一 profile 的 ABI 隐藏问题。可复用于传感器/加速器寄存器与有限 FIFO 端点；DMA、缓存一致性和新驱动需要另外的实际实现。
 
-后续检查建议：获得授权后覆盖 AW/W 先后与分离、响应停顿、不同 WSTRB、空读/满写、大于 FIFO 的数据块、计数回绕和传输超时；判断副作用次数、完整收发及会话失效规则。这里没有生成或运行测试，也没有执行投影生成器。
+后续检查建议：获得授权后覆盖 AW/W 先后与分离、响应停顿、不同 WSTRB、空读/满写、大于 FIFO 的数据块、计数回绕和传输超时；判断副作用次数、完整收发及会话失效规则。投影生成入口见 `fpga/system_pspl/generate_contract.py`。
 
 ## 经验与证据对应
 

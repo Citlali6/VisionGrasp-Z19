@@ -60,12 +60,12 @@ RAM数据目录（本次沿用 `/dev/shm/visiongrasp-pl-color-20261022`）：
 保留已有颜色固件的加载守卫与native自检流程，见[上板说明](BOARD.md)。
 以下启动命令不提供刷机入口。不能在未知PL镜像上直接运行MMIO程序。
 
-本轮新部署目录 `/opt/visiongrasp-voice-color-20261022`，依赖已验证语音资料目录
+当前部署目录 `/opt/visiongrasp-voice-color-20261022`，依赖已验证语音资料目录
 `/opt/visiongrasp-voice-echo-verified-20261022` 中的 `.venv`、`native`、
 `host/app/voice/audio.py`和 `host/models/vosk-model-small-cn-0.22`。
 不能把Windows虚拟环境复制到板端，也不应向PC安装这些AArch64运行库。
 
-离线依赖组合与本轮原生程序按当前颜色链准备。
+离线依赖组合与原生程序按当前颜色链准备。
 必须同时复制本目录 host 下的 color_control.py、voice_color.py、voice_color.sh、
 preview.py、coordinate_speech.py、grid_overlay.js 和新版相机程序，不能只替换旧版 preview.py。
 新版默认balanced，需要可选JPEG_DIVISOR参数；本页旧交付二进制不支持此参数。
@@ -81,7 +81,7 @@ python3 -u preview.py --directory /dev/shm/visiongrasp-pl-color-20261022 \
 ```
 
 不加 `--listen` 则默认麦克风暂停，可在网页开启。通过已有SSH本地转发8774→18774
-查看页面，仍需要自己的SSH认证；代码中没有密码。
+查看页面，仍需要自己的 SSH 认证；代码中不保存凭据。
 
 只使用现有模型与本地运行库，不经网络ASR，不保存PCM录音或完整语音日志。
 `voice.json`仅保留最新文本用于现场确认。关闭服务器停止其管理的采音和相机进程。
@@ -89,7 +89,7 @@ python3 -u preview.py --directory /dev/shm/visiongrasp-pl-color-20261022 \
 
 ## 验收状态
 
-本轮Python3.7语法、板端GCC零警告构建、语音环境入口已核对。
+Python 3.7 语法、板端GCC零警告构建、语音环境入口已核对。
 已恢复真实相机采集，麦克风设备为 `plughw:CARD=Device,DEV=0`。
 初版完整句过滤未能接受用户首次语音：ASR只返回低置信度单字，未伪造成功结果。
 随后按用户要求切换颜色关键词语法，加载165条模型词表有效表达。
@@ -106,4 +106,4 @@ python3 -u preview.py --directory /dev/shm/visiongrasp-pl-color-20261022 \
 现场服务继续保持运行，未为更新页面提示而重启。当前源码新增的关键词提示和输入峰值
 显示将在下一次正常启动服务后生效，不影响已在运行的关键词识别与PL定位。
 
-旧 `deliverables/pl_color_z19` 的r3交付包是冻结的纯颜色版本，**不包含本轮语音联动新增代码**。
+旧 `deliverables/pl_color_z19` 的r3交付包是冻结的纯颜色版本，**不包含后续语音联动新增代码**。

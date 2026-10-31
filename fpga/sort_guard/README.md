@@ -36,7 +36,7 @@
 | [scripts/sim.ps1](scripts/sim.ps1) | Vivado 2020.1 仿真入口，只写全新外部目录 |
 | [scripts/synth_ooc.tcl](scripts/synth_ooc.tcl) | `xczu19eg-ffvc1760-2-i` 独立 OOC 综合，不布局布线、不生成 bit、不访问硬件 |
 | [host](host/README.md) | 可注入寄存器 transport 的主机客户端与明确标注的离线软件回放 |
-| [validation](validation/README.md) | 实际工具结果、可审阅资源/时序/DRC 报告、输入与原始/发布报告哈希；完整运行日志放仓库外 |
+| [validation](validation/README.md) | 实际工具结果、可审阅资源/时序/DRC 报告、输入与原始/发布报告哈希；工具运行日志不随仓库分发 |
 
 从仓库根目录运行仿真；`VIVADO_2020_1_BIN` 指向现有 Vivado 2020.1 的 bin：
 
@@ -70,7 +70,7 @@ try {
 } finally { Pop-Location }
 ```
 
-本机 Vivado 2020.1 综合遇到中文源路径时内部崩溃；使用同一源文件的 ASCII 路径可避开。Windows 复现时建议从 ASCII 路径提供这三个输入文件（保留 rtl/scripts 目录关系）并核对哈希。不要覆盖已有日志。10 ns 时钟约束在综合后用于综合网表时序报告，没有布局布线、完整 I/O 约束或板端时钟验证，不据此宣称 100 MHz 或处理速度提升。
+本机 Vivado 2020.1 综合遇到中文源路径时内部崩溃；使用同一源文件的 ASCII 路径可避开。Windows 复现时建议从 ASCII 路径提供这三个输入文件（保留 rtl/scripts 目录关系）并核对哈希。不要覆盖已有日志。10 ns 时钟约束在综合后用于综合网表时序报告；完整实现与时序结果见[四功能构建记录](../../deliverables/fpga_build_20261031/README.md)。
 
 本次实际 OOC 报告为 **866 LUT、949 FF、0 BRAM、0 DSP**，无 latch，综合网表 DRC 为 0 条违规。10 ns 报告约束下 WNS 为 7.112 ns、WHS 为 0.061 ns；有 67 个输入和 40 个输出未设置 I/O delay，工具另提示 `HD.CLK_SRC` 未设置，无法估计时钟延迟/偏斜。因此这些数字只描述本次综合网表，不能当作整板时序收敛或已测工作频率。
 

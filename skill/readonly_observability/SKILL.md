@@ -28,4 +28,4 @@ description: Add a read-only UI and traceable logs to a hardware-owning control 
 | 5：SDK 指令阶段与实际成功分开 | 同一验证表“动作调用顺序”“实物效果”两行 | 替身检查确认既有 SDK 次序，现场回调只说明软件执行过程；未安装抓取成功传感器，不由界面阶段推导物理成功率 |
 | 2–4：新入口回调和 JPEG/身份同快照 | [可选观测适配](../../robot/dofbot/pspl_display.py)、[协作案例三](../../report/ai_collaboration.md#case-readonly-observability) | 漏接 save/recognized 和旧 JPEG 配新来源是源码审阅发现；新适配见提交 8a76e84 |
 
-本技能尚无独立运行、跨题目或跨板复用效果记录。新 PS/PL 适配仅源码/接口审阅，旧展示运行结果保持原归属。
+本技能来源见上表与[协作案例三](../../report/ai_collaboration.md#case-readonly-observability)；跨题目复用时按设备所有权与快照一致性条件重新核对。

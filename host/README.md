@@ -15,6 +15,6 @@ PS负责采集/解码、完整PIO收发、CPU垃圾模型、坐标解释、Vosk�
 | [scripts](scripts/) | Z19 SD/Linux 基础检查、恢复和相机加载工具；按 [FPGA 文档](../docs/fpga/README.md)手动使用 |
 | [tests/test_audio.py](tests/test_audio.py) | 不访问设备的采音异常处理与 PCM 转换检查 |
 
-分类与ASR在PS，不表述为PL神经网络。`semantic_bbox` 默认不执行颜色连通域分析，颜色对应为显式选项；原始显示旁路标为 `pl_processed=false`。权重/环境等缺项明确报错，预览不作为任务许可。
+分类与ASR在PS，不表述为PL神经网络。`semantic_bbox` 默认不执行颜色连通域分析，颜色对应为显式选项；原始显示旁路标为 `pl_processed=false`。权重/环境等缺失配置明确报错，预览不作为任务许可。
 
 原颜色语音入口为 [fpga/color_locator](../fpga/color_locator/GRID.md)。`ah_camera0`、`/opt/amazinghand` 保留设备与部署兼容作用；相机驱动、镜像和脚本按各自profile使用。
