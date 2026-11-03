@@ -1,6 +1,6 @@
 {
   "schema": "visiongrasp.track33-submission/1",
-  "date": "2026-10-31",
+  "date": "2026-11-03",
   "project": {
     "repository": "https://github.com/Citlali6/VisionGrasp-Z19",
     "technical_id": "VisionGrasp-Z19",
@@ -118,8 +118,8 @@
     },
     {
       "path": "deliverables/fpga_build_20261031/validation/timing_summary_routed.rpt",
-      "bytes": 366330,
-      "sha256": "016EE93CCFB34C3B40709D81D98FEDD0828B3D76A64072BA48EC3B5BA2E27957",
+      "bytes": 362722,
+      "sha256": "19A3EE2ABE45D719F5E6327281CCDB669DB238B1417E555165B09E747846844B",
       "profile": "z19_pspl_four_functions"
     },
     {
@@ -130,8 +130,8 @@
     },
     {
       "path": "deliverables/fpga_build_20261031/validation/power_routed.rpt",
-      "bytes": 12284,
-      "sha256": "B1506D0ECC4D23F26BD0EBEC2F454BB0896BB15659D490FEC3B4407C5B0818D4",
+      "bytes": 12098,
+      "sha256": "9E33291012F683C4F3F8F84436C5805E11CB5D3FDDDA4079D24831747359A561",
       "profile": "z19_pspl_four_functions"
     },
     {
@@ -181,10 +181,27 @@
       "skill/register_contract/SKILL.md",
       "skill/voice_task_boundary/SKILL.md",
       "skill/readonly_observability/SKILL.md"
-    ]
+    ],
+    "technical_document": "deliverables/technical_document/README.md",
+    "poster": "deliverables/poster/README.md"
   },
   "licenses": {
     "project": "LICENSE",
     "third_party": "THIRD_PARTY.md"
+  },
+  "documents": {
+    "poster": {
+      "path": "deliverables/poster/xinyu-smartsort-poster-20261103.pdf",
+      "png": "deliverables/poster/xinyu-smartsort-poster-20261103.png",
+      "bytes": 1119122,
+      "sha256": "95C40790ECC2510D27F6988E495CD006C5A6FCB2B99FEA4579B76D3ECE244216",
+      "png_sha256": "D1DC92894BE7002882FDDEF13ED900C9D25FE2E24C34B75B40FD70D5A43AB1F3"
+    },
+    "technical_document": {
+      "docx": "deliverables/technical_document/xinyu-smartsort-technical-document-20261103.docx",
+      "pdf": "deliverables/technical_document/xinyu-smartsort-technical-document-20261103.pdf",
+      "docx_sha256": "D932E0974C24026270878EBB1A7B7C78B8FC46BFA2F04DB11D7135F283F853D7",
+      "pdf_sha256": "723D4D75E1B551ECEA76622A0ADD2F9F0292F0A4DFCB9EA3AF8E00CF7F25D34C"
+    }
   }
 }
