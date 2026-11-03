@@ -93,6 +93,8 @@
 - [快速开始](docs/QUICKSTART.md)：安装并运行固定工位分拣
 - [系统架构](docs/architecture.md)：PS、PL 与上位机的分工和数据流
 - [验证记录](docs/VALIDATION.md)：板端、软件、RTL、综合四类结果
+- [技术文档](deliverables/technical_document/README.md)：64 页，五部分完整技术说明
+- [最新海报](deliverables/poster/README.md)：2026-11-03 匿名版，AMD 元素与修正后的器件参数
 - [设计报告](report/design_report.md)：背景、原理、划分、优化、复现
 - [Skill 技能包](skill/README.md) · [AI 开发协作记录](report/ai_collaboration.md)
 

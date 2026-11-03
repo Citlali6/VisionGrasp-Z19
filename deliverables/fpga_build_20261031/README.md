@@ -43,7 +43,7 @@ DRC 的 52 条 Warning 全部属于 DSP 输入/输出流水建议（DPIP-2 24 �
 | 文件 | 大小 | SHA-256 |
 |---|---:|---|
 | `system_pspl.xsa`（内含 bit） | 1,175,321 B | `3FFC97DA6FB31666E447C4FD8F540261DD73DD31CCC081C13F367AFF6DE23BD7` |
-| `system_pspl_wrapper.bit`（XSA 内条目） | 36,343,237 B | `E2DC755C01C67E6E9506CB71A0B9B010C5F7D6A158FFCAC0FA7660935AE71A29` |
+| `system_pspl.bit`（XSA 内条目） | 36,343,237 B | `E2DC755C01C67E6E9506CB71A0B9B010C5F7D6A158FFCAC0FA7660935AE71A29` |
 
 `validation/` 保存布局布线后的原始报告：`utilization_placed.rpt`、`timing_summary_routed.rpt`、`drc_routed.rpt`、`power_routed.rpt`。逐文件哈希见 [manifest.json](manifest.json)。
 

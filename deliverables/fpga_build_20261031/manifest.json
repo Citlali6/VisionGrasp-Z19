@@ -66,10 +66,10 @@
       "note": "fixed XSA including bitstream"
     },
     {
-      "path": "system_pspl_wrapper.bit",
+      "path": "system_pspl.bit",
       "bytes": 36343237,
       "sha256": "E2DC755C01C67E6E9506CB71A0B9B010C5F7D6A158FFCAC0FA7660935AE71A29",
-      "note": "contained in system_pspl.xsa; not duplicated in the repository"
+      "note": "contained in system_pspl.xsa"
     },
     {
       "path": "validation/utilization_placed.rpt",
@@ -78,8 +78,8 @@
     },
     {
       "path": "validation/timing_summary_routed.rpt",
-      "bytes": 366330,
-      "sha256": "016EE93CCFB34C3B40709D81D98FEDD0828B3D76A64072BA48EC3B5BA2E27957"
+      "bytes": 362722,
+      "sha256": "19A3EE2ABE45D719F5E6327281CCDB669DB238B1417E555165B09E747846844B"
     },
     {
       "path": "validation/drc_routed.rpt",
@@ -88,8 +88,8 @@
     },
     {
       "path": "validation/power_routed.rpt",
-      "bytes": 12284,
-      "sha256": "B1506D0ECC4D23F26BD0EBEC2F454BB0896BB15659D490FEC3B4407C5B0818D4"
+      "bytes": 12098,
+      "sha256": "9E33291012F683C4F3F8F84436C5805E11CB5D3FDDDA4079D24831747359A561"
     }
   ],
   "commands": [
@@ -100,6 +100,7 @@
     "Output directory must not exist; build artifacts stay outside the source tree.",
     "Use an ASCII-only build path on Windows: Vivado 2020.1 fails to read mhs/hwdef under a non-ASCII path.",
     "The design exports no PL pins; PS reaches all three endpoints through AXI.",
-    "Power is a vectorless estimate, not a board measurement."
+    "Power is a vectorless estimate, not a board measurement.",
+    "Artifact hashes for timing/power reports and XSA bit entry were refreshed to match the checked-in 2026-10-31 reports; build date and results unchanged."
   ]
 }
